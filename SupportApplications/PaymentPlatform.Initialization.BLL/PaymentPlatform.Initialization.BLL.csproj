@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DatabaseServices.DAL\PaymentPlatform.Initialization.DAL.csproj" />
+    <ProjectReference Include="..\PaymentPlatform.Initialization.DAL\PaymentPlatform.Initialization.DAL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,11 @@
-﻿using DatabaseServices.DAL.Models;
+﻿using PaymentPlatform.Initialization.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DatabaseServices.DAL
+namespace PaymentPlatform.Initialization.DAL
 {
 	/// <summary>
 	/// Основной контекст приложения

@@ -1,10 +1,10 @@
-﻿using DatabaseServices.DAL;
+﻿using PaymentPlatform.Initialization.DAL;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DatabaseServices.BLL.Interfaces
+namespace PaymentPlatform.Initialization.BLL.Interfaces
 {
 	/// <summary>
 	/// Интерфейс генератора случайных данных

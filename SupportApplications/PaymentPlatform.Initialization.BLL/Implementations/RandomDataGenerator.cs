@@ -1,13 +1,13 @@
-﻿using DatabaseServices.BLL.Interfaces;
-using DatabaseServices.DAL;
-using DatabaseServices.DAL.Models;
+﻿using PaymentPlatform.Initialization.BLL.Interfaces;
+using PaymentPlatform.Initialization.DAL;
+using PaymentPlatform.Initialization.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DatabaseServices.BLL.Implementations
+namespace PaymentPlatform.Initialization.BLL.Implementations
 {
 	/// <summary>
 	/// Генератор случайных данных для заполнения БД

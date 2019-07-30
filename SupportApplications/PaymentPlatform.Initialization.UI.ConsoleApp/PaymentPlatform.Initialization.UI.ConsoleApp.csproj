@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DatabaseServices.BLL\PaymentPlatform.Initialization.BLL.csproj" />
+    <ProjectReference Include="..\PaymentPlatform.Initialization.BLL\PaymentPlatform.Initialization.BLL.csproj" />
+    <ProjectReference Include="..\PaymentPlatform.Initialization.DAL\PaymentPlatform.Initialization.DAL.csproj" />
   </ItemGroup>
 
 </Project>

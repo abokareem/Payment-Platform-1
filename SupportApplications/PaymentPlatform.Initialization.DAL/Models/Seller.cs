@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DatabaseServices.DAL.Models
+namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
 	/// Модель продавца

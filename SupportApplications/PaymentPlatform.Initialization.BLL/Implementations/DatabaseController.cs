@@ -1,11 +1,11 @@
-﻿using DatabaseServices.BLL.Interfaces;
-using DatabaseServices.DAL;
+﻿using PaymentPlatform.Initialization.BLL.Interfaces;
+using PaymentPlatform.Initialization.DAL;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DatabaseServices.BLL.Implementations
+namespace PaymentPlatform.Initialization.BLL.Implementations
 {
 	/// <summary>
 	/// Контроллер БД
