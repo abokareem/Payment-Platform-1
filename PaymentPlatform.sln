@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{985A52D6-7FFA-494C-A12C-2A5616CBE412}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Gateway.API", "PaymentPlatform.Gateway.API\PaymentPlatform.Gateway.API.csproj", "{B3ACFF74-5DF2-467B-891D-C2BD6D0B019C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Gateway.API", "Gateway\PaymentPlatform.Gateway.API\PaymentPlatform.Gateway.API.csproj", "{B3ACFF74-5DF2-467B-891D-C2BD6D0B019C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{21EE2214-9B19-46FA-8F22-6F827ED00A20}"
 EndProject
