@@ -9,16 +9,55 @@ namespace DatabaseServices.BLL.Implementations
 {
 	public class RandomDataGenerator : IRandomDataGenerator
 	{
-		private readonly ApplicationContext applicationContext;
+		private readonly ApplicationContext _applicationContext;
 
 		public RandomDataGenerator(ApplicationContext applicationContext)
 		{
-			this.applicationContext = applicationContext;
+			this._applicationContext = applicationContext;
 		}
 
-		public Task<bool> GenerateRandomData()
+		public async Task<bool> GenerateRandomDataAsync()
 		{
-			throw new NotImplementedException();
+			try
+			{
+				await Task.Run(() =>
+				{
+					AddNewCustomers();
+					AddNewSellers();
+					AddNewBuyers();
+					AddNewProducts();
+					AddNewTransactions();
+				});
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			return default;
+		}
+
+		private void AddNewCustomers()
+		{
+
+		}
+		private void AddNewSellers()
+		{
+
+		}
+
+		private void AddNewBuyers()
+		{
+
+		}
+
+		private void AddNewProducts()
+		{
+
+		}
+
+		private void AddNewTransactions()
+		{
+
 		}
 	}
 }

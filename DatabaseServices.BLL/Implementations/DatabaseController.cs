@@ -16,9 +16,30 @@ namespace DatabaseServices.BLL.Implementations
 			_context = new ApplicationContext();
 		}
 
-		public Task<bool> AddRandomDataToDatabaseAsync(IRandomDataGenerator dataGenerator)
+		public DatabaseController(ApplicationContext context)
 		{
-			throw new NotImplementedException();
+			_context = context;
+		}
+
+		public async Task<bool> AddRandomDataToDatabaseAsync(IRandomDataGenerator dataGenerator)
+		{
+			if (dataGenerator is null)
+			{
+				throw new ArgumentNullException(nameof(dataGenerator));
+			}
+			if (await _context.Database.CanConnectAsync())
+			{
+				try
+				{
+					var result = await dataGenerator.GenerateRandomDataAsync();
+					return result;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+			}
+			return default;
 		}
 
 

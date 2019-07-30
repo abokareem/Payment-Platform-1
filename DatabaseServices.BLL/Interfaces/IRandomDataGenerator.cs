@@ -8,6 +8,6 @@ namespace DatabaseServices.BLL.Interfaces
 {
 	public interface IRandomDataGenerator
 	{
-		Task<bool> GenerateRandomData();
+		Task<bool> GenerateRandomDataAsync();
 	}
 }
