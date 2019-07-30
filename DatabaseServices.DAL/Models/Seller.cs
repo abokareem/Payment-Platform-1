@@ -12,6 +12,9 @@ namespace DatabaseServices.DAL.Models
 		public string ResponsiblePerson { get; set; }
 		public string Billing { get; set; }
 		public decimal Balance { get; set; }
+
+
+		public List<Product> Products { get; set; }
 		public List<Transaction> Transactions { get; set; }
 	}
 }

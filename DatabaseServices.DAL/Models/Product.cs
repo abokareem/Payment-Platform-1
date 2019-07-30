@@ -15,6 +15,8 @@ namespace DatabaseServices.DAL.Models
 		public int Amount { get; set; }
 		public decimal Price { get; set; }
 		public string QrCode { get; set; }
+
+		public Seller Seller { get; set; }
 		public List<Transaction> Transactions { get; set; }
 	}
 }

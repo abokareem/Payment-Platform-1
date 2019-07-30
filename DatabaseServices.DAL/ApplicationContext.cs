@@ -45,6 +45,8 @@ namespace DatabaseServices.DAL
 			modelBuilder.Entity<Product>().Property(p => p.MeasureUnit).IsRequired();
 			modelBuilder.Entity<Product>().Property(p => p.Category).IsRequired();
 			modelBuilder.Entity<Product>().Property(p => p.QrCode).IsRequired();
+
+			modelBuilder.Entity<Product>().HasOne(t => t.Seller).WithMany(s => s.Products).HasForeignKey(p => p.SellerId);
 			#endregion
 
 			#region Buyer
