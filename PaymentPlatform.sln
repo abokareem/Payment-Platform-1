@@ -9,15 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Gateway.API
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{21EE2214-9B19-46FA-8F22-6F827ED00A20}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Identity.API", "PaymentPlatform.Identity.API\PaymentPlatform.Identity.API.csproj", "{9D8476DC-5654-4F1D-95DB-9E72CF799699}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Identity.API", "Services\PaymentPlatform.Identity.API\PaymentPlatform.Identity.API.csproj", "{9D8476DC-5654-4F1D-95DB-9E72CF799699}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Customer.API", "PaymentPlatform.Customer.API\PaymentPlatform.Customer.API.csproj", "{C3D310B6-BA92-46E5-B4D7-4ECFEB2119BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Customer.API", "Services\PaymentPlatform.Customer.API\PaymentPlatform.Customer.API.csproj", "{C3D310B6-BA92-46E5-B4D7-4ECFEB2119BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Seller.API", "PaymentPlatform.Seller.API\PaymentPlatform.Seller.API.csproj", "{0727903E-2844-460D-B30A-FAC20EAF9CFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Seller.API", "Services\PaymentPlatform.Seller.API\PaymentPlatform.Seller.API.csproj", "{0727903E-2844-460D-B30A-FAC20EAF9CFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Product.API", "PaymentPlatform.Product.API\PaymentPlatform.Product.API.csproj", "{81D16506-9E27-40B8-807F-FAA90A65768E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Product.API", "Services\PaymentPlatform.Product.API\PaymentPlatform.Product.API.csproj", "{81D16506-9E27-40B8-807F-FAA90A65768E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Transaction.API", "PaymentPlatform.Transaction.API\PaymentPlatform.Transaction.API.csproj", "{4F5A1737-4EF1-4195-9493-B7B5A38EF598}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Transaction.API", "Services\PaymentPlatform.Transaction.API\PaymentPlatform.Transaction.API.csproj", "{4F5A1737-4EF1-4195-9493-B7B5A38EF598}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AuxiliaryServices", "AuxiliaryServices", "{5BB84C48-EAD3-442C-BBE2-EBF8E268E801}"
 EndProject
