@@ -15,5 +15,8 @@ namespace DatabaseServices.DAL.Models
 		public int? SellerId { get; set; }
 		public int Role { get; set; }
 		public bool Activity { get; set; }
+
+		public Buyer Buyer { get; set; }
+		public Seller Seller { get; set; }
 	}
 }

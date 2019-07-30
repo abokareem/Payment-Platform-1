@@ -9,6 +9,8 @@ namespace DatabaseServices.DAL.Models
 		public int Id { get; set; }
 		public string Billing { get; set; }
 		public decimal Balance { get; set; }
+
 		public List<Transaction> Transactions { get; set; }
+		public List<Customer> Customers { get; set; }
 	}
 }

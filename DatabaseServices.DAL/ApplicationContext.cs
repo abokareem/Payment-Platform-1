@@ -37,6 +37,10 @@ namespace DatabaseServices.DAL
 			modelBuilder.Entity<Customer>().Property(p => p.MiddleName).IsRequired();
 			modelBuilder.Entity<Customer>().Property(p => p.LastName).IsRequired();
 			modelBuilder.Entity<Customer>().Property(p => p.Email).IsRequired();
+
+
+			modelBuilder.Entity<Customer>().HasOne(t => t.Seller).WithMany(s => s.Customers).HasForeignKey(p => p.SellerId);
+			modelBuilder.Entity<Customer>().HasOne(t => t.Buyer).WithMany(s => s.Customers).HasForeignKey(p => p.BuyerId);
 			#endregion
 
 			#region Product

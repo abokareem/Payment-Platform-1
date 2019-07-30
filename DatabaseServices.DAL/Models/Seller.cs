@@ -16,5 +16,6 @@ namespace DatabaseServices.DAL.Models
 
 		public List<Product> Products { get; set; }
 		public List<Transaction> Transactions { get; set; }
+		public List<Customer> Customers { get; set; }
 	}
 }
