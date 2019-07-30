@@ -13,5 +13,7 @@ namespace DatabaseServices.DAL.Models
 		public int ProductId { get; set; }
 		public DateTime TransactionTime { get; set; }
 		public int TransactionStatus { get; set; }
+
+		public Seller Seller { get; set; }
 	}
 }
