@@ -9,15 +9,29 @@ using System.Threading.Tasks;
 
 namespace DatabaseServices.BLL.Implementations
 {
+	/// <summary>
+	/// Генератор случайных данных для заполнения БД
+	/// </summary>
 	public class RandomDataGenerator : IRandomDataGenerator
 	{
 		private readonly ApplicationContext _applicationContext;
-
+		/// <summary>
+		/// Конструктор, принимающий контекст БД
+		/// </summary>
+		/// <param name="applicationContext">Контекст работы с БД</param>
 		public RandomDataGenerator(ApplicationContext applicationContext)
 		{
 			_applicationContext = applicationContext;
 		}
+		/// <summary>
+		/// Пустой конструктор
+		/// </summary>
+		public RandomDataGenerator()
+		{
+			_applicationContext = new ApplicationContext();
+		}
 
+		/// <inheritdoc/>
 		public async Task<bool> GenerateRandomDataAsync()
 		{
 			try
@@ -37,7 +51,9 @@ namespace DatabaseServices.BLL.Implementations
 			}
 			return true;
 		}
-
+		/// <summary>
+		/// Добавляет в БД случайных продавцов
+		/// </summary>
 		private void AddNewSellers()
 		{
 			var sellers = new List<Seller>();
@@ -55,7 +71,9 @@ namespace DatabaseServices.BLL.Implementations
 			_applicationContext.Sellers.AddRange(sellers);
 			_applicationContext.SaveChanges();
 		}
-
+		/// <summary>
+		/// Добавляет в БД случайных покупателей
+		/// </summary>
 		private void AddNewBuyers()
 		{
 			var buyers = new List<Buyer>();
@@ -70,7 +88,9 @@ namespace DatabaseServices.BLL.Implementations
 			_applicationContext.Buyers.AddRange(buyers);
 			_applicationContext.SaveChanges();
 		}
-
+		/// <summary>
+		/// Добавляет в БД случайных пользователей
+		/// </summary>
 		private void AddNewCustomers()
 		{
 			var customers = new List<Customer>();
@@ -107,7 +127,9 @@ namespace DatabaseServices.BLL.Implementations
 			_applicationContext.Customers.AddRange(customers);
 			_applicationContext.SaveChanges();
 		}
-
+		/// <summary>
+		/// Добавляет в БД случайные продукты
+		/// </summary>
 		private void AddNewProducts()
 		{
 			var customers = _applicationContext.Customers
@@ -141,7 +163,9 @@ namespace DatabaseServices.BLL.Implementations
 			_applicationContext.Products.AddRange(products);
 			_applicationContext.SaveChanges();
 		}
-
+		/// <summary>
+		/// Добавляет в БД случайные транзакции
+		/// </summary>
 		private void AddNewTransactions()
 		{
 			var transactions = new List<Transaction>();
