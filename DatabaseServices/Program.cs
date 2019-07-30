@@ -14,6 +14,9 @@ namespace DatabaseServices.UI
 			Selector();
 		}
 
+		/// <summary>
+		/// Обеспечивает консольное управление проектом
+		/// </summary>
 		static void Selector()
 		{
 			bool exit = false;
@@ -37,24 +40,25 @@ namespace DatabaseServices.UI
 				{
 					case ConsoleKey.C:
 						var creationResult = dbController.CreateDatabaseAsync().Result;
-						operationResult = creationResult == true ? "успешно" : "с ошибкой";
-						Console.WriteLine($"Работа завершена {operationResult}. Была создана БД.");
+						operationResult = creationResult == true ? "успешно. Была создана БД." : "с ошибкой.";
+						Console.WriteLine($"Работа завершена {operationResult}");
 						break;
 					case ConsoleKey.D:
 						var deletionResult = dbController.DeleteDatabaseAsync().Result;
-						operationResult = deletionResult == true ? "успешно" : "с ошибкой";
-						Console.WriteLine($"Работа завершена {operationResult}. Была удалена БД.");
+						operationResult = deletionResult == true ? "успешно. Была удалена БД." : "с ошибкой.";
+						Console.WriteLine($"Работа завершена {operationResult}");
 						break;
 					case ConsoleKey.R:
 						var randomiseResult = dbController.AddRandomDataToDatabaseAsync(randomDataGenerator).Result;
-						operationResult = randomiseResult == true ? "успешно" : "с ошибкой";
-						Console.WriteLine($"Работа завершена {operationResult}. В существеющую БД были добавлены случайные значения.");
+						operationResult = randomiseResult == true ? "успешно. В существеющую БД были добавлены случайные значения." : "с ошибкой.";
+						Console.WriteLine($"Работа завершена {operationResult}");
 						break;
 					case ConsoleKey.E:
 						Console.WriteLine("Завершение работы программы.");
 						exit = true;
 						break;
 					default:
+						Console.WriteLine("Команда не определена!");
 						break;
 				}
 			}

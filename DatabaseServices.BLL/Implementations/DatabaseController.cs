@@ -45,35 +45,53 @@ namespace DatabaseServices.BLL.Implementations
 				{
 					return false;
 				}
+				return true;
 			}
-			return true;
+			else
+			{
+				return false;
+			}
 		}
 
 		/// <inheritdoc/>
 		public async Task<bool> CreateDatabaseAsync()
 		{
-			try
+			if (!await _context.Database.CanConnectAsync())
 			{
-				await _context.Database.EnsureCreatedAsync();
+				try
+				{
+					await _context.Database.EnsureCreatedAsync();
+					return true;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
 			}
-			catch (Exception)
+			else
 			{
 				return false;
 			}
-			return true;
 		}
 		/// <inheritdoc/>
 		public async Task<bool> DeleteDatabaseAsync()
 		{
-			try
+			if (await _context.Database.CanConnectAsync())
 			{
-				await _context.Database.EnsureDeletedAsync();
+				try
+				{
+					await _context.Database.EnsureDeletedAsync();
+					return true;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
 			}
-			catch (Exception)
+			else
 			{
 				return false;
 			}
-			return true;
 		}
 	}
 }
