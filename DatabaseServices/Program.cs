@@ -14,8 +14,13 @@ namespace DatabaseServices.View
 			IRandomDataGenerator randomDataGenerator = new RandomDataGenerator(context);
 
 			var dbController = new DatabaseController(context);
-			_ = dbController.CreateDatabaseAsync();
-			_ = dbController.AddRandomDataToDatabaseAsync(randomDataGenerator);
+			var dbDeletionResult = dbController.DeleteDatabaseAsync().Result;
+			var dbCreationResult = dbController.CreateDatabaseAsync().Result;
+			var randomAdditisionResult = dbController.AddRandomDataToDatabaseAsync(randomDataGenerator).Result;
+			Console.WriteLine(dbDeletionResult);
+			Console.WriteLine(dbCreationResult);
+			Console.WriteLine(randomAdditisionResult);
+			Console.ReadLine();
 		}
 	}
 }

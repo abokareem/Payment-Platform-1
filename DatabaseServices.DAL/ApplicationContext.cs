@@ -9,8 +9,11 @@ namespace DatabaseServices.DAL
 {
 	public class ApplicationContext:DbContext
 	{
-		public DbSet<Transaction> Transactions { get; set; }
+		public DbSet<Buyer> Buyers { get; set; }
+		public DbSet<Customer> Customers { get; set; }
 		public DbSet<Seller> Sellers { get; set; }
+		public DbSet<Product> Products { get; set; }
+		public DbSet<Transaction> Transactions { get; set; }
 
 		public ApplicationContext()
 		{

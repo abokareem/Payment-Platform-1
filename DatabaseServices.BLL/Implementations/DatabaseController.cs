@@ -31,28 +31,41 @@ namespace DatabaseServices.BLL.Implementations
 			{
 				try
 				{
-					var result = await dataGenerator.GenerateRandomDataAsync();
-					return result;
+					await dataGenerator.GenerateRandomDataAsync();
 				}
 				catch (Exception)
 				{
 					return false;
 				}
 			}
-			return default;
+			return true;
 		}
 
 
 		public async Task<bool> CreateDatabaseAsync()
 		{
-			var result = await _context.Database.EnsureCreatedAsync();
-			return result;
+			try
+			{
+				await _context.Database.EnsureCreatedAsync();
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			return true;
 		}
 
 		public async Task<bool> DeleteDatabaseAsync()
 		{
-			var result = await _context.Database.EnsureDeletedAsync();
-			return result;
+			try
+			{
+				await _context.Database.EnsureDeletedAsync();
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+			return true;
 		}
 	}
 }
