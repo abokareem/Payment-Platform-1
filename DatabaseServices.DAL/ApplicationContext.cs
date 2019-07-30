@@ -7,6 +7,9 @@ using System.Text;
 
 namespace DatabaseServices.DAL
 {
+	/// <summary>
+	/// Основной контекст приложения
+	/// </summary>
 	public class ApplicationContext:DbContext
 	{
 		public DbSet<Buyer> Buyers { get; set; }
@@ -15,16 +18,25 @@ namespace DatabaseServices.DAL
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Transaction> Transactions { get; set; }
 
+		/// <summary>
+		/// Пустой конструктор
+		/// </summary>
 		public ApplicationContext()
 		{
-			Database.EnsureCreated();
+
 		}
 
+		/// <summary>
+		/// Конфигурация контекста
+		/// </summary>
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=PaymentPlatformApplication;Trusted_Connection=True;MultipleActiveResultSets=true");
 		}
 
+		/// <summary>
+		/// Реализация FluentAPI
+		/// </summary>
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			#region Transaction table
@@ -58,9 +70,6 @@ namespace DatabaseServices.DAL
 			#region Customer table
 			modelBuilder.Entity<Customer>()
 				.Property(p => p.FirstName)
-				.IsRequired();
-			modelBuilder.Entity<Customer>()
-				.Property(p => p.MiddleName)
 				.IsRequired();
 			modelBuilder.Entity<Customer>()
 				.Property(p => p.LastName)
