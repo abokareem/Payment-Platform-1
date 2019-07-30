@@ -1,45 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
-	/// Модель транзакции
+	/// Модель транзакции.
 	/// </summary>
 	public class Transaction
 	{
-		/// <summary>
-		/// Идентификатор
-		/// </summary>
-		public int Id { get; set; }
-		/// <summary>
-		/// Уникальный хэш-код
-		/// </summary>
-		public string UniqueHashNumber { get; set; }
-		/// <summary>
-		/// Идентификатор продавца
-		/// </summary>
-		public int SellerId { get; set; }
-		/// <summary>
-		/// Идентификатор покупателя
-		/// </summary>
-		public int BuyerId { get; set; }
-		/// <summary>
-		/// Идентификатор продукта
-		/// </summary>
-		public int ProductId { get; set; }
-		/// <summary>
-		/// Время транзакции
-		/// </summary>
-		public DateTime TransactionTime { get; set; }
-		/// <summary>
-		/// Статус транзакции
-		/// </summary>
-		public int TransactionStatus { get; set; }
+        /// <summary>
+        /// Идентификатор (уникальный номер транзакции) (GUID).
+        /// </summary>
+        public string Id { get; set; }
 
-		public Seller Seller { get; set; }
-		public Buyer Buyer { get; set; }
-		public Product Product { get; set; }
-	}
+		/// <summary>
+		/// Идентификатор продавца.
+		/// </summary>
+		public string SellerId { get; set; }
+
+		/// <summary>
+		/// Идентификатор покупателя.
+		/// </summary>
+		public string CustomerId { get; set; }
+
+		/// <summary>
+		/// Идентификатор продукта.
+		/// </summary>
+		public string ProductId { get; set; }
+
+        /// <summary>
+        /// Время совершения операции.
+        /// </summary>
+        public DateTime Time { get; set; } = DateTime.Now;
+
+		/// <summary>
+		/// Статус.
+		/// </summary>
+		public int Status { get; set; }
+
+        // TODO: Добавить связи через ICollection
+    }
 }

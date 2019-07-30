@@ -1,52 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentPlatform.Initialization.DAL.Models
+﻿namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
-	/// Модель товара
+	/// Модель товара.
 	/// </summary>
 	public class Product
 	{
 		/// <summary>
-		/// Идентификатор
+		/// Идентификатор (GUID).
 		/// </summary>
-		public int Id { get; set; }
+		public string Id { get; set; }
+
 		/// <summary>
-		/// Идентификатор продавца
+		/// Идентификатор продавца.
 		/// </summary>
-		public int SellerId { get; set; }
+		public string AccountId { get; set; }
+
 		/// <summary>
-		/// Название товара
+		/// Название товара.
 		/// </summary>
-		public string ProductName { get; set; }
+		public string Name { get; set; }
+
 		/// <summary>
-		/// Описание товара
+		/// Описание товара.
 		/// </summary>
 		public string Description { get; set; }
+
 		/// <summary>
-		/// Единица измерения
+		/// Единица измерения.
 		/// </summary>
 		public string MeasureUnit { get; set; }
+
 		/// <summary>
-		/// Категория
+		/// Категория.
 		/// </summary>
 		public string Category { get; set; }
+
 		/// <summary>
-		/// Количество
+		/// Количество.
 		/// </summary>
 		public int Amount { get; set; }
+
 		/// <summary>
-		/// Цена
+		/// Цена.
 		/// </summary>
 		public decimal Price { get; set; }
+
 		/// <summary>
-		/// QR-код
+		/// QR-код.
 		/// </summary>
 		public string QrCode { get; set; }
 
-		public Seller Seller { get; set; }
-		public List<Transaction> Transactions { get; set; }
+		// TODO: Добавить связи через ICollection
 	}
 }
