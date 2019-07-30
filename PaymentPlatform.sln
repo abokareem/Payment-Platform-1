@@ -21,13 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Transaction
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AuxiliaryServices", "AuxiliaryServices", "{5BB84C48-EAD3-442C-BBE2-EBF8E268E801}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseServices.View", "DatabaseServices\DatabaseServices.View.csproj", "{D4BB2B6F-8FD9-4C8A-9E22-E29B571606F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseServices.UI", "DatabaseServices\DatabaseServices.UI.csproj", "{D4BB2B6F-8FD9-4C8A-9E22-E29B571606F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseServices.BLL", "DatabaseServices.BLL\DatabaseServices.BLL.csproj", "{C98D5118-ABC5-4D0F-8B90-22F4D87FBB48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseServices.BLL", "DatabaseServices.BLL\DatabaseServices.BLL.csproj", "{C98D5118-ABC5-4D0F-8B90-22F4D87FBB48}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DatabaseServices", "DatabaseServices", "{D1E06B29-5E35-4E2D-BC1B-91554FDF3E47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseServices.DAL", "DatabaseServices.DAL\DatabaseServices.DAL.csproj", "{72473734-5BB5-4D8B-83F8-BA02DAB688ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseServices.DAL", "DatabaseServices.DAL\DatabaseServices.DAL.csproj", "{72473734-5BB5-4D8B-83F8-BA02DAB688ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,7 +3,7 @@ using DatabaseServices.BLL.Interfaces;
 using DatabaseServices.DAL;
 using System;
 
-namespace DatabaseServices.View
+namespace DatabaseServices.UI
 {
 	class Program
 	{
