@@ -23,10 +23,10 @@ namespace DatabaseServices.UI
 			var dbController = new DatabaseController(context);
 
 			Console.WriteLine("Управление:");
-			Console.WriteLine("Нажмите С - для создания БД");
-			Console.WriteLine("Нажмите D - для удаления БД");
-			Console.WriteLine("Нажмите R - для добавления случайных записей в БД (при множественном использовании адекватную работу не гарантирую)");
-			Console.WriteLine("Нажмите E - для выхода");
+			Console.WriteLine("Нажмите С - для создания БД.");
+			Console.WriteLine("Нажмите D - для удаления БД.");
+			Console.WriteLine("Нажмите R - для добавления случайных записей в БД (при множественном использовании адекватную работу не гарантирую).");
+			Console.WriteLine("Нажмите E - для выхода.");
 
 			while (!exit)
 			{
@@ -36,19 +36,22 @@ namespace DatabaseServices.UI
 				switch (key)
 				{
 					case ConsoleKey.C:
-						operationResult = dbController.CreateDatabaseAsync().Result == true ? "успешно" : "с ошибкой";
-						Console.WriteLine($"Работа завершена {operationResult}");
+						var creationResult = dbController.CreateDatabaseAsync().Result;
+						operationResult = creationResult == true ? "успешно" : "с ошибкой";
+						Console.WriteLine($"Работа завершена {operationResult}. Была создана БД.");
 						break;
 					case ConsoleKey.D:
-						operationResult = dbController.DeleteDatabaseAsync().Result == true ? "успешно" : "с ошибкой";
-						Console.WriteLine($"Работа завершена {operationResult}");
+						var deletionResult = dbController.DeleteDatabaseAsync().Result;
+						operationResult = deletionResult == true ? "успешно" : "с ошибкой";
+						Console.WriteLine($"Работа завершена {operationResult}. Была удалена БД.");
 						break;
 					case ConsoleKey.R:
-						operationResult = dbController.AddRandomDataToDatabaseAsync(randomDataGenerator).Result == true ? "успешно" : "с ошибкой";
-						Console.WriteLine($"Работа завершена {operationResult}");
+						var randomiseResult = dbController.AddRandomDataToDatabaseAsync(randomDataGenerator).Result;
+						operationResult = randomiseResult == true ? "успешно" : "с ошибкой";
+						Console.WriteLine($"Работа завершена {operationResult}. В существеющую БД были добавлены случайные значения.");
 						break;
 					case ConsoleKey.E:
-						Console.WriteLine("Завершение работы");
+						Console.WriteLine("Завершение работы программы.");
 						exit = true;
 						break;
 					default:
