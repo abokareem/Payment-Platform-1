@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseServices.BLL.Implementations
 {
-	class DatabaseController : IDatabaseController
+	public class DatabaseController : IDatabaseController
 	{
 		private readonly ApplicationContext _context;
 

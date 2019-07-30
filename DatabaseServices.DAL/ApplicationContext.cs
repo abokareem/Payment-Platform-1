@@ -28,7 +28,9 @@ namespace DatabaseServices.DAL
 			modelBuilder.Entity<Transaction>().Property(p => p.TransactionTime).IsRequired().HasDefaultValueSql("GETDATE()");
 			modelBuilder.Entity<Transaction>().Property(p => p.UniqueHashNumber).IsRequired();
 
-			modelBuilder.Entity<Transaction>().HasOne(t => t.Seller).WithMany(s => s.Transactions).HasForeignKey(p=>p.SellerId);
+			modelBuilder.Entity<Transaction>().HasOne(t => t.Seller).WithMany(s => s.Transactions).HasForeignKey(p => p.SellerId);
+			modelBuilder.Entity<Transaction>().HasOne(t => t.Buyer).WithMany(s => s.Transactions).HasForeignKey(p => p.BuyerId);
+			modelBuilder.Entity<Transaction>().HasOne(t => t.Product).WithMany(s => s.Transactions).HasForeignKey(p => p.ProductId);
 			#endregion
 			#region Customer
 			modelBuilder.Entity<Customer>().Property(p => p.FirstName).IsRequired();

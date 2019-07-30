@@ -15,5 +15,7 @@ namespace DatabaseServices.DAL.Models
 		public int TransactionStatus { get; set; }
 
 		public Seller Seller { get; set; }
+		public Buyer Buyer { get; set; }
+		public Product Product { get; set; }
 	}
 }

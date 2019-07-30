@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DatabaseServices.BLL.Implementations;
+using System;
 
 namespace DatabaseServices.View
 {
@@ -7,6 +8,8 @@ namespace DatabaseServices.View
 		static void Main(string[] args)
 		{
 			Console.WriteLine("Hello World!");
+			var dbController = new DatabaseController();
+			_ = dbController.CreateDatabaseAsync();
 		}
 	}
 }
