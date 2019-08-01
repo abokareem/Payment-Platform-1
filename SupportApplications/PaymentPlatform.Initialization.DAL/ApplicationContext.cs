@@ -1,5 +1,7 @@
 ﻿using PaymentPlatform.Initialization.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace PaymentPlatform.Initialization.DAL
 {
@@ -26,7 +28,13 @@ namespace PaymentPlatform.Initialization.DAL
         /// </summary>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=PaymentPlatformApplication;Trusted_Connection=True;MultipleActiveResultSets=true");
+            var configuration = 
+                new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
 		}
 
 		/// <summary>
