@@ -29,7 +29,7 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Отчество.
 		/// </summary>
-		public string MiddleName { get; set; }
+		public string SecondName { get; set; }
 
 		/// <summary>
 		/// Идентификатор продавца.

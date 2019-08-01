@@ -1,14 +1,10 @@
 ﻿using PaymentPlatform.Initialization.DAL.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PaymentPlatform.Initialization.DAL
 {
 	/// <summary>
-	/// Основной контекст приложения
+	/// Основной контекст приложения.
 	/// </summary>
 	public class ApplicationContext:DbContext
 	{
@@ -18,7 +14,7 @@ namespace PaymentPlatform.Initialization.DAL
 		public DbSet<Transaction> Transactions { get; set; }
 
 		/// <summary>
-		/// Конфигурация контекста
+		/// Конфигурация контекста.
 		/// </summary>
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
@@ -26,81 +22,159 @@ namespace PaymentPlatform.Initialization.DAL
 		}
 
 		/// <summary>
-		/// Реализация FluentAPI
+		/// Реализация FluentAPI.
 		/// </summary>
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			#region Account table
+
 			modelBuilder.Entity<Account>()
 				.Property(p => p.Id)
 				.HasDefaultValueSql("newsequentialid()")
 				.IsRequired();
+
 			modelBuilder.Entity<Account>()
-				.Property(p => p.Id)
+				.Property(p => p.Email)
 				.IsRequired();
-			modelBuilder.Entity<Account>()
+
+            modelBuilder.Entity<Account>()
+                .Property(p => p.Password)
+                .IsRequired();
+
+            modelBuilder.Entity<Account>()
+                .Property(p => p.Login)
+                .IsRequired();
+
+            modelBuilder.Entity<Account>()
+                .Property(p => p.Role)
+                .IsRequired();
+
+            modelBuilder.Entity<Account>()
 				.HasOne(p => p.Profile)
 				.WithOne(a => a.Account)
 				.HasForeignKey<Profile>(p => p.Id);
+
 			#endregion
 
+
+
 			#region Product table
+
 			modelBuilder.Entity<Product>()
 				.Property(p => p.Id)
 				.HasDefaultValueSql("newsequentialid()")
 				.IsRequired();
+
 			modelBuilder.Entity<Product>()
 				.Property(p => p.ProfileId)
 				.IsRequired();
+
 			modelBuilder.Entity<Product>()
 				.Property(p => p.Name)
 				.IsRequired();
+
 			modelBuilder.Entity<Product>()
 				.Property(p => p.Description)
 				.IsRequired();
+
 			modelBuilder.Entity<Product>()
 				.Property(p => p.MeasureUnit)
 				.IsRequired();
+
 			modelBuilder.Entity<Product>()
 				.Property(p => p.Category)
 				.IsRequired();
-			modelBuilder.Entity<Product>()
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Amount)
+                .IsRequired();
+
+            modelBuilder.Entity<Product>()
 				.Property(p => p.Price)
 				.IsRequired();
-			modelBuilder.Entity<Product>()
-				.Property(p => p.QrCode)
-				.IsRequired();
-			#endregion
 
-			#region Profile table
-			modelBuilder.Entity<Profile>()
-				.Property(p => p.Id)
-				.IsRequired();
-			modelBuilder.Entity<Profile>()
+            modelBuilder.Entity<Product>()
+                .Property(p => p.QrCode)
+                .IsRequired();
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.IsActive)
+                .IsRequired();
+
+            #endregion
+
+
+
+            #region Profile table
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.Id)
+                .HasDefaultValueSql("newsequentialid()")
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
 				.Property(p => p.FirstName)
 				.IsRequired();
+
 			modelBuilder.Entity<Profile>()
 				.Property(p => p.LastName)
 				.IsRequired();
-			#endregion
 
-			#region Transaction table
-			modelBuilder.Entity<Transaction>()
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.SecondName);
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.IsSeller)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.OrgName);
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.OrgNumber);
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.BankBook)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.Balance)
+                .IsRequired();
+
+            #endregion
+
+
+
+            #region Transaction table
+
+            modelBuilder.Entity<Transaction>()
 				.Property(p => p.Id)
 				.HasDefaultValueSql("newsequentialid()")
 				.IsRequired();
+
 			modelBuilder.Entity<Transaction>()
 				.Property(p => p.ProfileId)
 				.IsRequired();
+
 			modelBuilder.Entity<Transaction>()
 				.Property(p => p.ProductId)
 				.IsRequired();
+
 			modelBuilder.Entity<Transaction>()
 				.Property(p => p.TransactionTime)
 				.IsRequired()
 				.HasDefaultValueSql("GETDATE()");
-			//Foreign Keys
-			modelBuilder.Entity<Transaction>()
+
+            modelBuilder.Entity<Transaction>()
+                .Property(p => p.Status)
+                .IsRequired();
+
+            modelBuilder.Entity<Transaction>()
+                .Property(p => p.TotalCost)
+                .IsRequired();
+
+            //Foreign Keys
+            modelBuilder.Entity<Transaction>()
 				.HasOne(t => t.Profile)
 				.WithMany(s => s.Transactions)
 				.HasForeignKey(p => p.ProfileId)
@@ -111,6 +185,7 @@ namespace PaymentPlatform.Initialization.DAL
 				.WithMany(s => s.Transactions)
 				.HasForeignKey(p => p.ProductId)
 				.OnDelete(DeleteBehavior.Restrict);
+
 			#endregion
 		}
 	}

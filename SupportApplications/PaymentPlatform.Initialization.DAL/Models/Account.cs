@@ -15,17 +15,17 @@ namespace PaymentPlatform.Initialization.DAL.Models
         /// <summary>
         /// Электронная почта.
         /// </summary>
-        public int Email { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Пароль.
         /// </summary>
-        public int Password { get; set; }
+        public string Password { get; set; }
 
         /// <summary>
         /// Псевдоним.
         /// </summary>
-        public int Login { get; set; }
+        public string Login { get; set; }
 
         /// <summary>
         /// Роль.
