@@ -56,9 +56,15 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// </summary>
 		public string QrCode { get; set; }
 
+        /// <summary>
+		/// Активность.
+		/// </summary>
+		public string IsActive { get; set; }
 
-		public Profile Profile { get; set; }
+
+
+        // Навигационные свойства.
+        public Profile Profile { get; set; }
 		public ICollection<Transaction> Transactions { get; set; }
-
 	}
 }

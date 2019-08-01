@@ -1,24 +1,45 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Initialization.DAL.Models
 {
-    public class Account : IdentityUser
+    public class Account
     {
-		// TODO: Добавить навигацию по Profile
 		/// <summary>
 		/// Идентификатор (GUID).
 		/// </summary>
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		new public Guid Id { get; set; }
-		/// <summary>
-		/// Активность.
-		/// </summary>
-		/// TODO: Использовать активацию в Identity вместо этого? 
-		public bool IsActive { get; set; }
+		public Guid Id { get; set; }
 
+        /// <summary>
+        /// Электронная почта.
+        /// </summary>
+        public int Email { get; set; }
+
+        /// <summary>
+        /// Пароль.
+        /// </summary>
+        public int Password { get; set; }
+
+        /// <summary>
+        /// Псевдоним.
+        /// </summary>
+        public int Login { get; set; }
+
+        /// <summary>
+        /// Роль.
+        /// </summary>
+        public int Role { get; set; }
+
+        /// <summary>
+        /// Активность.
+        /// </summary>
+        public bool IsActive { get; set; }
+
+
+
+        // Навигационные свойства.
 		public Profile Profile { get; set; }
 	}
 }

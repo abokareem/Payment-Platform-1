@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -37,16 +36,14 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		public int Status { get; set; }
 
 		/// <summary>
-		/// Количество продуктов.
+		/// Итоговая стоймость.
 		/// </summary>
-		public int ProductCount { get; set; }
+		public decimal TotalCost { get; set; }
 
-		/// <summary>
-		/// Итоговая стоимость.
-		/// </summary>
-		public decimal Total { get; set; }
 
-		public Product Product { get; set; }
+
+        // Навигационные свойства.
+        public Product Product { get; set; }
 		public Profile Profile { get; set; }
 	}
 }

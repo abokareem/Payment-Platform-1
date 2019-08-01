@@ -16,10 +16,15 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
-		/// <summary>
-		/// Фамилия.
+        /// <summary>
+		/// Имя.
 		/// </summary>
-		public string LastName { get; set; }
+		public string FirstName { get; set; }
+
+        /// <summary>
+        /// Фамилия.
+        /// </summary>
+        public string LastName { get; set; }
 
 		/// <summary>
 		/// Отчество.
@@ -27,27 +32,22 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		public string MiddleName { get; set; }
 
 		/// <summary>
-		/// Имя.
-		/// </summary>
-		public string FirstName { get; set; }
-
-		/// <summary>
 		/// Идентификатор продавца.
 		/// </summary>
 		public bool IsSeller { get; set; }
 
 		/// <summary>
-		/// Название организации
+		/// Название организации.
 		/// </summary>
-		public string OrganisationName { get; set; }
+		public string OrgName { get; set; }
 
 		/// <summary>
-		/// Номер организации (УИН, ИНН)
+		/// Номер организации (УИН, ИНН).
 		/// </summary>
-		public string OrganisationNumber { get; set; }
+		public string OrgNumber { get; set; }
 
 		/// <summary>
-		/// TODO: Что это 
+		/// Лицевой счет.
 		/// </summary>
 		public string BankBook { get; set; }
 
@@ -56,7 +56,10 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// </summary>
 		public decimal Balance { get; set; }
 
-		public Account Account { get; set; }
+
+
+        // Навигационные свойства.
+        public Account Account { get; set; }
 		public ICollection<Transaction> Transactions { get; set; }
 		public ICollection<Product> Products { get; set; }
 	}
