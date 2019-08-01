@@ -24,9 +24,9 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
             {
                 var allTime = 0L;
 
-                allTime += await StartFillingDatabase(1, rndDataGenerator, count);
-                allTime += await StartFillingDatabase(2, rndDataGenerator, count);
-                allTime += await StartFillingDatabase(3, rndDataGenerator, count);
+                allTime += await StartFillingDatabase(1, rndDataGenerator, count).ConfigureAwait(false);
+                allTime += await StartFillingDatabase(2, rndDataGenerator, count).ConfigureAwait(false);
+                allTime += await StartFillingDatabase(3, rndDataGenerator, count).ConfigureAwait(false);
 
                 Console.WriteLine(Constants.SUCCESSFUL_COMPLETION + allTime.ToString() + Constants.MS);
             }
@@ -47,8 +47,6 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
                 case 1: { await rndDataGenerator.AddNewAccountsAndProfilesAsync(count); } break;
                 case 2: { await rndDataGenerator.AddNewProductsAsync(count); } break;
                 case 3: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
-
-                default: break;
             }
 
             watch.Stop();
