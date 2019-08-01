@@ -18,15 +18,6 @@ namespace PaymentPlatform.Initialization.DAL
 		public DbSet<Transaction> Transactions { get; set; }
 
 		/// <summary>
-		/// Пустой конструктор
-		/// </summary>
-		public ApplicationContext()
-		{
-			Database.EnsureDeleted();
-			Database.EnsureCreated();
-		}
-
-		/// <summary>
 		/// Конфигурация контекста
 		/// </summary>
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -40,7 +31,10 @@ namespace PaymentPlatform.Initialization.DAL
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			#region Account table
-
+			modelBuilder.Entity<Account>()
+				.Property(p => p.Id)
+				.HasDefaultValueSql("newsequentialid()")
+				.IsRequired();
 			modelBuilder.Entity<Account>()
 				.Property(p => p.Id)
 				.IsRequired();
@@ -51,6 +45,10 @@ namespace PaymentPlatform.Initialization.DAL
 			#endregion
 
 			#region Product table
+			modelBuilder.Entity<Product>()
+				.Property(p => p.Id)
+				.HasDefaultValueSql("newsequentialid()")
+				.IsRequired();
 			modelBuilder.Entity<Product>()
 				.Property(p => p.ProfileId)
 				.IsRequired();
@@ -95,6 +93,10 @@ namespace PaymentPlatform.Initialization.DAL
 			#endregion
 
 			#region Transaction table
+			modelBuilder.Entity<Transaction>()
+				.Property(p => p.Id)
+				.HasDefaultValueSql("newsequentialid()")
+				.IsRequired();
 			modelBuilder.Entity<Transaction>()
 				.Property(p => p.ProfileId)
 				.IsRequired();

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Initialization.DAL.Models
 {
@@ -8,20 +10,21 @@ namespace PaymentPlatform.Initialization.DAL.Models
 	/// </summary>
 	public class Transaction
 	{
-        /// <summary>
-        /// Идентификатор (уникальный номер транзакции) (GUID).
-        /// </summary>
-        public string Id { get; set; }
+		/// <summary>
+		/// Идентификатор (GUID).
+		/// </summary>
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Идентификатор покупателя.
 		/// </summary>
-		public string ProfileId { get; set; }
+		public Guid ProfileId { get; set; }
 
 		/// <summary>
 		/// Идентификатор продукта.
 		/// </summary>
-		public string ProductId { get; set; }
+		public Guid ProductId { get; set; }
 
         /// <summary>
         /// Время совершения операции.
@@ -32,6 +35,11 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// Статус.
 		/// </summary>
 		public int Status { get; set; }
+
+		/// <summary>
+		/// Количество продуктов.
+		/// </summary>
+		public int ProductCount { get; set; }
 
 		/// <summary>
 		/// Итоговая стоимость.

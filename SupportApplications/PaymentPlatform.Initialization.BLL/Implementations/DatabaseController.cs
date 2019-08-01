@@ -1,8 +1,6 @@
 ﻿using PaymentPlatform.Initialization.BLL.Interfaces;
 using PaymentPlatform.Initialization.DAL;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Initialization.BLL.Implementations
@@ -35,40 +33,27 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 			{
 				throw new ArgumentNullException(nameof(dataGenerator));
 			}
-			if (false)
+			try
 			{
-				try
-				{
-					await dataGenerator.GenerateRandomDataAsync();
-				}
-				catch (Exception)
-				{
-					return false;
-				}
-				return true;
+				await dataGenerator.GenerateRandomDataAsync();
 			}
-			else
+			catch (Exception)
 			{
 				return false;
 			}
+			return true;
+
 		}
 
 		/// <inheritdoc/>
 		public async Task<bool> CreateDatabaseAsync()
 		{
-			if (false)
+			try
 			{
-				try
-				{
-					await _context.Database.EnsureCreatedAsync();
-					return true;
-				}
-				catch (Exception)
-				{
-					return false;
-				}
+				await _context.Database.EnsureCreatedAsync();
+				return true;
 			}
-			else
+			catch (Exception)
 			{
 				return false;
 			}
@@ -76,19 +61,12 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 		/// <inheritdoc/>
 		public async Task<bool> DeleteDatabaseAsync()
 		{
-			if (false)
+			try
 			{
-				try
-				{
-					await _context.Database.EnsureDeletedAsync();
-					return true;
-				}
-				catch (Exception)
-				{
-					return false;
-				}
+				await _context.Database.EnsureDeletedAsync();
+				return true;
 			}
-			else
+			catch (Exception)
 			{
 				return false;
 			}

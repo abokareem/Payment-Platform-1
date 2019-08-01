@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Initialization.DAL.Models
 {
@@ -10,7 +13,8 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Идентификатор (GUID).
 		/// </summary>
-		public string Id { get; set; }
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// Фамилия.
