@@ -6,10 +6,6 @@ namespace PaymentPlatform.Initialization.DAL.Models
     {
 		// TODO: Добавить навигацию по Profile
 		/// <summary>
-		/// Идентификатор профиля.
-		/// </summary>
-		public string ProfileId { get; set; }
-		/// <summary>
 		/// Активность.
 		/// </summary>
 		/// TODO: Использовать активацию в Identity вместо этого? 

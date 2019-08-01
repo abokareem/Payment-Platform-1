@@ -26,7 +26,7 @@ namespace PaymentPlatform.Initialization.DAL.Models
         /// <summary>
         /// Время совершения операции.
         /// </summary>
-        public DateTime TransictionTime { get; set; } = DateTime.Now;
+        public DateTime TransactionTime { get; set; } = DateTime.Now;
 
 		/// <summary>
 		/// Статус.
