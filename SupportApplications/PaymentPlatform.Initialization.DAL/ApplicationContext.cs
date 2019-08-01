@@ -66,13 +66,52 @@ namespace PaymentPlatform.Initialization.DAL
 				.WithOne(a => a.Account)
 				.HasForeignKey<Profile>(p => p.Id);
 
-			#endregion
+            #endregion
 
 
 
-			#region Product table
+            #region Profile table
 
-			modelBuilder.Entity<Product>()
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.Id)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.FirstName)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.LastName)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.SecondName);
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.IsSeller)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.OrgName);
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.OrgNumber);
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.BankBook)
+                .IsRequired();
+
+            modelBuilder.Entity<Profile>()
+                .Property(p => p.Balance)
+                .IsRequired();
+
+            #endregion
+
+
+
+            #region Product table
+
+            modelBuilder.Entity<Product>()
 				.Property(p => p.Id)
 				.HasDefaultValueSql("newsequentialid()")
 				.IsRequired();
@@ -111,46 +150,6 @@ namespace PaymentPlatform.Initialization.DAL
 
             modelBuilder.Entity<Product>()
                 .Property(p => p.IsActive)
-                .IsRequired();
-
-            #endregion
-
-
-
-            #region Profile table
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("newsequentialid()")
-                .IsRequired();
-
-            modelBuilder.Entity<Profile>()
-				.Property(p => p.FirstName)
-				.IsRequired();
-
-			modelBuilder.Entity<Profile>()
-				.Property(p => p.LastName)
-				.IsRequired();
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.SecondName);
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.IsSeller)
-                .IsRequired();
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.OrgName);
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.OrgNumber);
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.BankBook)
-                .IsRequired();
-
-            modelBuilder.Entity<Profile>()
-                .Property(p => p.Balance)
                 .IsRequired();
 
             #endregion

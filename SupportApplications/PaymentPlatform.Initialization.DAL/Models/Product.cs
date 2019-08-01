@@ -59,7 +59,7 @@ namespace PaymentPlatform.Initialization.DAL.Models
         /// <summary>
 		/// Активность.
 		/// </summary>
-		public string IsActive { get; set; }
+		public bool IsActive { get; set; }
 
 
 

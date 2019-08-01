@@ -13,7 +13,7 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Идентификатор (GUID).
 		/// </summary>
-		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key]
 		public Guid Id { get; set; }
 
         /// <summary>

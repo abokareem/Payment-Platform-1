@@ -1,20 +1,28 @@
-﻿using PaymentPlatform.Initialization.DAL;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace PaymentPlatform.Initialization.BLL.Interfaces
 {
-	/// <summary>
-	/// Интерфейс генератора случайных данных
-	/// </summary>
-	public interface IRandomDataGenerator
+    /// <summary>
+    /// Интерфейс для генератора заполнения базы данных случайными данными.
+    /// </summary>
+    public interface IRandomDataGenerator
 	{
-		/// <summary>
-		/// Заполнить БД случайными значениями
-		/// </summary>
-		/// <returns>true - в случае успеха</returns>
-		Task<bool> GenerateRandomDataAsync();
-	}
+        /// <summary>
+        /// Добавить новые данные в таблицы аккаунт и профиля.
+        /// </summary>
+        /// <param name="count">количество.</param>
+        Task AddNewAccountsAndProfilesAsync(int count);
+
+        /// <summary>
+        /// Добавить новые данные в таблицу продуктов.
+        /// </summary>
+        /// <param name="count">количество.</param>
+        Task AddNewProductsAsync(int count);
+
+        /// <summary>
+        /// Добавить новые данные в таблицу транзакций.
+        /// </summary>
+        /// <param name="count">количество.</param>
+        Task AddNewTransactionsAsync(int count);
+    }
 }
