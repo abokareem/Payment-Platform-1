@@ -1,55 +1,45 @@
 ﻿namespace PaymentPlatform.Initialization.DAL.Models
 {
-    /// <summary>
-    /// Модель профиля пользователя.
-    /// </summary>
-    public class Profile
-    {
-        /// <summary>
-        /// Идентификатор (GUID).
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// Фамилия.
-        /// </summary>
-        public string LastName { get; set; }
-
-        /// <summary>
-        /// Имя.
-        /// </summary>
-        public string FirstName { get; set; }
-
-        /// <summary>
-        /// Отчество.
-        /// </summary>
-        public string MiddleName { get; set; }
-
-        /// <summary>
-		/// Название организации.
+	/// <summary>
+	/// Модель профиля пользователя.
+	/// </summary>
+	public class Profile
+	{
+		/// <summary>
+		/// Идентификатор (GUID).
 		/// </summary>
-		public string OrganizationName { get; set; }
+		public string Id { get; set; }
 
-        /// <summary>
-        /// Номер организации (УИН, ИНН).
-        /// </summary>
-        public string OrganizationNumber { get; set; }
+		/// <summary>
+		/// Фамилия.
+		/// </summary>
+		public string LastName { get; set; }
 
-        /// <summary>
-        /// Ответственное лицо.
-        /// </summary>
-        public string ResponsiblePerson { get; set; }
+		/// <summary>
+		/// Отчество.
+		/// </summary>
+		public string MiddleName { get; set; }
 
-        /// <summary>
-        /// Счет.
-        /// </summary>
-        public string Billing { get; set; }
+		/// <summary>
+		/// Имя.
+		/// </summary>
+		public string FirstName { get; set; }
 
-        /// <summary>
-        /// Баланс.
-        /// </summary>
-        public decimal Balance { get; set; }
+		/// <summary>
+		/// Идентификатор продавца.
+		/// </summary>
+		public string SellerId { get; set; }
 
-        // TODO: Добавить связи через ICollection
-    }
+		/// <summary>
+		/// TODO: Что это 
+		/// </summary>
+		public string BankBook { get; set; }
+
+		/// <summary>
+		/// Баланс.
+		/// </summary>
+		public decimal Balance { get; set; }
+
+		// TODO: Добавить связи через ICollection
+	}
 }

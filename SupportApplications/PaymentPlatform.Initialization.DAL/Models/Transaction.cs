@@ -13,11 +13,6 @@ namespace PaymentPlatform.Initialization.DAL.Models
         public string Id { get; set; }
 
 		/// <summary>
-		/// Идентификатор продавца.
-		/// </summary>
-		public string SellerId { get; set; }
-
-		/// <summary>
 		/// Идентификатор покупателя.
 		/// </summary>
 		public string CustomerId { get; set; }
@@ -30,13 +25,17 @@ namespace PaymentPlatform.Initialization.DAL.Models
         /// <summary>
         /// Время совершения операции.
         /// </summary>
-        public DateTime Time { get; set; } = DateTime.Now;
+        public DateTime TransictionTime { get; set; } = DateTime.Now;
 
 		/// <summary>
 		/// Статус.
 		/// </summary>
 		public int Status { get; set; }
 
-        // TODO: Добавить связи через ICollection
-    }
+		/// <summary>
+		/// Итоговая стоимость.
+		/// </summary>
+		public decimal Total { get; set; }
+										   // TODO: Добавить связи через ICollection
+	}
 }

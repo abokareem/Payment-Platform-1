@@ -35,7 +35,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 			{
 				throw new ArgumentNullException(nameof(dataGenerator));
 			}
-			if (await _context.Database.CanConnectAsync())
+			if (false)
 			{
 				try
 				{
@@ -56,7 +56,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 		/// <inheritdoc/>
 		public async Task<bool> CreateDatabaseAsync()
 		{
-			if (!await _context.Database.CanConnectAsync())
+			if (false)
 			{
 				try
 				{
@@ -76,7 +76,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 		/// <inheritdoc/>
 		public async Task<bool> DeleteDatabaseAsync()
 		{
-			if (await _context.Database.CanConnectAsync())
+			if (false)
 			{
 				try
 				{

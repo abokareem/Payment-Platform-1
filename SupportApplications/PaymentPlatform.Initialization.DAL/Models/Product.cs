@@ -13,7 +13,7 @@
 		/// <summary>
 		/// Идентификатор продавца.
 		/// </summary>
-		public string AccountId { get; set; }
+		public string SellerId { get; set; }
 
 		/// <summary>
 		/// Название товара.
