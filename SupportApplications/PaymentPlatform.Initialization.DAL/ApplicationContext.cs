@@ -61,6 +61,7 @@ namespace PaymentPlatform.Initialization.DAL
                 .Property(p => p.IsActive)
                 .IsRequired();
 
+
             modelBuilder.Entity<Account>()
 				.HasOne(p => p.Profile)
 				.WithOne(a => a.Account)
@@ -184,7 +185,7 @@ namespace PaymentPlatform.Initialization.DAL
                 .Property(p => p.TotalCost)
                 .IsRequired();
 
-            //Foreign Keys
+
             modelBuilder.Entity<Transaction>()
 				.HasOne(t => t.Profile)
 				.WithMany(s => s.Transactions)
