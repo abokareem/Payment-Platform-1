@@ -1,5 +1,6 @@
 ﻿using PaymentPlatform.Initialization.BLL.Implementations;
 using PaymentPlatform.Initialization.BLL.Interfaces;
+using PaymentPlatform.Initialization.DAL;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
 
             IRandomDataGenerator rndDataGenerator = new RandomDataGenerator();
 
-            Console.Write("Пожалуйста, укажите количество для генерации случайных значений: ");
+            Console.Write(Constants.ENTER_COUNT);
             var value = Console.ReadLine();
             int.TryParse(value, out int count);
 
@@ -27,11 +28,11 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
                 allTime += await StartFillingDatabase(2, rndDataGenerator, count);
                 allTime += await StartFillingDatabase(3, rndDataGenerator, count);
 
-                Console.WriteLine("\nУспешное завершение программы. Время выполнения: " + allTime.ToString() + " мс.");
+                Console.WriteLine(Constants.SUCCESSFUL_COMPLETION + allTime.ToString() + Constants.MS);
             }
             else
             {
-                Console.WriteLine("Внимание! Введено неверное значение. Завершение работы программы..");
+                Console.WriteLine(Constants.INVALID_COMMAND);
             }
 
             Console.ReadLine();
@@ -51,7 +52,7 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
             }
 
             watch.Stop();
-            Console.WriteLine("Время выполнения метода: " + watch.ElapsedMilliseconds.ToString() + " мс.");
+            Console.WriteLine(Constants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + Constants.MS);
 
             return watch.ElapsedMilliseconds;
         }
