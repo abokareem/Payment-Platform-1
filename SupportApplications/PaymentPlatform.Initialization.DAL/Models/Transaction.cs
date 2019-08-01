@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PaymentPlatform.Initialization.DAL.Models
 {
@@ -15,7 +16,7 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Идентификатор покупателя.
 		/// </summary>
-		public string CustomerId { get; set; }
+		public string ProfileId { get; set; }
 
 		/// <summary>
 		/// Идентификатор продукта.
@@ -36,6 +37,8 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// Итоговая стоимость.
 		/// </summary>
 		public decimal Total { get; set; }
-										   // TODO: Добавить связи через ICollection
+
+		public Product Product { get; set; }
+		public Profile Profile { get; set; }
 	}
 }

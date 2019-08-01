@@ -12,6 +12,9 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Активность.
 		/// </summary>
+		/// TODO: Использовать активацию в Identity вместо этого? 
 		public bool IsActive { get; set; }
+
+		public Profile Profile { get; set; }
 	}
 }

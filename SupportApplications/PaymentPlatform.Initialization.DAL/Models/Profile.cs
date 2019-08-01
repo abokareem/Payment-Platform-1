@@ -1,4 +1,6 @@
-﻿namespace PaymentPlatform.Initialization.DAL.Models
+﻿using System.Collections.Generic;
+
+namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
 	/// Модель профиля пользователя.
@@ -28,7 +30,17 @@
 		/// <summary>
 		/// Идентификатор продавца.
 		/// </summary>
-		public string SellerId { get; set; }
+		public bool IsSeller { get; set; }
+
+		/// <summary>
+		/// Название организации
+		/// </summary>
+		public string OrganisationName { get; set; }
+
+		/// <summary>
+		/// Номер организации (УИН, ИНН)
+		/// </summary>
+		public string OrganisationNumber { get; set; }
 
 		/// <summary>
 		/// TODO: Что это 
@@ -40,6 +52,8 @@
 		/// </summary>
 		public decimal Balance { get; set; }
 
-		// TODO: Добавить связи через ICollection
+		public Account Account { get; set; }
+		public ICollection<Transaction> Transactions { get; set; }
+		public ICollection<Product> Products { get; set; }
 	}
 }

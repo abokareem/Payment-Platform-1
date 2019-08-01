@@ -1,4 +1,6 @@
-﻿namespace PaymentPlatform.Initialization.DAL.Models
+﻿using System.Collections.Generic;
+
+namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
 	/// Модель товара.
@@ -11,9 +13,9 @@
 		public string Id { get; set; }
 
 		/// <summary>
-		/// Идентификатор продавца.
+		/// Идентификатор профиля.
 		/// </summary>
-		public string SellerId { get; set; }
+		public string ProfileId { get; set; }
 
 		/// <summary>
 		/// Название товара.
@@ -50,6 +52,9 @@
 		/// </summary>
 		public string QrCode { get; set; }
 
-		// TODO: Добавить связи через ICollection
+
+		public Profile Profile { get; set; }
+		public ICollection<Transaction> Transactions { get; set; }
+
 	}
 }
