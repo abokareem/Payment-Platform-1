@@ -6,17 +6,25 @@ namespace PaymentPlatform.Initialization.DAL
 	/// <summary>
 	/// Основной контекст приложения.
 	/// </summary>
-	public class ApplicationContext:DbContext
+	public class ApplicationContext : DbContext
 	{
 		public DbSet<Account> Accounts { get; set; }
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Profile> Profiles { get; set; }
 		public DbSet<Transaction> Transactions { get; set; }
 
-		/// <summary>
-		/// Конфигурация контекста.
-		/// </summary>
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        /// <summary>
+        /// Пустой конструктор.
+        /// </summary>
+        public ApplicationContext()
+        {
+            Database.EnsureCreated();
+        }
+
+        /// <summary>
+        /// Конфигурация контекста.
+        /// </summary>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=PaymentPlatformApplication;Trusted_Connection=True;MultipleActiveResultSets=true");
 		}
@@ -47,6 +55,10 @@ namespace PaymentPlatform.Initialization.DAL
 
             modelBuilder.Entity<Account>()
                 .Property(p => p.Role)
+                .IsRequired();
+
+            modelBuilder.Entity<Account>()
+                .Property(p => p.IsActive)
                 .IsRequired();
 
             modelBuilder.Entity<Account>()

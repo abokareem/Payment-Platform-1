@@ -1,6 +1,7 @@
 ﻿using PaymentPlatform.Initialization.BLL.Implementations;
 using PaymentPlatform.Initialization.BLL.Interfaces;
 using PaymentPlatform.Initialization.DAL;
+using PaymentPlatform.Initialization.DAL.Models;
 using System;
 
 namespace PaymentPlatform.Initialization.UI.ConsoleApp
@@ -9,9 +10,26 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Сервис для генерирования БД и тестовых данных для нее");
+            using (var db = new ApplicationContext())
+            {
+                // создаем два объекта User
+                Account user1 = new Account
+                {
+                    Email = "123",
+                    Password = "123",
+                    Login = "123",
+                    Role = 1,
+                    IsActive = true
+                };
 
-            Selector();
+                // добавляем их в бд
+                db.Accounts.Add(user1);
+                db.SaveChanges();
+            }
+
+            Console.WriteLine("Сервис для генерирования БД и тестовых данных для нее");
+            Console.ReadLine();
+            //Selector();
         }
 
         /// <summary>

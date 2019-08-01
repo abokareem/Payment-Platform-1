@@ -13,7 +13,8 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 	/// </summary>
 	public class RandomDataGenerator : IRandomDataGenerator
 	{
-		private ApplicationContext _applicationContext;
+		private readonly ApplicationContext _applicationContext;
+
 		/// <summary>
 		/// Конструктор, принимающий контекст БД.
 		/// </summary>
@@ -22,6 +23,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 		{
 			_applicationContext = applicationContext;
 		}
+
 		/// <summary>
 		/// Пустой конструктор.
 		/// </summary>
@@ -43,52 +45,53 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 
 			return true;
 		}
-		/// <summary>
-		/// Добавляет в БД случайные аккаунты.
-		/// </summary>
-		private void AddNewAccounts()
-		{
-			var accounts = new List<Account>();
-			for (int i = 0; i < 50; i++)
-			{
-				accounts.Add(new Account
-				{
-					Email = $"{Guid.NewGuid().ToString()}@mail.ru",
-					UserName = Guid.NewGuid().ToString(),
-				});
-			}
-			_applicationContext.Accounts.AddRange(accounts);
-			_applicationContext.SaveChanges();
-		}
 
-		/// <summary>
-		/// Добавляет в БД профили.
-		/// </summary>
-		private void AddNewProfiles()
+        /// <summary>
+        /// Добавляет в БД случайные аккаунты.
+        /// </summary>
+        private void AddNewAccounts()
+        {
+            //var accounts = new List<Account>();
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    accounts.Add(new Account
+            //    {
+            //        Email = $"{Guid.NewGuid().ToString()}@mail.ru",
+            //        UserName = Guid.NewGuid().ToString(),
+            //    });
+            //}
+            //_applicationContext.Accounts.AddRange(accounts);
+            //_applicationContext.SaveChanges();
+        }
+
+        /// <summary>
+        /// Добавляет в БД профили.
+        /// </summary>
+        private void AddNewProfiles()
 		{
-			var existedProfiles = _applicationContext.Profiles.Select(eP => eP.Id).ToList();
-			var accounts = _applicationContext.Accounts
-				.Except(_applicationContext.Accounts
-								.Join(existedProfiles, l => l.Id, r => r, (l, r) => l))
-				.ToList();
-			var profiles = new List<Profile>();
-			foreach (var account in accounts)
-			{
-				profiles.Add(new Profile
-				{
-					FirstName = Guid.NewGuid().ToString(),
-					MiddleName = Guid.NewGuid().ToString(),
-					LastName = Guid.NewGuid().ToString(),
-					IsSeller = Convert.ToBoolean(new Random().Next(0, 2)),
-					OrganisationName = Guid.NewGuid().ToString(),
-					OrganisationNumber = Guid.NewGuid().ToString(),
-					BankBook = Guid.NewGuid().ToString(),
-					Balance = new Random(10).Next(10000),
-					Account = account,
-				});
-			}
-			_applicationContext.Profiles.AddRange(profiles);
-			_applicationContext.SaveChanges();
+			//var existedProfiles = _applicationContext.Profiles.Select(eP => eP.Id).ToList();
+			//var accounts = _applicationContext.Accounts
+			//	.Except(_applicationContext.Accounts
+			//					.Join(existedProfiles, l => l.Id, r => r, (l, r) => l))
+			//	.ToList();
+			//var profiles = new List<Profile>();
+			//foreach (var account in accounts)
+			//{
+			//	profiles.Add(new Profile
+			//	{
+			//		FirstName = Guid.NewGuid().ToString(),
+			//		MiddleName = Guid.NewGuid().ToString(),
+			//		LastName = Guid.NewGuid().ToString(),
+			//		IsSeller = Convert.ToBoolean(new Random().Next(0, 2)),
+			//		OrganisationName = Guid.NewGuid().ToString(),
+			//		OrganisationNumber = Guid.NewGuid().ToString(),
+			//		BankBook = Guid.NewGuid().ToString(),
+			//		Balance = new Random(10).Next(10000),
+			//		Account = account,
+			//	});
+			//}
+			//_applicationContext.Profiles.AddRange(profiles);
+			//_applicationContext.SaveChanges();
 		}
 
 		/// <summary>
@@ -128,35 +131,35 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 		/// </summary>
 		private void AddNewTransactions()
 		{
-			var transactions = new List<Transaction>();
-			var profiles = _applicationContext.Profiles
-				.Where(c => !c.IsSeller)
-				.ToList();
+			//var transactions = new List<Transaction>();
+			//var profiles = _applicationContext.Profiles
+			//	.Where(c => !c.IsSeller)
+			//	.ToList();
 
-			var products = _applicationContext.Products
-				.Where(p => p.Amount > 0)
-				.Select(x => new { x.Id, x.ProfileId, x.Amount, x.Price })
-				.ToList();
-			int i = profiles.Count - 1;
-			foreach (var product in products)
-			{
-				if (i <= 0)
-				{
-					i = profiles.Count - 1;
-				}
-				var productCount = product.Amount / 2;
-				transactions.Add(new Transaction
-				{
-					ProductId = product.Id,
-					ProfileId = profiles[i--].Id,
-					TransactionTime = DateTime.Now,
-					Status = 0,
-					ProductCount = productCount,
-					Total = productCount * product.Price
-				});
-			}
-			_applicationContext.Transactions.AddRange(transactions);
-			_applicationContext.SaveChanges();
+			//var products = _applicationContext.Products
+			//	.Where(p => p.Amount > 0)
+			//	.Select(x => new { x.Id, x.ProfileId, x.Amount, x.Price })
+			//	.ToList();
+			//int i = profiles.Count - 1;
+			//foreach (var product in products)
+			//{
+			//	if (i <= 0)
+			//	{
+			//		i = profiles.Count - 1;
+			//	}
+			//	var productCount = product.Amount / 2;
+			//	transactions.Add(new Transaction
+			//	{
+			//		ProductId = product.Id,
+			//		ProfileId = profiles[i--].Id,
+			//		TransactionTime = DateTime.Now,
+			//		Status = 0,
+			//		ProductCount = productCount,
+			//		Total = productCount * product.Price
+			//	});
+			//}
+			//_applicationContext.Transactions.AddRange(transactions);
+			//_applicationContext.SaveChanges();
 		}
 	}
 }
