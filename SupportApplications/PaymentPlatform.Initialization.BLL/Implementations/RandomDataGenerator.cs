@@ -51,7 +51,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 			var accounts = new List<Account>();
 			for (int i = 0; i < 50; i++)
 			{
-				accounts.Add(new Account()
+				accounts.Add(new Account
 				{
 					Email = $"{Guid.NewGuid().ToString()}@mail.ru",
 					UserName = Guid.NewGuid().ToString(),
@@ -74,7 +74,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 			var profiles = new List<Profile>();
 			foreach (var account in accounts)
 			{
-				profiles.Add(new Profile()
+				profiles.Add(new Profile
 				{
 					FirstName = Guid.NewGuid().ToString(),
 					MiddleName = Guid.NewGuid().ToString(),
@@ -145,7 +145,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
 					i = profiles.Count - 1;
 				}
 				var productCount = product.Amount / 2;
-				transactions.Add(new Transaction()
+				transactions.Add(new Transaction
 				{
 					ProductId = product.Id,
 					ProfileId = profiles[i--].Id,

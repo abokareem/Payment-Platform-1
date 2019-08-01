@@ -70,8 +70,6 @@ namespace PaymentPlatform.Initialization.DAL
 			modelBuilder.Entity<Product>()
 				.Property(p => p.QrCode)
 				.IsRequired();
-			//Foreign Keys
-
 			#endregion
 
 			#region Profile table
@@ -84,12 +82,6 @@ namespace PaymentPlatform.Initialization.DAL
 			modelBuilder.Entity<Profile>()
 				.Property(p => p.LastName)
 				.IsRequired();
-			//Foreign Keys
-			//modelBuilder.Entity<Profile>()
-			//	.HasOne(t => t.Account)
-			//	.WithOne(s => s.Profile)
-			//	.HasForeignKey<Account>(p => p.Id)
-			//	.OnDelete(DeleteBehavior.SetNull);
 			#endregion
 
 			#region Transaction table
@@ -119,12 +111,6 @@ namespace PaymentPlatform.Initialization.DAL
 				.WithMany(s => s.Transactions)
 				.HasForeignKey(p => p.ProductId)
 				.OnDelete(DeleteBehavior.Restrict);
-			#endregion
-
-			#region Buyer table
-			//	modelBuilder.Entity<Buyer>()
-			//		.Property(p => p.Billing)
-			//		.IsRequired();
 			#endregion
 		}
 	}
