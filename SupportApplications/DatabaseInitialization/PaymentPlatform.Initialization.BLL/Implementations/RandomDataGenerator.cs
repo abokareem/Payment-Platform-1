@@ -98,16 +98,21 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                 var rnd = new Random();
 
                 var transactions = new List<Transaction>();
-				var profilesId = db.Profiles.Select(p => p.Id).ToList();
-                var productsId = db.Products.Where(p=>p.IsActive).Select(p => p.Id).ToList();
+
+				var profilesId = db.Profiles.Where(p => p.IsSeller == true)
+                                            .Select(p => p.Id)
+                                            .ToList();
+
+                var productsId = db.Products.Where(p => p.IsActive == true)
+                                            .Select(p => p.Id)
+                                            .ToList();
 
                 for (int i = 0; i < count; i++)
                 {
                     var profileIndex = rnd.Next(profilesId.Count);
-
                     var productIndex = rnd.Next(productsId.Count);
-                    var product = db.Products.Where(p=>p.ProfileId != profilesId[profileIndex]) 
-						                     .FirstOrDefault(p => p.Id == productsId[productIndex]);
+
+                    var product = db.Products.FirstOrDefault(p => p.Id == productsId[productIndex]);
 
                     transactions.Add(new Transaction
                     {
