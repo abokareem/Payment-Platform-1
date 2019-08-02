@@ -81,7 +81,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                         Amount = new Random(0).Next(10000),
                         Price = new Random(10).Next(10000),
                         QrCode = Guid.NewGuid().ToString().ToUpper(),
-                        IsActive = Convert.ToBoolean(new Random().Next(3))
+                        IsActive = Convert.ToBoolean(new Random().Next(2))
                     });
                 }
 
