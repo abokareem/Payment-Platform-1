@@ -28,8 +28,8 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                         Email = $"{Guid.NewGuid().ToString()}@outlook.com",
                         Password = Guid.NewGuid().ToString().ToUpper().Substring(0,8),
                         Login = Guid.NewGuid().ToString().ToUpper(),
-                        Role = 0, // TODO: В константы
-                        IsActive = Convert.ToBoolean(new Random().Next(3))
+                        Role = new Random(0).Next(5),
+                        IsActive = Convert.ToBoolean(new Random().Next(2))
 					});
                 }
 
@@ -43,7 +43,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                         FirstName = Guid.NewGuid().ToString().Substring(0, 8),
                         LastName = Guid.NewGuid().ToString().Substring(0, 8),
                         SecondName = Guid.NewGuid().ToString().Substring(0, 8),
-                        IsSeller = Convert.ToBoolean(new Random().Next(3)),
+                        IsSeller = Convert.ToBoolean(new Random().Next(2)),
                         OrgName = Guid.NewGuid().ToString().Substring(0, 8),
                         OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
                         BankBook = Guid.NewGuid().ToString().ToUpper(),
@@ -106,15 +106,14 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                     var profileIndex = rnd.Next(profilesId.Count);
 
                     var productIndex = rnd.Next(productsId.Count);
-                    var product = db.Products
-						.Where(p=>p.ProfileId != profilesId[profileIndex]) //Не купить у самого себя
-						.FirstOrDefault(p => p.Id == productsId[productIndex]);
+                    var product = db.Products.Where(p=>p.ProfileId != profilesId[profileIndex]) 
+						                     .FirstOrDefault(p => p.Id == productsId[productIndex]);
 
                     transactions.Add(new Transaction
                     {
                         ProfileId = profilesId[profileIndex],
                         ProductId = product.Id,
-                        Status = 0, // TODO: В константы
+                        Status = new Random(0).Next(5),
                         TotalCost = product.Price
                     });
                 }
