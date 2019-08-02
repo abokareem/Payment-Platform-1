@@ -21,13 +21,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Transaction
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SupportApplications", "SupportApplications", "{5BB84C48-EAD3-442C-BBE2-EBF8E268E801}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Initialization.BLL", "SupportApplications\PaymentPlatform.Initialization.BLL\PaymentPlatform.Initialization.BLL.csproj", "{C98D5118-ABC5-4D0F-8B90-22F4D87FBB48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Initialization.BLL", "SupportApplications\DatabaseInitialization\PaymentPlatform.Initialization.BLL\PaymentPlatform.Initialization.BLL.csproj", "{C98D5118-ABC5-4D0F-8B90-22F4D87FBB48}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DatabaseInitialization", "DatabaseInitialization", "{D1E06B29-5E35-4E2D-BC1B-91554FDF3E47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Initialization.DAL", "SupportApplications\PaymentPlatform.Initialization.DAL\PaymentPlatform.Initialization.DAL.csproj", "{72473734-5BB5-4D8B-83F8-BA02DAB688ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Initialization.DAL", "SupportApplications\DatabaseInitialization\PaymentPlatform.Initialization.DAL\PaymentPlatform.Initialization.DAL.csproj", "{72473734-5BB5-4D8B-83F8-BA02DAB688ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentPlatform.Initialization.UI.ConsoleApp", "SupportApplications\PaymentPlatform.Initialization.UI.ConsoleApp\PaymentPlatform.Initialization.UI.ConsoleApp.csproj", "{B27E6FD9-AEC6-4AAF-B84B-B727E7D02994}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentPlatform.Initialization.UI.ConsoleApp", "SupportApplications\DatabaseInitialization\PaymentPlatform.Initialization.UI.ConsoleApp\PaymentPlatform.Initialization.UI.ConsoleApp.csproj", "{B27E6FD9-AEC6-4AAF-B84B-B727E7D02994}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
