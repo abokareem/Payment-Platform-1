@@ -29,8 +29,8 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                         Password = Guid.NewGuid().ToString().ToUpper().Substring(0,8),
                         Login = Guid.NewGuid().ToString().ToUpper(),
                         Role = 0, // TODO: В константы
-                        IsActive = false
-                    });
+                        IsActive = Convert.ToBoolean(new Random().Next(3))
+					});
                 }
 
                 await db.Accounts.AddRangeAsync(accounts);
@@ -43,7 +43,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                         FirstName = Guid.NewGuid().ToString().Substring(0, 8),
                         LastName = Guid.NewGuid().ToString().Substring(0, 8),
                         SecondName = Guid.NewGuid().ToString().Substring(0, 8),
-                        IsSeller = true,
+                        IsSeller = Convert.ToBoolean(new Random().Next(3)),
                         OrgName = Guid.NewGuid().ToString().Substring(0, 8),
                         OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
                         BankBook = Guid.NewGuid().ToString().ToUpper(),
@@ -65,7 +65,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                 var rnd = new Random();
 
                 var products = new List<Product>();
-                var profilesId = db.Profiles.Select(p => p.Id).ToList();
+                var profilesId = db.Profiles.Where(p=>p.IsSeller).Select(p => p.Id).ToList();
 
                 for (int i = 0; i < count; i++)
                 {
@@ -81,7 +81,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                         Amount = new Random(0).Next(10000),
                         Price = new Random(10).Next(10000),
                         QrCode = Guid.NewGuid().ToString().ToUpper(),
-                        IsActive = false
+                        IsActive = Convert.ToBoolean(new Random().Next(3))
                     });
                 }
 
@@ -98,15 +98,17 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                 var rnd = new Random();
 
                 var transactions = new List<Transaction>();
-                var profilesId = db.Profiles.Select(p => p.Id).ToList();
-                var productsId = db.Products.Select(p => p.Id).ToList();
+				var profilesId = db.Profiles.Select(p => p.Id).ToList();
+                var productsId = db.Products.Where(p=>p.IsActive).Select(p => p.Id).ToList();
 
                 for (int i = 0; i < count; i++)
                 {
                     var profileIndex = rnd.Next(profilesId.Count);
 
                     var productIndex = rnd.Next(productsId.Count);
-                    var product = db.Products.FirstOrDefault(p => p.Id == productsId[productIndex]);
+                    var product = db.Products
+						.Where(p=>p.ProfileId != profilesId[profileIndex]) //Не купить у самого себя
+						.FirstOrDefault(p => p.Id == productsId[productIndex]);
 
                     transactions.Add(new Transaction
                     {
