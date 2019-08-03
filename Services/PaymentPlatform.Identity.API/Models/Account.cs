@@ -7,7 +7,7 @@ namespace PaymentPlatform.Identity.API.Models
     /// <summary>
     /// Личный кабинет пользователя.
     /// </summary>
-    public class Account
+    public class Account : Login
     {
         /// <summary>
         /// Идентификатор (GUID).
@@ -19,16 +19,6 @@ namespace PaymentPlatform.Identity.API.Models
         /// Электронная почта.
         /// </summary>
         public string Email { get; set; }
-
-        /// <summary>
-        /// Пароль.
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
-        /// Псевдоним.
-        /// </summary>
-        public string Login { get; set; }
 
         /// <summary>
         /// Роль.
