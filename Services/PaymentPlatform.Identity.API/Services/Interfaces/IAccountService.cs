@@ -2,6 +2,9 @@
 
 namespace PaymentPlatform.Identity.API.Services.Interfaces
 {
+    /// <summary>
+    /// Интерфейс для DI.
+    /// </summary>
     public interface IAccountService
     {
         /// <summary>

@@ -11,17 +11,31 @@ using PaymentPlatform.Identity.API.Helpers;
 
 namespace PaymentPlatform.Identity.API.Services.Implementations
 {
+    /// <summary>
+    /// Сервис для учетной записи пользователя.
+    /// </summary>
     public class AccountService : IAccountService
     {
         private readonly AppSettings _appSettings;
         private readonly IdentityContext _identityContext;
 
+        /// <summary>
+        /// Конструктор с параметрами.
+        /// </summary>
+        /// <param name="appSettings">настройки проекта.</param>
+        /// <param name="identityContext">контекст бд.</param>
         public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext)
         {
             _appSettings = appSettings.Value;
             _identityContext = identityContext;
         }
 
+        /// <summary>
+        /// Аутентификация пользователя.
+        /// </summary>
+        /// <param name="email">электронная почта.</param>
+        /// <param name="password">пароль.</param>
+        /// <returns>Результат аутентификации.</returns>
         public UserToken Authenticate(string email, string password)
         {
             var account = _identityContext.Accounts.SingleOrDefault(x => x.Email == email && x.Password == password);

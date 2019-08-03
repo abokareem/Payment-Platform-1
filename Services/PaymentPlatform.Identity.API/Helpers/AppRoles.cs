@@ -1,7 +1,7 @@
 ﻿namespace PaymentPlatform.Identity.API.Helpers
 {
     /// <summary>
-    /// Перечисление ролей в приложении.
+    /// Перечисление ролей в проекте Identity.
     /// </summary>
     public enum AppRoles
     {

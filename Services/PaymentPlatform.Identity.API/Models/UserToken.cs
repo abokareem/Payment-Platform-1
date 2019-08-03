@@ -1,12 +1,12 @@
 ﻿namespace PaymentPlatform.Identity.API.Models
 {
     /// <summary>
-    /// Секретный токен.
+    /// Пользовательский токен.
     /// </summary>
     public class UserToken
     {
         /// <summary>
-        /// Токен для авторизации.
+        /// Токен для аутентификации.
         /// </summary>
         public string JWT_Token { get; set; }
     }
