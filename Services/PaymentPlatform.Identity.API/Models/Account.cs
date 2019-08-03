@@ -16,9 +16,9 @@ namespace PaymentPlatform.Identity.API.Models
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Электронная почта.
+        /// Псевдоним.
         /// </summary>
-        public string Email { get; set; }
+        public string Username { get; set; }
 
         /// <summary>
         /// Роль.

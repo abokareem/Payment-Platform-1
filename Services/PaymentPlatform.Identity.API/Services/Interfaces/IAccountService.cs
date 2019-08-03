@@ -2,7 +2,7 @@
 
 namespace PaymentPlatform.Identity.API.Services.Interfaces
 {
-    interface IAccountService
+    public interface IAccountService
     {
         /// <summary>
         /// Аутентификация пользователя.
