@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,11 +24,11 @@ namespace PaymentPlatform.Identity.API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            var appSettingSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingSection);
+            var secretKey = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(secretKey);
 
-            string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connection));
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 
             services.AddScoped<IAccountService, AccountService>();
         }

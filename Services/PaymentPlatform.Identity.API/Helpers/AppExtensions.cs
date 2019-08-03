@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PaymentPlatform.Identity.API.Helpers
+﻿namespace PaymentPlatform.Identity.API.Helpers
 {
     public static class AppExtensions
     {
