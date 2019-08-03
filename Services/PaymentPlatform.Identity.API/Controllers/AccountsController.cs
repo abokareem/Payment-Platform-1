@@ -3,24 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 
-namespace PaymentPlatform.Identity.API.Controller
+namespace PaymentPlatform.Identity.API.Controllers
 {
-    [Route("api/account")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountsController : Controller
     {
-        private readonly IAccountService _userService;
+        private readonly IAccountService _accountService;
 
-        public AccountController(IAccountService userService)
+        public AccountsController(IAccountService accountService)
         {
-            _userService = userService;
+            _accountService = accountService;
         }
 
         [AllowAnonymous]
         [HttpPost("auth")]
-        public IActionResult Authenticate([FromBody] Login loginParams)
+        public IActionResult Authenticate([FromBody] Login login)
         {
-            var token = _userService.Authenticate(loginParams.Email, loginParams.Password);
+            var token = _accountService.Authenticate(login.Email, login.Password);
 
             if (token is null)
             {

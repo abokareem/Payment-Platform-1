@@ -34,12 +34,15 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
 
+            var id = account.Id.ToString();
+            var role = account.Role.ConvertRole();
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("id", account.Id.ToString()),
-                    new Claim("role", account.Role.ConvertRole()),
+                    new Claim("id", id),
+                    new Claim("role", role),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

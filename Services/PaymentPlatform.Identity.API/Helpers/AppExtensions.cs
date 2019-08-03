@@ -13,9 +13,10 @@ namespace PaymentPlatform.Identity.API.Helpers
 
             switch (role)
             {
-                case (int)AppRoles.None: { result = AppConstants.ROLE_NONE; } break;
                 case (int)AppRoles.User: { result = AppConstants.ROLE_USER; } break;
                 case (int)AppRoles.Admin: { result = AppConstants.ROLE_ADMIN; } break;
+
+                default: { result = AppConstants.ROLE_NONE; } break;
             }
 
             return result;

@@ -18,7 +18,7 @@ namespace PaymentPlatform.Identity.API.Models
         /// <summary>
         /// Псевдоним.
         /// </summary>
-        public string Username { get; set; }
+        public string Login { get; set; }
 
         /// <summary>
         /// Роль.
