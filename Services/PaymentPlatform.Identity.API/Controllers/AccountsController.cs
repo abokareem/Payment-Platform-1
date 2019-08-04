@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Interfaces;
+using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
 {
@@ -30,9 +31,9 @@ namespace PaymentPlatform.Identity.API.Controllers
         /// <returns>Результат получения JWT токена.</returns>
         [AllowAnonymous]
         [HttpPost("auth")]
-        public IActionResult Authenticate([FromBody] Login data)
+        public async Task<IActionResult> Authenticate([FromBody] Login data)
         {
-            var token = _accountService.Authenticate(data.Email, data.Password);
+            var token = await _accountService.AuthenticateAsync(data.Email, data.Password);
 
             if (token is null)
             {
@@ -40,6 +41,27 @@ namespace PaymentPlatform.Identity.API.Controllers
             }
 
             return Ok(token);
+        }
+
+
+
+        /// <summary>
+        /// Аутентификация.
+        /// </summary>
+        /// <param name="data">данные.</param>
+        /// <returns>Результат получения JWT токена.</returns>
+        [AllowAnonymous]
+        [HttpPost("registration")]
+        public async Task<IActionResult> Registration([FromBody] Account account)
+        {
+            var (result, message) = await _accountService.RegistrationAsync(account);
+
+            if (result)
+            {
+                return Ok();
+            }
+
+            return BadRequest(new { message = message });
         }
     }  
 }

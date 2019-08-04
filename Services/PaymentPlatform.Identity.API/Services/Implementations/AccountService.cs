@@ -8,6 +8,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using PaymentPlatform.Identity.API.Helpers;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace PaymentPlatform.Identity.API.Services.Implementations
 {
@@ -31,14 +33,34 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
         }
 
         /// <summary>
+        /// Регистрация пользователя.
+        /// </summary>
+        /// <param name="account">данные.</param>
+        /// <returns>Результат регистрации.</returns>
+        public async Task<(bool result, string message)> RegistrationAsync(Account account)
+        {
+            var user = await _identityContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
+
+            if (user != null)
+            {
+                return (false, "Пользователь c таким электронным адресом уже существует.");
+            }
+
+            await _identityContext.Accounts.AddAsync(account);
+            await _identityContext.SaveChangesAsync();
+
+            return (true, string.Empty);
+        }
+
+        /// <summary>
         /// Аутентификация пользователя.
         /// </summary>
         /// <param name="email">электронная почта.</param>
         /// <param name="password">пароль.</param>
         /// <returns>Результат аутентификации.</returns>
-        public UserToken Authenticate(string email, string password)
+        public async Task<UserToken> AuthenticateAsync(string email, string password)
         {
-            var account = _identityContext.Accounts.SingleOrDefault(x => x.Email == email && x.Password == password);
+            var account = await _identityContext.Accounts.SingleOrDefaultAsync(x => x.Email == email && x.Password == password);
 
             if (account is null)
             {
