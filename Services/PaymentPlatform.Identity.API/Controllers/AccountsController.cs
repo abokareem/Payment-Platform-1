@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using PaymentPlatform.Identity.API.ViewModels;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (token is null)
             {
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest(new { message = AppConstants.USER_DATA_INCORRECT });
             }
 
             return Ok(token);

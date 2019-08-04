@@ -19,5 +19,15 @@
         /// Администратор.
         /// </summary>
         public static readonly string ROLE_ADMIN = "Admin";
+
+        /// <summary>
+        /// Пользователь существует.
+        /// </summary>
+        public static readonly string USER_EXIST = "Пользователь c таким электронным адресом уже существует.";
+
+        /// <summary>
+        /// Пользователь существует.
+        /// </summary>
+        public static readonly string USER_DATA_INCORRECT = "Логин или пароль неверны.";
     }
 }
