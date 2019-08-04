@@ -1,4 +1,5 @@
 ﻿using PaymentPlatform.Identity.API.Models;
+using PaymentPlatform.Identity.API.ViewModels;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Services.Interfaces
@@ -11,16 +12,15 @@ namespace PaymentPlatform.Identity.API.Services.Interfaces
         /// <summary>
         /// Аутентификация пользователя.
         /// </summary>
-        /// <param name="email">электронная почта.</param>
-        /// <param name="password">пароль.</param>
+        /// <param name="loginViewModel">данные пользователя.</param>
         /// <returns>Результат аутентификации.</returns>
-        Task<UserToken> AuthenticateAsync(string email, string password);
+        Task<UserToken> AuthenticateAsync(LoginViewModel loginViewModel);
 
         /// <summary>
         /// Регистрация пользователя.
         /// </summary>
-        /// <param name="account">данные.</param>
+        /// <param name="accountViewModel">данные учетной записи пользователя.</param>
         /// <returns>Результат регистрации.</returns>
-        Task<(bool result, string message)> RegistrationAsync(Account account);
+        Task<(bool result, string message)> RegistrationAsync(AccountViewModel accountViewModel);
     }
 }

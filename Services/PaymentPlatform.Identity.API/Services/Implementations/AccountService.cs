@@ -1,7 +1,6 @@
 ﻿using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using System;
-using System.Linq;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +9,8 @@ using System.Text;
 using PaymentPlatform.Identity.API.Helpers;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using PaymentPlatform.Identity.API.ViewModels;
+using AutoMapper;
 
 namespace PaymentPlatform.Identity.API.Services.Implementations
 {
@@ -20,47 +21,42 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
     {
         private readonly AppSettings _appSettings;
         private readonly IdentityContext _identityContext;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="appSettings">настройки проекта.</param>
         /// <param name="identityContext">контекст бд.</param>
-        public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext)
+        public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext, IMapper mapper)
         {
             _appSettings = appSettings.Value;
             _identityContext = identityContext;
+            _mapper = mapper;
         }
 
-        /// <summary>
-        /// Регистрация пользователя.
-        /// </summary>
-        /// <param name="account">данные.</param>
-        /// <returns>Результат регистрации.</returns>
-        public async Task<(bool result, string message)> RegistrationAsync(Account account)
+        /// <inheritdoc/>
+        public async Task<(bool result, string message)> RegistrationAsync(AccountViewModel accountViewModel)
         {
-            var user = await _identityContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
+            var user = await _identityContext.Accounts.FirstOrDefaultAsync(a => a.Email == accountViewModel.Email);
 
             if (user != null)
             {
                 return (false, "Пользователь c таким электронным адресом уже существует.");
             }
 
-            await _identityContext.Accounts.AddAsync(account);
+            var model = _mapper.Map<Account>(accountViewModel);
+
+            await _identityContext.Accounts.AddAsync(model);
             await _identityContext.SaveChangesAsync();
 
             return (true, string.Empty);
         }
 
-        /// <summary>
-        /// Аутентификация пользователя.
-        /// </summary>
-        /// <param name="email">электронная почта.</param>
-        /// <param name="password">пароль.</param>
-        /// <returns>Результат аутентификации.</returns>
-        public async Task<UserToken> AuthenticateAsync(string email, string password)
+        /// <inheritdoc/>
+        public async Task<UserToken> AuthenticateAsync(LoginViewModel loginViewModel)
         {
-            var account = await _identityContext.Accounts.SingleOrDefaultAsync(x => x.Email == email && x.Password == password);
+            var account = await _identityContext.Accounts.SingleOrDefaultAsync(x => x.Email == loginViewModel.Email && x.Password == loginViewModel.Password);
 
             if (account is null)
             {

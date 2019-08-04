@@ -8,6 +8,7 @@ using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
+using AutoMapper;
 
 namespace PaymentPlatform.Identity.API
 {
@@ -29,6 +30,14 @@ namespace PaymentPlatform.Identity.API
 
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddScoped<IAccountService, AccountService>();
         }
