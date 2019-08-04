@@ -42,7 +42,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 
             if (user != null)
             {
-                return (false, "Пользователь c таким электронным адресом уже существует.");
+                return (false, AppConstants.USER_EXIST);
             }
 
             var model = _mapper.Map<Account>(accountViewModel);
