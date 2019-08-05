@@ -36,7 +36,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         {
             var token = await _accountService.AuthenticateAsync(data);
 
-            if (token is null)
+            if (token == null)
             {
                 return BadRequest(new { message = AppConstants.USER_DATA_INCORRECT });
             }
