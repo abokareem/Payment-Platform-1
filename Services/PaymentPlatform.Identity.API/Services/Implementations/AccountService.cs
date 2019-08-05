@@ -58,7 +58,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
         {
             var account = await _identityContext.Accounts.SingleOrDefaultAsync(x => x.Email == loginViewModel.Email && x.Password == loginViewModel.Password);
 
-            if (account is null)
+            if (account == null)
             {
                 return null;
             }     
