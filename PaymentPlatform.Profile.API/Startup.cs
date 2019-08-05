@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace PaymentPlatform.Identity.API
+namespace PaymentPlatform.Profile.API
 {
     public class Startup
     {

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PaymentPlatform.Initialization.BLL\PaymentPlatform.Initialization.BLL.csproj" />
+    <ProjectReference Include="..\PaymentPlatform.Initialization.DAL\PaymentPlatform.Initialization.DAL.csproj" />
+  </ItemGroup>
+
+</Project>
