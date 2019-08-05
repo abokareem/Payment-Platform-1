@@ -1,20 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PaymentPlatform.Initialization.DAL.Models
+﻿namespace PaymentPlatform.Identity.API.ViewModels
 {
     /// <summary>
-    /// Личный кабинет пользователя.
+    /// Личный кабинет пользователя в виде ViewModel.
     /// </summary>
-    public class Account
+    public class AccountViewModel
     {
-		/// <summary>
-		/// Идентификатор (GUID).
-		/// </summary>
-		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public Guid Id { get; set; }
-
         /// <summary>
         /// Электронная почта.
         /// </summary>
@@ -39,10 +29,5 @@ namespace PaymentPlatform.Initialization.DAL.Models
         /// Активность.
         /// </summary>
         public bool IsActive { get; set; }
-
-
-
-        // Навигационные свойства.
-		public Profile Profile { get; set; }
-	}
+    }
 }
