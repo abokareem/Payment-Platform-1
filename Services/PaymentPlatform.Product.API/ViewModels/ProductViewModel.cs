@@ -8,6 +8,10 @@ namespace PaymentPlatform.Product.API.ViewModels
 	public class ProductViewModel
 	{
 		/// <summary>
+		/// Идентификатор (GUID).
+		/// </summary>
+		public Guid Id { get; set; }
+		/// <summary>
 		/// Название товара.
 		/// </summary>
 		public string Name { get; set; }
