@@ -1,12 +1,19 @@
-﻿using System;
-using AutoMapper;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using PaymentPlatform.Product.API.ViewModels;
 
 namespace PaymentPlatform.Product.API.Helpers
 {
-	public class MappingProfile:Profile
+	/// <summary>
+	/// Профиль AutoMapper.
+	/// </summary>
+	public class MappingProfile : Profile
 	{
+		/// <summary>
+		/// Пустой конструктор.
+		/// </summary>
+		public MappingProfile()
+		{
+			CreateMap<ProductViewModel, Models.Product>().ReverseMap();
+		}
 	}
 }
