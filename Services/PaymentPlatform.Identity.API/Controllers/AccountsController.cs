@@ -34,7 +34,11 @@ namespace PaymentPlatform.Identity.API.Controllers
         [HttpPost("auth")]
         public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
         {
-            var token = await _accountService.AuthenticateAsync(data);
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			var token = await _accountService.AuthenticateAsync(data);
 
             if (token == null)
             {
@@ -53,7 +57,11 @@ namespace PaymentPlatform.Identity.API.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
         {
-            var (result, message) = await _accountService.RegistrationAsync(account);
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			var (result, message) = await _accountService.RegistrationAsync(account);
 
             if (!result)
             {
