@@ -61,7 +61,7 @@ namespace PaymentPlatform.Product.API.Controllers
 
 			if (successfullyUpdated)
 			{
-				return Ok();
+				return Ok(product);
 			}
 			else
 			{
