@@ -1,18 +1,22 @@
-﻿namespace PaymentPlatform.Identity.API.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PaymentPlatform.Identity.API.ViewModels
 {
     /// <summary>
     /// Учетная запись пользователя в виде ViewModel.
     /// </summary>
     public class LoginViewModel
     {
-        /// <summary>
-        /// Электронная почта.
-        /// </summary>
+		/// <summary>
+		/// Электронная почта.
+		/// </summary>
+		[Required(ErrorMessage = "E-mail filed is required")]
         public string Email { get; set; }
 
-        /// <summary>
-        /// Пароль.
-        /// </summary>
-        public string Password { get; set; }
+		/// <summary>
+		/// Пароль.
+		/// </summary>
+		[Required(ErrorMessage = "Password filed is required")]
+		public string Password { get; set; }
     }
 }

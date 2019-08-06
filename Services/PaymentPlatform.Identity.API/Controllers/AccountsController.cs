@@ -34,7 +34,11 @@ namespace PaymentPlatform.Identity.API.Controllers
         [HttpPost("auth")]
         public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
         {
-            var token = await _accountService.AuthenticateAsync(data);
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			var token = await _accountService.AuthenticateAsync(data);
 
             if (token == null)
             {
