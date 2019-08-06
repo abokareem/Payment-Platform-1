@@ -40,5 +40,9 @@ namespace PaymentPlatform.Product.API.ViewModels
 		/// Цена.
 		/// </summary>
 		public decimal Price { get; set; }
+		/// <summary>
+		/// Активность.
+		/// </summary>
+		public bool IsActive { get; set; }
 	}
 }
