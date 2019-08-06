@@ -53,7 +53,11 @@ namespace PaymentPlatform.Identity.API.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
         {
-            var (result, message) = await _accountService.RegistrationAsync(account);
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+			var (result, message) = await _accountService.RegistrationAsync(account);
 
             if (!result)
             {
