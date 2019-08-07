@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PaymentPlatform.Product.API.Services.Interfaces;
 using PaymentPlatform.Product.API.ViewModels;
 using System;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 namespace PaymentPlatform.Product.API.Controllers
 {
 	[Route("api/[controller]")]
+	[Authorize]
 	[ApiController]
 	public class ProductsController : ControllerBase
 	{
@@ -72,6 +74,8 @@ namespace PaymentPlatform.Product.API.Controllers
 
 
 		// POST: api/Products
+
+		[Authorize(Roles = "User, Admin")]
 		[HttpPost]
 		public async Task<IActionResult> PostProduct([FromBody] ProductViewModel product)
 		{
@@ -94,6 +98,7 @@ namespace PaymentPlatform.Product.API.Controllers
 		}
 
 		// DELETE: api/Products/5
+		[Authorize(Roles = "User, Admin")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
 		{
