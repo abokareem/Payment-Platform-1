@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using PaymentPlatform.Identity.API.ViewModels;
+using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
@@ -32,28 +36,33 @@ namespace PaymentPlatform.Identity.API.Controllers
         /// <returns>Результат получения JWT токена.</returns>
         [AllowAnonymous]
         [HttpPost("auth")]
-        public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
+        public async Task Authenticate([FromBody] LoginViewModel data)
         {
 			if (!ModelState.IsValid)
 			{
-				return BadRequest(ModelState);
+				await Response.WriteAsync(JsonConvert.SerializeObject(ModelState, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+				Response.StatusCode = StatusCodes.Status400BadRequest;
+				return;
 			}
-			var token = await _accountService.AuthenticateAsync(data);
+
+			(string access_token, string username, int role)? token = await _accountService.AuthenticateAsync(data);
 
             if (token == null)
             {
-                return BadRequest(new { message = AppConstants.USER_DATA_INCORRECT });
+				await Response.WriteAsync(JsonConvert.SerializeObject(AppConstants.USER_DATA_INCORRECT, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+				Response.StatusCode = StatusCodes.Status400BadRequest;
+				return;
             }
+			Response.ContentType = "application/json";
+			await Response.WriteAsync(JsonConvert.SerializeObject(token, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+		}
 
-            return Ok(token);
-        }
-
-        /// <summary>
-        /// Аутентификация.
-        /// </summary>
-        /// <param name="data">данные.</param>
-        /// <returns>Результат получения JWT токена.</returns>
-        [AllowAnonymous]
+		/// <summary>
+		/// Аутентификация.
+		/// </summary>
+		/// <param name="data">данные.</param>
+		/// <returns>Результат получения JWT токена.</returns>
+		[AllowAnonymous]
         [HttpPost("registration")]
         public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
         {
