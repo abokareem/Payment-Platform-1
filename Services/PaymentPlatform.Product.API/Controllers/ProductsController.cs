@@ -54,7 +54,10 @@ namespace PaymentPlatform.Product.API.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-			if (!await ProductExists(product.Id))
+
+			var isProdustExists = await ProductExists(product.Id).ConfigureAwait(false);
+
+			if (!isProdustExists)
 			{
 				return NotFound();
 			}
@@ -107,7 +110,9 @@ namespace PaymentPlatform.Product.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			if (await ProductExists(id))
+			var isProdustExists = await ProductExists(id).ConfigureAwait(false);
+
+			if (isProdustExists)
 			{
 				var product = await _productService.GetProductByIdAsync(id);
 				product.IsActive = false;
