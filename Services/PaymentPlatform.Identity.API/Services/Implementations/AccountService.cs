@@ -19,7 +19,8 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 	/// </summary>
 	public class AccountService : IAccountService
 	{
-		private readonly AppSettings _appSettings;
+		//TODO: Удалить неиспользуемые свойства.
+		//private readonly AppSettings _appSettings;
 		private readonly IdentityContext _identityContext;
 		private readonly IMapper _mapper;
 
@@ -28,9 +29,9 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 		/// </summary>
 		/// <param name="appSettings">настройки проекта.</param>
 		/// <param name="identityContext">контекст бд.</param>
-		public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext, IMapper mapper)
+		public AccountService(/*IOptions<AppSettings> appSettings*/ IdentityContext identityContext, IMapper mapper)
 		{
-			_appSettings = appSettings.Value;
+			//_appSettings = appSettings.Value;
 			_identityContext = identityContext;
 			_mapper = mapper;
 		}
@@ -50,7 +51,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 			await _identityContext.Accounts.AddAsync(model);
 			await _identityContext.SaveChangesAsync();
 
-			return (true, string.Empty);
+			return (true, AppConstants.USER_REGISTRATION_SUCCESS);
 		}
 
 		/// <inheritdoc/>
