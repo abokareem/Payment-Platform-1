@@ -41,7 +41,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			(string access_token, string username, int role)? token = await _accountService.AuthenticateAsync(data);
+			var token = await _accountService.AuthenticateAsync(data);
 
 			if (token == null)
 			{

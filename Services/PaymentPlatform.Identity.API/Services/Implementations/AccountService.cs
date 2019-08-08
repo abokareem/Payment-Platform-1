@@ -55,7 +55,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 		}
 
 		/// <inheritdoc/>
-		public async Task<(string access_token, string username, int role)?> AuthenticateAsync(LoginViewModel loginViewModel)
+		public async Task<UserToken> AuthenticateAsync(LoginViewModel loginViewModel)
 		{
 			var account = await _identityContext.Accounts.SingleOrDefaultAsync(x => x.Email == loginViewModel.Email && x.Password == loginViewModel.Password);
 
@@ -81,10 +81,14 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 					expires: now.Add(TimeSpan.FromMinutes(authOptions.TokenLifetime)),
 					signingCredentials: new SigningCredentials(authOptions.GetIssuerSigningKey(), SecurityAlgorithms.HmacSha256));
 			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+			var userToken = new UserToken()
+			{
+				UserName = account.Login,
+				Role = account.Role.ConvertRole(),
+				Token = encodedJwt
+			};
 
-			var response = (encodedJwt, account.Login, account.Role);
-
-			return response;
+			return userToken;
 		}
 	}
 }

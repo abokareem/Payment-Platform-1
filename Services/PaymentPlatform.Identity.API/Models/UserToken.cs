@@ -5,9 +5,19 @@
     /// </summary>
     public class UserToken
     {
-        /// <summary>
-        /// Токен для аутентификации.
-        /// </summary>
-        public string JWT_Token { get; set; }
+		/// <summary>
+		/// Имя пользователя
+		/// </summary>
+		public string UserName { get; set; }
+
+		/// <summary>
+		/// Роль в приложении
+		/// </summary>
+		public string Role { get; set; }
+
+		/// <summary>
+		/// Токен для аутентификации.
+		/// </summary>
+		public string Token { get; set; }
     }
 }
