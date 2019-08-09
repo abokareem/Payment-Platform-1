@@ -79,7 +79,7 @@ namespace PaymentPlatform.Profile.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var profileViewModel = await _profileService.GetProfileByIdAsync(id);
+            var profileViewModel = await _profileService.GetProfileByIdAsync(profile.Id);
             var isExist = profileViewModel != null ? true : false;
 
             if (!isExist)
