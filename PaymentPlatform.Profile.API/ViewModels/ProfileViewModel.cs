@@ -1,17 +1,15 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
-namespace PaymentPlatform.Profile.API.Models
+namespace PaymentPlatform.Profile.API.ViewModels
 {
     /// <summary>
-	/// Модель профиля пользователя.
+	/// ViewModel профиля пользователя.
 	/// </summary>
-	public class Profile
+    public class ProfileViewModel
     {
         /// <summary>
         /// Идентификатор (GUID).
         /// </summary>
-        [Key]
         public Guid Id { get; set; }
 
         /// <summary>

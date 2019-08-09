@@ -9,8 +9,6 @@
     <Folder Include="Services\Interfaces\" />
     <Folder Include="wwwroot\" />
     <Folder Include="Controllers\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
 
   <ItemGroup>
