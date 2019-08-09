@@ -30,7 +30,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<string> AddNewProfileAsync(ProfileViewModel profileViewModel, UserViewModel userViewModel)
+        public async Task<string> AddNewProfileAsync(ProfileViewModel profileViewModel)
         {
             var profile = _mapper.Map<Models.Profile>(profileViewModel);
 
@@ -43,7 +43,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProfileViewModel>> GetAllProfilesAsyc(int? take = null, int? skip = null)
+        public async Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
         {
             var queriableListOfProfiles = _profileContext.Profiles.Select(x => x);
 
