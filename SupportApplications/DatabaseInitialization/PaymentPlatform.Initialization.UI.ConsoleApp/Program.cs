@@ -10,7 +10,7 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
 {
     static class Program
     {
-        private static async Task Main()
+        public static async Task Main()
         {
             Console.Title = "RandomDataGenerator Application v1.0";
 
@@ -47,8 +47,6 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
                 case 1: { await rndDataGenerator.AddNewAccountsAndProfilesAsync(count); } break;
                 case 2: { await rndDataGenerator.AddNewProductsAsync(count); } break;
                 case 3: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
-
-                default: break;
             }
 
             watch.Stop();
