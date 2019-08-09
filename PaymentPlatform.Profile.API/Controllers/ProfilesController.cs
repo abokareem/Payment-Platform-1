@@ -79,7 +79,8 @@ namespace PaymentPlatform.Profile.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var isExist = await ProfileExists(profile.Id).ConfigureAwait(false);
+            var profileViewModel = await _profileService.GetProfileByIdAsync(id);
+            var isExist = profileViewModel != null ? true : false;
 
             if (!isExist)
             {
@@ -94,21 +95,6 @@ namespace PaymentPlatform.Profile.API.Controllers
             }
 
             return Ok(profile);
-        }
-
-        [Authorize(Roles = "User, Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProfile([FromRoute] Guid id)
-        {
-            // TODO: Сделать
-
-            return BadRequest();
-        }
-
-        private async Task<bool> ProfileExists(Guid id)
-        {
-            var profile = await _profileService.GetProfileByIdAsync(id);
-            return profile != null ? true : false;
         }
     }
 }
