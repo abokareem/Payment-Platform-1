@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Profile.API.Services.Interfaces
 {
+    /// <summary>
+    /// Интерфейс для сервиса Profile.
+    /// </summary>
     interface IProfileService
     {
         /// <summary>
