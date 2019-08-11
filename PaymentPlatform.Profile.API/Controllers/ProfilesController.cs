@@ -27,12 +27,14 @@ namespace PaymentPlatform.Profile.API.Controllers
             _profileService = profileService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IEnumerable<ProfileViewModel>> GetProfiles(int? take, int? skip)
         {
             return await _profileService.GetAllProfilesAsync(take, skip);
         }
 
+        [Authorize(Roles = "User, Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProfile([FromRoute] Guid id)
         {
@@ -71,6 +73,7 @@ namespace PaymentPlatform.Profile.API.Controllers
             return CreatedAtAction(nameof(PostProfile), profile);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProfile([FromBody] ProfileViewModel profile)
         {
