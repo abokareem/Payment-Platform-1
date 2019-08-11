@@ -10,17 +10,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PaymentPlatform.Product.API.Services.Implementations
 {
+    /// <summary>
+    /// Реализация сервиса Product.
+    /// </summary>
 	public class ProductService : IProductService
 	{
 		private readonly ProductContext _productContext;
 		private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="productContext">контекст.</param>
+        /// <param name="mapper">профиль AutoMapper.</param>
 		public ProductService(ProductContext productContext, IMapper mapper)
 		{
 			_productContext = productContext;
 			_mapper = mapper;
 		}
 
+        /// <inheritdoc/>
 		public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
 		{
 			var product = _mapper.Map<Models.Product>(productViewModel);
@@ -30,6 +39,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			return id;
 		}
 
+        /// <inheritdoc/>
 		public async Task<List<ProductViewModel>> GetAllProductsAsyc(int? take = null, int? skip = null)
 		{
 			var queriableListOfProducts = _productContext.Products.Select(x => x);
@@ -49,6 +59,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			return listOfViewModels;
 		}
 
+        /// <inheritdoc/>
 		public async Task<ProductViewModel> GetProductByIdAsync(Guid productId)
 		{
 			var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
@@ -56,6 +67,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			return productViewModel;
 		}
 
+        /// <inheritdoc/>
 		public async Task<List<ProductViewModel>> GetProductsByUserIdAsyc(UserViewModel userViewModel, int? take = null, int? skip = null)
 		{
 			var listOfProductViewModel = new List<ProductViewModel>();
@@ -68,25 +80,27 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			return listOfProductViewModel;
 		}
 
+        /// <inheritdoc/>
 		public async Task<bool> UpdateProductAsync(ProductViewModel productViewModel)
 		{
 			var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productViewModel.Id);
-			if (product != null)
-			{
-				product.Name = productViewModel.Name;
-				product.Description = productViewModel.Description;
-				product.MeasureUnit = productViewModel.MeasureUnit;
-				product.Category = productViewModel.Category;
-				product.Amount = productViewModel.Amount;
-				product.Price = productViewModel.Price;
-				_productContext.Update(product);
-				await _productContext.SaveChangesAsync();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            product.Name = productViewModel.Name;
+            product.Description = productViewModel.Description;
+            product.MeasureUnit = productViewModel.MeasureUnit;
+            product.Category = productViewModel.Category;
+            product.Amount = productViewModel.Amount;
+            product.Price = productViewModel.Price;
+
+            _productContext.Update(product);
+            await _productContext.SaveChangesAsync();
+
+            return true;
+        }
 	}
 }

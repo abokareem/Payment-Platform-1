@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Controllers
 {
+    /// <summary>
+    /// Основной контроллер для Product.
+    /// </summary>
 	[Route("api/[controller]")]
 	[Authorize]
 	[ApiController]
@@ -15,6 +18,10 @@ namespace PaymentPlatform.Product.API.Controllers
 	{
 		private readonly IProductService _productService;
 
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="productService">product сервис.</param>
 		public ProductsController(IProductService productService)
 		{
 			_productService = productService;
@@ -74,10 +81,7 @@ namespace PaymentPlatform.Product.API.Controllers
 			}
 		}
 
-
-
 		// POST: api/Products
-
 		[Authorize(Roles = "User, Admin")]
 		[HttpPost]
 		public async Task<IActionResult> PostProduct([FromBody] ProductViewModel product)

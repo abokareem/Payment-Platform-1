@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.ViewModels
 {
+    /// <summary>
+	/// ViewModel продукта.
+	/// </summary>
 	public class ProductViewModel
 	{
 		/// <summary>
