@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Initializat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Initialization.UI.ConsoleApp", "SupportApplications\DatabaseInitialization\PaymentPlatform.Initialization.UI.ConsoleApp\PaymentPlatform.Initialization.UI.ConsoleApp.csproj", "{B27E6FD9-AEC6-4AAF-B84B-B727E7D02994}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Profile.API", "PaymentPlatform.Profile.API\PaymentPlatform.Profile.API.csproj", "{FF1F0925-D2DF-4D6F-B3F0-1FBA1CE5C36E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Profile.API", "Services\PaymentPlatform.Profile.API\PaymentPlatform.Profile.API.csproj", "{FF1F0925-D2DF-4D6F-B3F0-1FBA1CE5C36E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
