@@ -5,15 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PaymentPlatform.Transaction.API.Models;
+using AutoMapper;
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
 	public class TransactionService : ITransactionService
 	{
-		private readonly TransactionContext transactionContext;
-		public TransactionService(TransactionContext transactionContext)
+		private readonly TransactionContext _transactionContext;
+		private readonly IMapper _mapper;
+		public TransactionService(TransactionContext transactionContext, IMapper mapper)
 		{
-			this.transactionContext = transactionContext;
+			_transactionContext = transactionContext;
+			_mapper = mapper;
 		}
 
 		public Task<(bool success, string result)> AddNewTransactionAsync(TransactionViewModel transaction)
