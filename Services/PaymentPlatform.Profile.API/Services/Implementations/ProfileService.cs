@@ -35,6 +35,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
             var profile = _mapper.Map<Models.Profile>(profileViewModel);
 			if (await _profileContext.Profiles.FirstOrDefaultAsync(p=>p.Id == profileViewModel.Id) != null)
 			{
+				///TODO: Вынести результат в константы
 				return ("fail", false);
 			}
             await _profileContext.Profiles.AddAsync(profile);
