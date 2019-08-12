@@ -4,13 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PaymentPlatform.Transaction.API.Models;
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
 	public class TransactionService : ITransactionService
 	{
-		public TransactionService()
+		private readonly TransactionContext transactionContext;
+		public TransactionService(TransactionContext transactionContext)
 		{
+			this.transactionContext = transactionContext;
 		}
 
 		public Task<(bool success, string result)> AddNewTransactionAsync(TransactionViewModel transaction)
