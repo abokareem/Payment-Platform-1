@@ -40,10 +40,19 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// </summary>
 		public decimal TotalCost { get; set; }
 
+		/// <summary>
+		/// Идентификатор резерва денег.
+		/// </summary>
+		public Guid? BalanceReserveId { get; set; }
+		/// <summary>
+		/// Идентификатор резерва товара.
+		/// </summary>
+		public Guid? ProductReserveId { get; set; }
 
-
-        // Навигационные свойства.
-        public Product Product { get; set; }
+		// Навигационные свойства.
+		public Product Product { get; set; }
 		public Profile Profile { get; set; }
+		public BalanceReserve BalanceReserve { get; set; }
+		public ProductReserve ProductReserve { get; set; }
 	}
 }
