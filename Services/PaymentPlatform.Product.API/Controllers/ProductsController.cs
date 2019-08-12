@@ -4,6 +4,7 @@ using PaymentPlatform.Product.API.Services.Interfaces;
 using PaymentPlatform.Product.API.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Controllers
@@ -35,7 +36,7 @@ namespace PaymentPlatform.Product.API.Controllers
 		}
 
 		// GET: api/Products/5
-		[HttpGet("{id}")]
+		[HttpGet("{productId}")]
 		public async Task<IActionResult> GetProduct([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
@@ -54,7 +55,8 @@ namespace PaymentPlatform.Product.API.Controllers
 		}
 
 		// PUT: api/Products/5
-		[HttpPut("{id}")]
+		[Authorize(Roles = "User, Admin")]
+		[HttpPut("{productId}")]
 		public async Task<IActionResult> PutProduct([FromBody] ProductViewModel product)
 		{
 			if (!ModelState.IsValid)
@@ -62,11 +64,13 @@ namespace PaymentPlatform.Product.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			var isProdustExists = await ProductExists(product.Id).ConfigureAwait(false);
+			var userId = User.Identities.First().Claims.FirstOrDefault(c => c.Type == "id").Value;
+			var userRole = User.Identities.First().Claims.FirstOrDefault(c => c.Type.Contains("role")).Value;
+			var productExists = await ProductExists(product.Id, new Guid(userId), userRole);
 
-			if (!isProdustExists)
+			if (!productExists)
 			{
-				return NotFound();
+				return Forbid();
 			}
 
 			var successfullyUpdated = await _productService.UpdateProductAsync(product);
@@ -86,16 +90,18 @@ namespace PaymentPlatform.Product.API.Controllers
 		[HttpPost]
 		public async Task<IActionResult> PostProduct([FromBody] ProductViewModel product)
 		{
-			if (!ModelState.IsValid)
+			var userId = new Guid(User.Identities.First().Claims.FirstOrDefault(c => c.Type == "id").Value);
+			var userRole = User.Identities.First().Claims.FirstOrDefault(c => c.Type.Contains("role")).Value;
+
+			if (!ModelState.IsValid || (product.ProfileId != userId && userRole != "Admin"))
 			{
 				return BadRequest(ModelState);
 			}
 
-			var id = await _productService.AddNewProductAsync(product, new UserViewModel());
+			var id = await _productService.AddNewProductAsync(product, new UserViewModel { Id = userId, Role = userRole });
 			if (id != null)
 			{
-				product.Id = new Guid(id);
-				return CreatedAtAction("PostProduct", product);
+				return CreatedAtAction(nameof(PostProduct), product);
 			}
 			else
 			{
@@ -106,7 +112,7 @@ namespace PaymentPlatform.Product.API.Controllers
 
 		// DELETE: api/Products/5
 		[Authorize(Roles = "User, Admin")]
-		[HttpDelete("{id}")]
+		[HttpDelete("{productId}")]
 		public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
@@ -114,9 +120,11 @@ namespace PaymentPlatform.Product.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			var isProdustExists = await ProductExists(id).ConfigureAwait(false);
+			var userId = User.Identities.First().Claims.FirstOrDefault(c => c.Type == "id").Value;
+			var userRole = User.Identities.First().Claims.FirstOrDefault(c => c.Type.Contains("role")).Value;
+			var productExists = await ProductExists(id, new Guid(userId), userRole);
 
-			if (isProdustExists)
+			if (productExists)
 			{
 				var product = await _productService.GetProductByIdAsync(id);
 				product.IsActive = false;
@@ -127,14 +135,29 @@ namespace PaymentPlatform.Product.API.Controllers
 				{
 					return Ok();
 				}
+				return BadRequest();
 			}
-			return NotFound();
+			else
+			{
+				return NotFound();
+			}
 		}
 
-		private async Task<bool> ProductExists(Guid id)
+		private async Task<bool> ProductExists(Guid productId, Guid userId, string userRole)
 		{
-			var product = await _productService.GetProductByIdAsync(id);
-			return product != null ? true : false;
+			var product = await _productService.GetProductByIdAsync(productId);
+			if (product == null)
+			{
+				return false;
+			}
+			if (userRole == "Admin")
+			{
+				return true;
+			}
+			else
+			{
+				return product != null && product.ProfileId == userId;
+			}
 		}
 	}
 }
