@@ -15,7 +15,7 @@ namespace PaymentPlatform.Profile.API.Services.Interfaces
 		/// </summary>
 		/// <param name="profileViewModel">профиля.</param>
 		/// <returns>Id профиля.</returns>
-		Task<string> AddNewProfileAsync(ProfileViewModel profileViewModel);
+		Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel);
 
         /// <summary>
         /// Получить профиль по его Id.
