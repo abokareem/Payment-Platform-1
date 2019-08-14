@@ -61,5 +61,6 @@ namespace PaymentPlatform.Initialization.DAL.Models
         public Account Account { get; set; }
 		public ICollection<Transaction> Transactions { get; set; }
 		public ICollection<Product> Products { get; set; }
+		public ICollection<BalanceReserve> BalanceReserves { get; set; }
 	}
 }

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Initialization.DAL.Models
+namespace PaymentPlatform.Transaction.API.Models
 {
 	/// <summary>
 	/// Модель транзакции.
@@ -50,8 +50,6 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		public Guid? ProductReserveId { get; set; }
 
 		// Навигационные свойства.
-		public Product Product { get; set; }
-		public Profile Profile { get; set; }
 		public BalanceReserve BalanceReserve { get; set; }
 		public ProductReserve ProductReserve { get; set; }
 	}

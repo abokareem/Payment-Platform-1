@@ -66,5 +66,6 @@ namespace PaymentPlatform.Initialization.DAL.Models
         // Навигационные свойства.
         public Profile Profile { get; set; }
 		public ICollection<Transaction> Transactions { get; set; }
+		public ICollection<ProductReserve> ProductReserves { get; set; }
 	}
 }

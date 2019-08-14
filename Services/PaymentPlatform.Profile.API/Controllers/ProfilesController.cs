@@ -62,14 +62,14 @@ namespace PaymentPlatform.Profile.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var id = await _profileService.AddNewProfileAsync(profile);
+            var (result, success) = await _profileService.AddNewProfileAsync(profile);
 
-            if (id == null)
+            if (!success)
             {
-                return Conflict();
+                return Conflict(result);
             }
-
-            profile.Id = new Guid(id);
+			
+            profile.Id = new Guid(result);
             return CreatedAtAction(nameof(PostProfile), profile);
         }
 
@@ -83,16 +83,16 @@ namespace PaymentPlatform.Profile.API.Controllers
             }
 
             var profileViewModel = await _profileService.GetProfileByIdAsync(profile.Id);
-            var isExist = profileViewModel != null ? true : false;
+            var exists = profileViewModel != null;
 
-            if (!isExist)
+            if (!exists)
             {
                 return NotFound();
             }
 
-            var isUpdated = await _profileService.UpdateProfileAsync(profile);
+            var updated = await _profileService.UpdateProfileAsync(profile);
 
-            if (!isUpdated)
+            if (!updated)
             {
                 return Conflict();
             }
