@@ -31,6 +31,70 @@
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/products/{productId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 49052
+        }
+      ],
+      "UpstreamPathTemplate": "/products/{productId}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/products/{productId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 49052
+        }
+      ],
+      "UpstreamPathTemplate": "/products/{productId}",
+      "UpstreamHttpMethod": [ "Put" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/products",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 49052
+        }
+      ],
+      "UpstreamPathTemplate": "/products",
+      "UpstreamHttpMethod": [ "Post" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/products/{productId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 49052
+        }
+      ],
+      "UpstreamPathTemplate": "/products/{productId}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
     }
   ],
   "GlobalConfiguration": {
