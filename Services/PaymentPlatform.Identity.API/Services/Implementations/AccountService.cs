@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Gateway.API.Helpers;
 using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Interfaces;

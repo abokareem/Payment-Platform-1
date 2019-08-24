@@ -39,24 +39,6 @@ namespace PaymentPlatform.Identity.API
 				mc.AddProfile(new MappingProfile());
 			});
 
-			var authOtions = new AuthOptions();
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-			.AddJwtBearer(options =>
-			{
-				//TODO: Вынести в конфиг
-				options.RequireHttpsMetadata = false;
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuer = true,
-					ValidIssuer = authOtions.ValidIssuer,
-					ValidateAudience = true,
-					ValidAudience = authOtions.ValidAudience,
-					ValidateLifetime = true,
-					IssuerSigningKey = authOtions.GetIssuerSigningKey(),
-					ValidateIssuerSigningKey = true,
-				};
-			});
-
 			IMapper mapper = mappingConfig.CreateMapper();
 			services.AddSingleton(mapper);
 
