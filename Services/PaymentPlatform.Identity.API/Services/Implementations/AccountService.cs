@@ -72,8 +72,8 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("Id", account.Id.ToString()),
-                    new Claim("Role", account.Role.ConvertRole())
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, account.Id.ToString()),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, account.Role.ConvertRole())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -89,7 +89,6 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             };
 
             return userToken;
-
         }
     }
 }
