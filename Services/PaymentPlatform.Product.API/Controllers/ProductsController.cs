@@ -36,7 +36,7 @@ namespace PaymentPlatform.Product.API.Controllers
 		}
 
 		// GET: api/Products/5
-		[HttpGet("{productId}")]
+		[HttpGet("{id}")]
 		public async Task<IActionResult> GetProduct([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace PaymentPlatform.Product.API.Controllers
 
 		// PUT: api/Products/5
 		[Authorize(Roles = "User, Admin")]
-		[HttpPut("{productId}")]
+		[HttpPut("{id}")]
 		public async Task<IActionResult> PutProduct([FromBody] ProductViewModel product)
 		{
 			if (!ModelState.IsValid)
@@ -112,7 +112,7 @@ namespace PaymentPlatform.Product.API.Controllers
 
 		// DELETE: api/Products/5
 		[Authorize(Roles = "User, Admin")]
-		[HttpDelete("{productId}")]
+		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)

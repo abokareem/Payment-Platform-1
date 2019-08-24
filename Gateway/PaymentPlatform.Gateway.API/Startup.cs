@@ -7,9 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using PaymentPlatform.Gateway.API.Helpers;
 using PaymentPlatform.Identity.API.Helpers;
 using System.Text;
+
+// TODO: Добавить в conf Transaction
 
 namespace PaymentPlatform.Gateway.API
 {
@@ -56,25 +57,6 @@ namespace PaymentPlatform.Gateway.API
                     ValidateAudience = false
                 };
             });
-
-            // TODO: Возможно временное решение 
-            //var authOtions = new AuthOptions();
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //.AddJwtBearer(options =>
-            //{
-            //    //TODO: Вынести в конфиг
-            //    options.RequireHttpsMetadata = false;
-            //    options.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidIssuer = authOtions.ValidIssuer,
-            //        ValidateAudience = true,
-            //        ValidAudience = authOtions.ValidAudience,
-            //        ValidateLifetime = true,
-            //        IssuerSigningKey = authOtions.GetIssuerSigningKey(),
-            //        ValidateIssuerSigningKey = true,
-            //    };
-            //});
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
