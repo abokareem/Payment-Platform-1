@@ -101,7 +101,6 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
                 OrgNumber = profileViewModel.OrgNumber,
                 BankBook = profileViewModel.BankBook,
                 Balance = profileViewModel.Balance
-
             };
 
             _profileContext.Update(updatedProfile);
