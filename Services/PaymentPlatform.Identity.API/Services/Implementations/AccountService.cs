@@ -20,22 +20,23 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 	/// </summary>
 	public class AccountService : IAccountService
 	{
-		//TODO: Удалить неиспользуемые свойства.
-		//private readonly AppSettings _appSettings;
-		private readonly IdentityContext _identityContext;
+        //TODO: Удалить неиспользуемые свойства.
+        private readonly AppSettings _appSettings;
+        private readonly IdentityContext _identityContext;
 		private readonly IMapper _mapper;
 
-		/// <summary>
-		/// Конструктор с параметрами.
-		/// </summary>
-		/// <param name="appSettings">настройки проекта.</param>
-		/// <param name="identityContext">контекст бд.</param>
-		public AccountService(/*IOptions<AppSettings> appSettings*/ IdentityContext identityContext, IMapper mapper)
+        /// <summary>
+        /// Конструктор с параметрами.
+        /// </summary>
+        /// <param name="appSettings">настройки проекта.</param>
+        /// <param name="identityContext">контекст бд.</param>
+        public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext, IMapper mapper)
 		{
 			//_appSettings = appSettings.Value;
 			_identityContext = identityContext;
 			_mapper = mapper;
-		}
+            _appSettings = appSettings.Value;
+        }
 
 		/// <inheritdoc/>
 		public async Task<(bool result, string message)> RegistrationAsync(AccountViewModel accountViewModel)
@@ -64,32 +65,59 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 			{
 				return null;
 			}
-			var now = DateTime.UtcNow;
-			var identity = new
-			{
-				Claims = new Claim[]
-				{
-					new Claim("id", account.Id.ToString()),
-					new Claim("role", account.Role.ConvertRole()),
-				}
-			};
-			var authOptions = new AuthOptions();
-			var jwt = new JwtSecurityToken(
-					issuer: authOptions.ValidIssuer,
-					audience: authOptions.ValidAudience,
-					notBefore: now,
-					claims: identity.Claims,
-					expires: now.Add(TimeSpan.FromMinutes(authOptions.TokenLifetime)),
-					signingCredentials: new SigningCredentials(authOptions.GetIssuerSigningKey(), SecurityAlgorithms.HmacSha256));
-			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-			var userToken = new UserToken()
-			{
-				UserName = account.Login,
-				Role = account.Role.ConvertRole(),
-				Token = encodedJwt
-			};
 
-			return userToken;
-		}
-	}
+            //var now = DateTime.UtcNow;
+            //var identity = new
+            //{
+            //	Claims = new Claim[]
+            //	{
+            //		new Claim("id", account.Id.ToString()),
+            //		new Claim("role", account.Role.ConvertRole()),
+            //	}
+            //};
+            //var authOptions = new AuthOptions();
+            //var jwt = new JwtSecurityToken(
+            //		issuer: authOptions.ValidIssuer,
+            //		audience: authOptions.ValidAudience,
+            //		notBefore: now,
+            //		claims: identity.Claims,
+            //		expires: now.Add(TimeSpan.FromMinutes(authOptions.TokenLifetime)),
+            //		signingCredentials: new SigningCredentials(authOptions.GetIssuerSigningKey(), SecurityAlgorithms.HmacSha256));
+            //var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            //var userToken = new UserToken()
+            //{
+            //	UserName = account.Login,
+            //	Role = account.Role.ConvertRole(),
+            //	Token = encodedJwt
+            //};
+
+            //return userToken;
+
+            // authentication successful so generate jwt token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("id", account.Id.ToString()),
+                    new Claim("role", account.Role.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwtSecurityToken = tokenHandler.WriteToken(token);
+
+            var userToken = new UserToken()
+            {
+                UserName = account.Login,
+                Role = account.Role.ConvertRole(),
+                Token = jwtSecurityToken
+            };
+
+            return userToken;
+
+        }
+    }
 }
