@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace PaymentPlatform.Identity.API.ViewModels
 {
@@ -7,6 +8,11 @@ namespace PaymentPlatform.Identity.API.ViewModels
     /// </summary>
     public class AccountViewModel
     {
+        /// <summary>
+		/// Идентификатор (GUID).
+		/// </summary>
+		public Guid Id { get; set; }
+
         /// <summary>
         /// Электронная почта.
         /// </summary>

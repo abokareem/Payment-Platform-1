@@ -100,17 +100,13 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
                 return false;
             }
 
-            var updatedAccount = new Models.Account
-            {
-                Id = account.Id,
-                Login = accountViewModel.Login,
-                Role = accountViewModel.Role.Value,
-                IsActive = accountViewModel.IsActive.Value,
-                Email = accountViewModel.Email,
-                Password = accountViewModel.Password
-            };
+            account.Login = accountViewModel.Login;
+            account.Role = accountViewModel.Role.Value;
+            account.IsActive = accountViewModel.IsActive.Value;
+            account.Email = accountViewModel.Email;
+            account.Password = accountViewModel.Password;
 
-            _identityContext.Update(updatedAccount);
+            _identityContext.Update(account);
             await _identityContext.SaveChangesAsync();
 
             return true;

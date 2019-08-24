@@ -25,12 +25,8 @@ namespace PaymentPlatform.Identity.API.Controllers
 			_accountService = accountService;
 		}
 
-		/// <summary>
-		/// Аутентификация.
-		/// </summary>
-		/// <param name="data">данные.</param>
-		/// <returns>Результат получения JWT токена.</returns>
-		[AllowAnonymous]
+        // POST: api/accounts/auth
+        [AllowAnonymous]
 		[HttpPost("auth")]
 		public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
 		{
@@ -50,11 +46,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 			return Accepted(token);
 		}
 
-        /// <summary>
-        /// Аутентификация.
-        /// </summary>
-        /// <param name="account">данные.</param>
-        /// <returns>Результат получения JWT токена.</returns>
+        // POST: api/accounts/registration
         [AllowAnonymous]
 		[HttpPost("registration")]
 		public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
@@ -73,6 +65,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 			return Ok(new { message });
 		}
 
+        // PUT: api/accounts/auth
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccount([FromBody] AccountViewModel account)
@@ -83,16 +76,16 @@ namespace PaymentPlatform.Identity.API.Controllers
             }
 
             var accountViewModel = await _accountService.GetAccountByEmailAsync(account.Email);
-            var exists = accountViewModel != null;
+            var accountExist = accountViewModel != null;
 
-            if (!exists)
+            if (!accountExist)
             {
                 return NotFound();
             }
 
-            var updated = await _accountService.UpdateAccountAsync(account);
+            var updatedResult = await _accountService.UpdateAccountAsync(account);
 
-            if (!updated)
+            if (!updatedResult)
             {
                 return Conflict();
             }

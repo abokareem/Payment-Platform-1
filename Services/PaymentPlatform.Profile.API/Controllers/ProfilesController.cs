@@ -27,6 +27,7 @@ namespace PaymentPlatform.Profile.API.Controllers
             _profileService = profileService;
         }
 
+        // GET: api/profiles
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IEnumerable<ProfileViewModel>> GetProfiles(int? take, int? skip)
@@ -34,6 +35,7 @@ namespace PaymentPlatform.Profile.API.Controllers
             return await _profileService.GetAllProfilesAsync(take, skip);
         }
 
+        // GET: api/profiles/{id}
         [Authorize(Roles = "User, Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProfile([FromRoute] Guid id)
@@ -53,9 +55,10 @@ namespace PaymentPlatform.Profile.API.Controllers
             return Ok(profile);
         }
 
+        // POST: api/profiles
         [Authorize(Roles = "User, Admin")]
         [HttpPost]
-        public async Task<IActionResult> PostProfile([FromBody] ProfileViewModel profile)
+        public async Task<IActionResult> AddNewProfile([FromBody] ProfileViewModel profile)
         {
             if (!ModelState.IsValid)
             {
@@ -71,12 +74,13 @@ namespace PaymentPlatform.Profile.API.Controllers
 			
             profile.Id = new Guid(result);
 
-            return CreatedAtAction(nameof(PostProfile), profile);
+            return CreatedAtAction(nameof(AddNewProfile), profile);
         }
 
+        // PUT: api/profiles/{id}
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProfile([FromBody] ProfileViewModel profile)
+        public async Task<IActionResult> UpdateProfile([FromBody] ProfileViewModel profile)
         {
             if (!ModelState.IsValid)
             {
@@ -84,16 +88,16 @@ namespace PaymentPlatform.Profile.API.Controllers
             }
 
             var profileViewModel = await _profileService.GetProfileByIdAsync(profile.Id);
-            var exists = profileViewModel != null;
+            var profileExist = profileViewModel != null;
 
-            if (!exists)
+            if (!profileExist)
             {
                 return NotFound();
             }
 
-            var updated = await _profileService.UpdateProfileAsync(profile);
+            var updatedResult = await _profileService.UpdateProfileAsync(profile);
 
-            if (!updated)
+            if (!updatedResult)
             {
                 return Conflict();
             }

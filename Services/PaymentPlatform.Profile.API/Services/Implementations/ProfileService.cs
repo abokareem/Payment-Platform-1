@@ -90,20 +90,16 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
                 return false;
             }
 
-            var updatedProfile = new Models.Profile
-            {
-                Id = profile.Id,
-                FirstName = profileViewModel.FirstName,
-                LastName = profileViewModel.LastName,
-                SecondName = profileViewModel.SecondName,
-                IsSeller = profileViewModel.IsSeller,
-                OrgName = profileViewModel.OrgName,
-                OrgNumber = profileViewModel.OrgNumber,
-                BankBook = profileViewModel.BankBook,
-                Balance = profileViewModel.Balance
-            };
+            profile.FirstName = profileViewModel.FirstName;
+            profile.LastName = profileViewModel.LastName;
+            profile.SecondName = profileViewModel.SecondName;
+            profile.IsSeller = profileViewModel.IsSeller;
+            profile.OrgName = profileViewModel.OrgName;
+            profile.OrgNumber = profileViewModel.OrgNumber;
+            profile.BankBook = profileViewModel.BankBook;
+            profile.Balance = profileViewModel.Balance;
 
-            _profileContext.Update(updatedProfile);
+            _profileContext.Update(profile);
             await _profileContext.SaveChangesAsync();
 
             return true;

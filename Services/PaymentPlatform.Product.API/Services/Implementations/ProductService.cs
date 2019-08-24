@@ -43,9 +43,19 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 		}
 
         /// <inheritdoc/>
-		public async Task<List<ProductViewModel>> GetAllProductsAsyc(int? take = null, int? skip = null)
+		public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
 		{
-			var queriableListOfProducts = _productContext.Products.Select(x => x);
+			IQueryable<Models.Product> queriableListOfProducts = null;
+
+            if (isAdmin)
+            {
+                queriableListOfProducts = _productContext.Products.Select(x => x);
+            }
+            else
+            {
+                queriableListOfProducts = _productContext.Products.Select(x => x).Where(p => p.ProfileId == profileId);
+            }
+
 			if (take != null && take > 0 && skip != null && skip > 0)
 			{
 				queriableListOfProducts = queriableListOfProducts.Skip((int)skip).Take((int)take);
@@ -97,17 +107,14 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                 return false;
             }
 
-            var updatedProduct = new Models.Product
-            {
-                Id = product.Id,
-                Description = productViewModel.Description,
-                MeasureUnit = productViewModel.MeasureUnit,
-                Category = productViewModel.Category,
-                Amount = productViewModel.Amount,
-                Price = productViewModel.Price
-            };
+            product.Name = productViewModel.Name;
+            product.Description = productViewModel.Description;
+            product.MeasureUnit = productViewModel.MeasureUnit;
+            product.Category = productViewModel.Category;
+            product.Amount = productViewModel.Amount;
+            product.Price = productViewModel.Price;
 
-            _productContext.Update(updatedProduct);
+            _productContext.Update(product);
             await _productContext.SaveChangesAsync();
 
             return true;
