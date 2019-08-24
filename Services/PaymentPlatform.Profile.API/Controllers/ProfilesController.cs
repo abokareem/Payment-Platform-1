@@ -70,6 +70,7 @@ namespace PaymentPlatform.Profile.API.Controllers
             }
 			
             profile.Id = new Guid(result);
+
             return CreatedAtAction(nameof(PostProfile), profile);
         }
 

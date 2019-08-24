@@ -13,7 +13,7 @@ namespace PaymentPlatform.Product.API.Helpers
 		/// </summary>
 		public MappingProfile()
 		{
-			CreateMap<ProductViewModel, Product>().ReverseMap();
+			CreateMap<ProductViewModel, Models.Product>().ReverseMap();
 		}
 	}
 }

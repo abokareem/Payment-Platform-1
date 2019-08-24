@@ -33,11 +33,13 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
         {
             var profile = _mapper.Map<Models.Profile>(profileViewModel);
+
 			if (await _profileContext.Profiles.FirstOrDefaultAsync(p=>p.Id == profileViewModel.Id) != null)
 			{
 				///TODO: Вынести результат в константы
 				return ("fail", false);
 			}
+
             await _profileContext.Profiles.AddAsync(profile);
             await _profileContext.SaveChangesAsync();
 
@@ -57,7 +59,6 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
             }
 
             var listOfProfiles = await queriableListOfProfiles.ToListAsync();
-
 
             var listOfProfilesViewModels = new List<ProfileViewModel>();
 
@@ -89,16 +90,21 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
                 return false;
             }
 
-            profile.FirstName = profileViewModel.FirstName;
-            profile.LastName = profileViewModel.LastName;
-            profile.SecondName = profileViewModel.SecondName;
-            profile.IsSeller = profileViewModel.IsSeller;
-            profile.OrgName = profileViewModel.OrgName;
-            profile.OrgNumber = profileViewModel.OrgNumber;
-            profile.BankBook = profileViewModel.BankBook;
-            profile.Balance = profileViewModel.Balance;
+            var updatedProfile = new Models.Profile
+            {
+                Id = profile.Id,
+                FirstName = profileViewModel.FirstName,
+                LastName = profileViewModel.LastName,
+                SecondName = profileViewModel.SecondName,
+                IsSeller = profileViewModel.IsSeller,
+                OrgName = profileViewModel.OrgName,
+                OrgNumber = profileViewModel.OrgNumber,
+                BankBook = profileViewModel.BankBook,
+                Balance = profileViewModel.Balance
 
-            _profileContext.Update(profile);
+            };
+
+            _profileContext.Update(updatedProfile);
             await _profileContext.SaveChangesAsync();
 
             return true;

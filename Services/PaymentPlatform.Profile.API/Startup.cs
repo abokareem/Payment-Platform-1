@@ -18,6 +18,7 @@ namespace PaymentPlatform.Profile.API
     public class Startup
     {
         public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -59,7 +60,7 @@ namespace PaymentPlatform.Profile.API
                 mc.AddProfile(new MappingProfile());
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
+            var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
             services.AddScoped<IProfileService, ProfileService>();

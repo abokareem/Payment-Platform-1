@@ -32,7 +32,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// <inheritdoc/>
 		public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
 		{
-			var product = _mapper.Map<Product>(productViewModel);
+			var product = _mapper.Map<Models.Product>(productViewModel);
 
 			await _productContext.Products.AddAsync(product);
 			await _productContext.SaveChangesAsync();
@@ -97,7 +97,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                 return false;
             }
 
-            var updatedProduct = new Product
+            var updatedProduct = new Models.Product
             {
                 Id = product.Id,
                 Description = productViewModel.Description,
