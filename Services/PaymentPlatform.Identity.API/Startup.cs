@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
-using System.Text;
 
 namespace PaymentPlatform.Identity.API
 {
@@ -28,9 +25,6 @@ namespace PaymentPlatform.Identity.API
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-			var secretKey = Configuration.GetSection("AppSettings");
-			services.Configure<AppSettings>(secretKey);
-
 			string connectionString = Configuration.GetConnectionString("DefaultConnection");
 			services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 
@@ -39,7 +33,7 @@ namespace PaymentPlatform.Identity.API
 				mc.AddProfile(new MappingProfile());
 			});
 
-			IMapper mapper = mappingConfig.CreateMapper();
+			var mapper = mappingConfig.CreateMapper();
 			services.AddSingleton(mapper);
 
 			services.AddScoped<IAccountService, AccountService>();

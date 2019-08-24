@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using PaymentPlatform.Identity.API.ViewModels;
@@ -52,12 +50,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 			return Accepted(token);
 		}
 
-		/// <summary>
-		/// Аутентификация.
-		/// </summary>
-		/// <param name="data">данные.</param>
-		/// <returns>Результат получения JWT токена.</returns>
-		[AllowAnonymous]
+        /// <summary>
+        /// Аутентификация.
+        /// </summary>
+        /// <param name="account">данные.</param>
+        /// <returns>Результат получения JWT токена.</returns>
+        [AllowAnonymous]
 		[HttpPost("registration")]
 		public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
 		{
