@@ -66,42 +66,14 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 				return null;
 			}
 
-            //var now = DateTime.UtcNow;
-            //var identity = new
-            //{
-            //	Claims = new Claim[]
-            //	{
-            //		new Claim("id", account.Id.ToString()),
-            //		new Claim("role", account.Role.ConvertRole()),
-            //	}
-            //};
-            //var authOptions = new AuthOptions();
-            //var jwt = new JwtSecurityToken(
-            //		issuer: authOptions.ValidIssuer,
-            //		audience: authOptions.ValidAudience,
-            //		notBefore: now,
-            //		claims: identity.Claims,
-            //		expires: now.Add(TimeSpan.FromMinutes(authOptions.TokenLifetime)),
-            //		signingCredentials: new SigningCredentials(authOptions.GetIssuerSigningKey(), SecurityAlgorithms.HmacSha256));
-            //var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-            //var userToken = new UserToken()
-            //{
-            //	UserName = account.Login,
-            //	Role = account.Role.ConvertRole(),
-            //	Token = encodedJwt
-            //};
-
-            //return userToken;
-
-            // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("id", account.Id.ToString()),
-                    new Claim("role", account.Role.ToString())
+                    new Claim("Id", account.Id.ToString()),
+                    new Claim("Role", account.Role.ConvertRole())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

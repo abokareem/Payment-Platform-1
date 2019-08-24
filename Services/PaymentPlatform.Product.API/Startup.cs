@@ -32,31 +32,11 @@ namespace PaymentPlatform.Product.API
 			string connectionString = Configuration.GetConnectionString("DefaultConnection");
 			services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
 
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //		.AddJwtBearer(options =>
-            //		{
-            //			//TODO: Вынести в конфиг
-            //			options.RequireHttpsMetadata = false;
-            //			options.TokenValidationParameters = new TokenValidationParameters
-            //			{
-            //				// укзывает, будет ли валидироваться издатель при валидации токена
-            //				ValidateIssuer = true,
-            //				// строка, представляющая издателя
-            //				ValidIssuer = "http://localhost:49051",
+            var appSettingSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingSection);
 
-            //				// будет ли валидироваться потребитель токена
-            //				ValidateAudience = true,
-            //				// установка потребителя токена
-            //				ValidAudience = "PaymentPlatform",
-            //				// будет ли валидироваться время существования
-            //				ValidateLifetime = true,
-
-            //				// установка ключа безопасности
-            //				IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("3ce1637ed40041cd94d4853d3e766c4d")),
-            //				// валидация ключа безопасности
-            //				ValidateIssuerSigningKey = true,
-            //			};
-            //		});
+            var appSettings = appSettingSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(x =>
             {
@@ -70,7 +50,7 @@ namespace PaymentPlatform.Product.API
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("3ce1637ed40041cd94d4853d3e766c4d")),
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
