@@ -22,5 +22,19 @@ namespace PaymentPlatform.Identity.API.Services.Interfaces
         /// <param name="accountViewModel">данные учетной записи пользователя.</param>
         /// <returns>Результат регистрации.</returns>
         Task<(bool result, string message)> RegistrationAsync(AccountViewModel accountViewModel);
+
+        /// <summary>
+        /// Получить данные пользователя по Email.
+        /// </summary>
+        /// <param name="email">электронный адрес.</param>
+        /// <returns>ViewModel данных пользователя.</returns>
+        Task<AccountViewModel> GetAccountByEmailAsync(string email);
+
+        /// <summary>
+        /// Обновить данные пользователя.
+        /// </summary>
+        /// <param name="accountViewModel">данные учетной записи пользователя.</param>
+        /// <returns>Результат операции.</returns>
+        Task<bool> UpdateAccountAsync(AccountViewModel accountViewModel);
     }
 }

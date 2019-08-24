@@ -89,5 +89,40 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 
             return userToken;
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateAccountAsync(AccountViewModel accountViewModel)
+        {
+            var account = await _identityContext.Accounts.FirstOrDefaultAsync(p => p.Id == accountViewModel.Id);
+
+            if (account == null)
+            {
+                return false;
+            }
+
+            var updatedAccount = new Models.Account
+            {
+                Id = account.Id,
+                Login = accountViewModel.Login,
+                Role = accountViewModel.Role.Value,
+                IsActive = accountViewModel.IsActive.Value,
+                Email = accountViewModel.Email,
+                Password = accountViewModel.Password
+            };
+
+            _identityContext.Update(updatedAccount);
+            await _identityContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<AccountViewModel> GetAccountByEmailAsync(string email)
+        {
+            var account = await _identityContext.Accounts.FirstOrDefaultAsync(p => p.Email == email);
+            var accountViewModel = _mapper.Map<AccountViewModel>(account);
+
+            return accountViewModel;
+        }
     }
 }

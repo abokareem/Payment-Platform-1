@@ -72,5 +72,32 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			return Ok(new { message });
 		}
-	}
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAccount([FromBody] AccountViewModel account)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var accountViewModel = await _accountService.GetAccountByEmailAsync(account.Email);
+            var exists = accountViewModel != null;
+
+            if (!exists)
+            {
+                return NotFound();
+            }
+
+            var updated = await _accountService.UpdateAccountAsync(account);
+
+            if (!updated)
+            {
+                return Conflict();
+            }
+
+            return Ok(account);
+        }
+    }
 }
