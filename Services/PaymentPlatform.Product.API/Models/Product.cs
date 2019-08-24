@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Product.API.Models
+namespace PaymentPlatform.Product.API
 {
 	/// <summary>
 	/// Модель товара.

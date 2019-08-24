@@ -79,11 +79,9 @@ namespace PaymentPlatform.Product.API.Controllers
 			{
 				return Ok(product);
 			}
-			else
-			{
-				return Conflict();
-			}
-		}
+
+            return Conflict();
+        }
 
 		// POST: api/Products
 		[Authorize(Roles = "User, Admin")]
@@ -99,16 +97,14 @@ namespace PaymentPlatform.Product.API.Controllers
 			}
 
 			var id = await _productService.AddNewProductAsync(product, new UserViewModel { Id = userId, Role = userRole });
+
 			if (id != null)
 			{
 				return CreatedAtAction(nameof(PostProduct), product);
 			}
-			else
-			{
-				return Conflict();
-			}
 
-		}
+            return Conflict();
+        }
 
 		// DELETE: api/Products/5
 		[Authorize(Roles = "User, Admin")]
@@ -135,29 +131,28 @@ namespace PaymentPlatform.Product.API.Controllers
 				{
 					return Ok();
 				}
+
 				return BadRequest();
 			}
-			else
-			{
-				return NotFound();
-			}
-		}
+
+            return NotFound();
+        }
 
 		private async Task<bool> ProductExists(Guid productId, Guid userId, string userRole)
 		{
 			var product = await _productService.GetProductByIdAsync(productId);
+
 			if (product == null)
 			{
 				return false;
 			}
+
 			if (userRole == "Admin")
 			{
 				return true;
 			}
-			else
-			{
-				return product != null && product.ProfileId == userId;
-			}
-		}
+
+            return product != null && product.ProfileId == userId;
+        }
 	}
 }
