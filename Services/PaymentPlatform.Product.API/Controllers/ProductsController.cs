@@ -13,8 +13,8 @@ namespace PaymentPlatform.Product.API.Controllers
     /// Основной контроллер для Product.
     /// </summary>
 	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
+    [Authorize]
+    [ApiController]
 	public class ProductsController : ControllerBase
 	{
 		private readonly IProductService _productService;

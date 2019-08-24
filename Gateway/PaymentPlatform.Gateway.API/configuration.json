@@ -1,36 +1,28 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/account/auth",
+      "DownstreamPathTemplate": "/api/accounts/auth",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49051
+          "Port": 49060
         }
       ],
-      "UpstreamPathTemplate": "/account/auth",
-      "UpstreamHttpMethod": [ "Get" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "UpstreamPathTemplate": "/accounts/auth",
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
-      "DownstreamPathTemplate": "/api/account/registration",
+      "DownstreamPathTemplate": "/api/accounts/registration",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49051
+          "Port": 49060
         }
       ],
-      "UpstreamPathTemplate": "/account/registration",
-      "UpstreamHttpMethod": [ "Get" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "UpstreamPathTemplate": "/accounts/registration",
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "DownstreamPathTemplate": "/api/products/{productId}",
@@ -74,11 +66,7 @@
         }
       ],
       "UpstreamPathTemplate": "/products",
-      "UpstreamHttpMethod": [ "Post" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "DownstreamPathTemplate": "/api/products/{productId}",

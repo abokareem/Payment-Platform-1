@@ -32,33 +32,51 @@ namespace PaymentPlatform.Product.API
 			string connectionString = Configuration.GetConnectionString("DefaultConnection");
 			services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
 
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-					.AddJwtBearer(options =>
-					{
-						//TODO: Вынести в конфиг
-						options.RequireHttpsMetadata = false;
-						options.TokenValidationParameters = new TokenValidationParameters
-						{
-							// укзывает, будет ли валидироваться издатель при валидации токена
-							ValidateIssuer = true,
-							// строка, представляющая издателя
-							ValidIssuer = "http://localhost:49051",
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //		.AddJwtBearer(options =>
+            //		{
+            //			//TODO: Вынести в конфиг
+            //			options.RequireHttpsMetadata = false;
+            //			options.TokenValidationParameters = new TokenValidationParameters
+            //			{
+            //				// укзывает, будет ли валидироваться издатель при валидации токена
+            //				ValidateIssuer = true,
+            //				// строка, представляющая издателя
+            //				ValidIssuer = "http://localhost:49051",
 
-							// будет ли валидироваться потребитель токена
-							ValidateAudience = true,
-							// установка потребителя токена
-							ValidAudience = "PaymentPlatform",
-							// будет ли валидироваться время существования
-							ValidateLifetime = true,
+            //				// будет ли валидироваться потребитель токена
+            //				ValidateAudience = true,
+            //				// установка потребителя токена
+            //				ValidAudience = "PaymentPlatform",
+            //				// будет ли валидироваться время существования
+            //				ValidateLifetime = true,
 
-							// установка ключа безопасности
-							IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("3ce1637ed40041cd94d4853d3e766c4d")),
-							// валидация ключа безопасности
-							ValidateIssuerSigningKey = true,
-						};
-					});
+            //				// установка ключа безопасности
+            //				IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("3ce1637ed40041cd94d4853d3e766c4d")),
+            //				// валидация ключа безопасности
+            //				ValidateIssuerSigningKey = true,
+            //			};
+            //		});
 
-			var mappingConfig = new MapperConfiguration(mc =>
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("3ce1637ed40041cd94d4853d3e766c4d")),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            var mappingConfig = new MapperConfiguration(mc =>
 			{
 				mc.AddProfile(new MappingProfile());
 			});
@@ -77,8 +95,8 @@ namespace PaymentPlatform.Product.API
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseAuthentication();
-			app.UseMvc();
+            app.UseAuthentication();
+            app.UseMvc();
 		}
 	}
 }
