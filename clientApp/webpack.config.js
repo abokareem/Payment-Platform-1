@@ -3,6 +3,7 @@ const sass = require("node-sass");
 const htmlWebpackPlugin = require("html-webpack-plugin");
 const autoprefixer = require("autoprefixer");
 
+
 const PATHS = {
     src: path.resolve(__dirname, "src"),
     build: path.resolve(__dirname, "build")
@@ -44,6 +45,14 @@ module.exports = {
                         loader: "sass-loader"
                     }
                 ]
+            },
+            {
+                test: /\.(jpe?g|png)$/i,
+                loader: "file-loader",
+                options: {
+                    name: '[name].[ext]',
+                    useRelativePath: true
+                }
             }
         ]
     },
@@ -54,7 +63,7 @@ module.exports = {
         })
     ],
     devServer: {
-        port: 8000,
+        port: 9000,
         hot: true,
         overlay: true,
         historyApiFallback: true

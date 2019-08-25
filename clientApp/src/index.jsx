@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom';
+import "normalize.css";
 import App from "./containers/App.jsx";
 import { store } from "./store/store.js";
 import { Provider } from "react-redux";

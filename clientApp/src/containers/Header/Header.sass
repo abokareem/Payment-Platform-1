@@ -1,0 +1,42 @@
+@import "../../settings.sass"
+
+#header
+  display: flex
+  width: 100%
+  height: 70px
+  background: $green
+
+#sell-btn
+  display: flex
+  margin-left: 2%
+
+  button
+    border: none
+    background: $white
+    padding: 5px 20px 5px 20px
+    border-radius: 20px
+    color: $green
+    text-transform: uppercase
+    font:
+      family: $OS
+      weight: normal
+      size: 14px
+
+    &:active
+      margin-top: 2px
+
+#auth-link
+  display: flex
+  position: absolute
+  right: 0
+
+  a
+    text-decoration: none
+    color: $white
+    font:
+      family: $OS
+      size: 16px
+      weight: lighter
+
+    &:hover
+      text-decoration: underline
