@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using PaymentPlatform.Identity.API.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
@@ -24,6 +26,34 @@ namespace PaymentPlatform.Identity.API.Controllers
 		{
 			_accountService = accountService;
 		}
+
+        // GET: api/accounts
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IEnumerable<AccountViewModel>> GetAccounts(int? take, int? skip)
+        {
+            return await _accountService.GetAllAccountsAsync(take, skip);
+        }
+
+        // GET: api/accounts/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProfile([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var account = await _accountService.GetAccountByIdAsync(id);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(account);
+        }
 
         // POST: api/accounts/auth
         [AllowAnonymous]
@@ -65,7 +95,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 			return Ok(new { message });
 		}
 
-        // PUT: api/accounts/auth
+        // PUT: api/accounts/{id}
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccount([FromBody] AccountViewModel account)
