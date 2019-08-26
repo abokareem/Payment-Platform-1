@@ -7,7 +7,9 @@ using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using PaymentPlatform.Identity.API.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,6 +121,38 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             var accountViewModel = _mapper.Map<AccountViewModel>(account);
 
             return accountViewModel;
+        }
+
+        /// <inheritdoc/>
+        public async Task<AccountViewModel> GetAccountByIdAsync(Guid accoundId)
+        {
+            var account = await _identityContext.Accounts.FirstOrDefaultAsync(p => p.Id == accoundId);
+            var accountViewModel = _mapper.Map<AccountViewModel>(account);
+
+            return accountViewModel;
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<AccountViewModel>> GetAllAccountsAsync(int? take = null, int? skip = null)
+        {
+            var queriableListOfAccounts = _identityContext.Accounts.Select(x => x);
+
+            if (take != null && take > 0 && skip != null && skip > 0)
+            {
+                queriableListOfAccounts = queriableListOfAccounts.Skip((int)skip).Take((int)take);
+            }
+
+            var listOfAccounts = await queriableListOfAccounts.ToListAsync();
+
+            var listOfAccountsViewModels = new List<AccountViewModel>();
+
+            foreach (var account in listOfAccounts)
+            {
+                var accountViewModel = _mapper.Map<AccountViewModel>(account);
+                listOfAccountsViewModels.Add(accountViewModel);
+            }
+
+            return listOfAccountsViewModels;
         }
     }
 }
