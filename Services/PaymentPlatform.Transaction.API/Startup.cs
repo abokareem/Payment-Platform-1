@@ -17,6 +17,8 @@ using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Implementations;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
+using PaymentPlatform.Core.Interfaces;
+using PaymentPlatform.Core.Implementations;
 
 namespace PaymentPlatform.Transaction.API
 {
@@ -70,6 +72,10 @@ namespace PaymentPlatform.Transaction.API
 			services.AddSingleton(mapper);
 
 			services.AddScoped<ITransactionService, TransactionService>();
+
+			IRabbitService rabbitService = new RabbitService();
+
+			services.AddSingleton(rabbitService);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
