@@ -1,5 +1,7 @@
 ﻿using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Services.Interfaces
@@ -29,6 +31,21 @@ namespace PaymentPlatform.Identity.API.Services.Interfaces
         /// <param name="email">электронный адрес.</param>
         /// <returns>ViewModel данных пользователя.</returns>
         Task<AccountViewModel> GetAccountByEmailAsync(string email);
+
+        /// <summary>
+        /// Получить учетную запись пользователя по его Guid.
+        /// </summary>
+        /// <param name="accoundId">Guid учетной записи.</param>
+        /// <returns>ViewModel учетная запись пользователя.</returns>
+        Task<AccountViewModel> GetAccountByIdAsync(Guid accoundId);
+
+        /// <summary>
+        /// Получить все учетные записи пользователей.
+        /// </summary>
+        /// <param name="take">параметр пагинации (кол-во взять).</param>
+        /// <param name="skip">параметр пагинации (кол-во пропустить).</param>
+        /// <returns>Список учетных записей пользователей.</returns>
+        Task<List<AccountViewModel>> GetAllAccountsAsync(int? take = null, int? skip = null);
 
         /// <summary>
         /// Обновить данные пользователя.
