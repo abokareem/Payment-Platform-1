@@ -22,13 +22,18 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_transactionContext = transactionContext;
 			_mapper = mapper;
 			_rabbitService = rabbitService;
-			_rabbitService.SetListenerAsync("TransactionAPI", OnIncomingMessage(""));
+			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage(""));
 		}
 
 		private Action<string> OnIncomingMessage(string v)
 		{
 			//TODO: ParseMessage
-			throw new NotImplementedException();
+			return TODOSomething;
+		}
+
+		private void TODOSomething (string str)
+		{
+
 		}
 
 		public Task<(bool success, string result)> AddNewTransactionAsync(TransactionViewModel transaction)
@@ -42,7 +47,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			var productReserve = _mapper.Map<ProductReserve>(transaction);
 
 			//TODO: Decrease balance
-			await _rabbitService.SendMessageAsync(JsonConvert.SerializeObject(new BalanceReserve()),"ProfileAPI");
+			_rabbitService.SendMessage(JsonConvert.SerializeObject(new BalanceReserve { }),"ProfileAPI");
 			//TODO: Decrease product
 			await _transactionContext.BalanceReserves.AddAsync(balanceReserve);
 			await _transactionContext.ProductReserves.AddAsync(productReserve);
@@ -96,5 +101,6 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 }

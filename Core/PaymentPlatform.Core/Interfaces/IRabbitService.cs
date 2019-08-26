@@ -7,11 +7,11 @@ namespace PaymentPlatform.Core.Interfaces
 {
 	public interface IRabbitService
 	{
-		Task<(bool success, string message)> SendMessageAsync(string message, string recipient);
-		Task<(bool success, string message)> CheckConnectionAsync();
-		Task<(bool success, string message)> ConfigureServiceAsync(string host, int port, string virtualHost, string userName, string userPassword);
-		Task<(bool success, string message)> ConfigureServiceDefaultAsync();
-		Task<(bool success, string message)> SetListenerAsync(string channelToListen, Action<string> onIncomingMessage);
+		(bool success, string message) SendMessage(string message, string recipient);
+		(bool success, string message) CheckConnection();
+		(bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword);
+		(bool success, string message) ConfigureServiceDefault();
+		(bool success, string message) SetListener(string channelToListen, Action<string> onIncomingMessage);
 
 	}
 }

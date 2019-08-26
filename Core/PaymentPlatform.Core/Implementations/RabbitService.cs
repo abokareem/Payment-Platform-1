@@ -4,44 +4,39 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 using System;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PaymentPlatform.Core.Implementations
 {
 	public class RabbitService : IRabbitService
 	{
-		private ConnectionFactory connectionFactory;
-		private IConnection connection;
-		private IModel channel;
+		private static ConnectionFactory connectionFactory = new ConnectionFactory();
+		private static IConnection connection;
+		private static IModel channel;
 
 
 		public RabbitService(string hostName, int port, string virtualHost, string userName, string password)
 		{
-			_ = ConfigureServiceAsync(hostName, port, virtualHost, userName, password);
+			_ = ConfigureService(hostName, port, virtualHost, userName, password);
 		}
 
 		public RabbitService()
 		{
-			_ = ConfigureServiceDefaultAsync();
+			_ = ConfigureServiceDefault();
 		}
-		public async Task<(bool success, string message)> CheckConnectionAsync()
+		public (bool success, string message) CheckConnection()
 		{
-			return await Task.Run(() =>
+			if (connection.IsOpen)
 			{
-				if (connection.IsOpen)
-				{
-					return (true, "Соединение установлено.");
-				}
-				else
-				{
-					return (false, "Соединение не установлено.");
-				}
-			});
+				return (true, "Соединение установлено.");
+			}
+			else
+			{
+				return (false, "Соединение не установлено.");
+			}
 		}
 
-		public async Task<(bool success, string message)> ConfigureServiceAsync(string host, int port, string virtualHost, string userName, string userPassword)
+		public (bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword)
 		{
 			#region Parameters check
 			if (string.IsNullOrEmpty(host))
@@ -68,22 +63,19 @@ namespace PaymentPlatform.Core.Implementations
 			}
 			#endregion
 
-			return await Task.Run(() =>
+			connectionFactory = new ConnectionFactory()
 			{
-				connectionFactory = new ConnectionFactory()
-				{
-					HostName = host,
-					Port = port,
-					VirtualHost = virtualHost,
-					UserName = userName,
-					Password = userPassword
+				HostName = host,
+				Port = port,
+				VirtualHost = virtualHost,
+				UserName = userName,
+				Password = userPassword
 
-				};
-				return (true, "Конфигурация установлена успешно.");
-			});
+			};
+			return (true, "Конфигурация установлена успешно.");
 		}
 
-		public async Task<(bool success, string message)> SendMessageAsync(string message, string recipient)
+		public (bool success, string message) SendMessage(string message, string recipient)
 		{
 			#region Parameters check
 			if (string.IsNullOrEmpty(message))
@@ -99,19 +91,16 @@ namespace PaymentPlatform.Core.Implementations
 
 			try
 			{
-				return await Task.Run(() =>
+				using (var connection = connectionFactory.CreateConnection())
+				using (var channel = connection.CreateModel())
 				{
-					using (var connection = connectionFactory.CreateConnection())
-					using (var channel = connection.CreateModel())
-					{
-						channel.QueueDeclare(recipient, false, false, false, null);
+					channel.QueueDeclare(recipient, false, false, false, null);
 
-						var messageBytes = Encoding.UTF8.GetBytes(message);
+					var messageBytes = Encoding.UTF8.GetBytes(message);
 
-						channel.BasicPublish("", recipient, null, messageBytes);
-					}
-					return (true, "Сообщение отправлено успешно.");
-				});
+					channel.BasicPublish("", recipient, null, messageBytes);
+				}
+				return (true, "Сообщение отправлено успешно.");
 			}
 			catch (BrokerUnreachableException brokerException)
 			{
@@ -123,27 +112,24 @@ namespace PaymentPlatform.Core.Implementations
 			}
 		}
 
-		public async Task<(bool success, string message)> SetListenerAsync(string channelToListen, Action<string> onIncomingMessage)
+		public (bool success, string message) SetListener(string channelToListen, Action<string> onIncomingMessage)
 		{
 			try
 			{
-				return await Task.Run(()=>
+				connection = connectionFactory.CreateConnection();
+				channel = connection.CreateModel();
+
+				channel.QueueDeclare(channelToListen, false, false, false, null);
+
+				var consumer = new EventingBasicConsumer(channel);
+				consumer.Received += (model, ea) =>
 				{
-					connection = connectionFactory.CreateConnection();
-					channel = connection.CreateModel();
-
-					channel.QueueDeclare(channelToListen, false, false, false, null);
-
-					var consumer = new EventingBasicConsumer(channel);
-					consumer.Received += (model, ea) =>
-					{
-						var body = ea.Body;
-						var message = Encoding.UTF8.GetString(body);
-						onIncomingMessage.Invoke(message);
-					};
-					channel.BasicConsume(channelToListen, true, consumer);
-					return (true, "Успешно.");
-				});
+					var body = ea.Body;
+					var message = Encoding.UTF8.GetString(body);
+					onIncomingMessage.Invoke(message);
+				};
+				channel.BasicConsume(channelToListen, true, consumer);
+				return (true, "Успешно.");
 			}
 			catch (BrokerUnreachableException brokerException)
 			{
@@ -156,35 +142,29 @@ namespace PaymentPlatform.Core.Implementations
 			}
 		}
 
-		public async Task<(bool success, string message)> ConfigureServiceDefaultAsync()
+		public (bool success, string message) ConfigureServiceDefault()
 		{
-			return await Task.Run(() =>
+			//TODO: Сделать нормальный путь
+			var jsonConfiguration = new ConfigurationBuilder()
+				   .SetBasePath(Environment.CurrentDirectory)
+				   .AddJsonFile(@"C:\Users\s207883\source\repos\PaymentPlatform\Core\PaymentPlatform.Core\Settings\RabbitMqConfig.json")
+				   .Build();
+
+			var host = jsonConfiguration.GetSection("host").Value;
+			var port = jsonConfiguration.GetSection("port").Value;
+			var virtualHost = jsonConfiguration.GetSection("virtualHost").Value;
+			var userName = jsonConfiguration.GetSection("userName").Value;
+			var password = jsonConfiguration.GetSection("password").Value;
+
+			connectionFactory = new ConnectionFactory()
 			{
-				if (!File.Exists("RabbitMqConfig"))
-				{
-					return (false, "Файл конфигурации не найден.");
-				}
-				var jsonConfiguration = new ConfigurationBuilder()
-					   .SetBasePath(Environment.CurrentDirectory)
-					   .AddJsonFile("conf.json").Build();
-
-				var host = jsonConfiguration.GetSection("host").Value;
-				var port = jsonConfiguration.GetSection("port").Value;
-				var virtualHost = jsonConfiguration.GetSection("virtualHost").Value;
-				var userName = jsonConfiguration.GetSection("userName").Value;
-				var password = jsonConfiguration.GetSection("password").Value;
-
-				connectionFactory = new ConnectionFactory()
-				{
-					HostName = host,
-					Port = int.Parse(port),
-					VirtualHost = virtualHost,
-					UserName = userName,
-					Password = password
-				};
-				return (true, "Конфигурация установлена успешно.");
-			});
-
+				HostName = host,
+				Port = int.Parse(port),
+				VirtualHost = virtualHost,
+				UserName = userName,
+				Password = password
+			};
+			return (true, "Конфигурация установлена успешно.");
 		}
 	}
 }
