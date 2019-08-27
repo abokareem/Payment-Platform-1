@@ -49,6 +49,11 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// </summary>
 		public Guid? ProductReserveId { get; set; }
 
+		/// <summary>
+		/// Успешность транзакции на основе резерва.
+		/// </summary>
+		public bool TransactionSuccess { get; set; }
+
 		// Навигационные свойства.
 		public Product Product { get; set; }
 		public Profile Profile { get; set; }
