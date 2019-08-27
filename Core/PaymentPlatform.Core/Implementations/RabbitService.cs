@@ -147,7 +147,7 @@ namespace PaymentPlatform.Core.Implementations
 			//TODO: Сделать нормальный путь
 			var jsonConfiguration = new ConfigurationBuilder()
 				   .SetBasePath(Environment.CurrentDirectory)
-				   .AddJsonFile(@"C:\Users\s207883\source\repos\PaymentPlatform\Core\PaymentPlatform.Core\Settings\RabbitMqConfig.json")
+				   .AddJsonFile(@"Settings/RabbitMqConfig.json")
 				   .Build();
 
 			var host = jsonConfiguration.GetSection("host").Value;

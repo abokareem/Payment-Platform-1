@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: GatewayDockerfile
+    ports:
+      - 81:81
+  transaction:
+    build:
+      context: .
+      dockerfile: TransactionDockerfile
+    ports:
+      - 82:82
+  profile:
+    build:
+      context: .
+      dockerfile: ProfileDockerfile
+    ports:
+      - 83:83
+  product:
+    build:
+      context: .
+      dockerfile: ProductDockerfile
+    ports:
+      - 84:84
+  identity:
+    build:
+      context: .
+      dockerfile: IdentityDockerfile
+    ports:
+      - 85:85

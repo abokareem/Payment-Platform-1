@@ -71,9 +71,7 @@ namespace PaymentPlatform.Transaction.API
 
 			services.AddScoped<ITransactionService, TransactionService>();
 
-			IRabbitService rabbitService = new RabbitService();
-
-			services.AddSingleton(rabbitService);
+			services.AddSingleton<IRabbitService, RabbitService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
