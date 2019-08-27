@@ -8,6 +8,9 @@ using PaymentPlatform.Transaction.API.Models;
 using AutoMapper;
 using PaymentPlatform.Core.Interfaces;
 using Newtonsoft.Json;
+using PaymentPlatform.Core.Models;
+using PaymentPlatform.Core.Models.DatabaseModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
@@ -22,69 +25,68 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_transactionContext = transactionContext;
 			_mapper = mapper;
 			_rabbitService = rabbitService;
-			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage(""));
+			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
 		}
 
-		private Action<string> OnIncomingMessage(string v)
+
+		private void OnIncomingMessage(string message)
 		{
-			//TODO: ParseMessage
-			return TODOSomething;
+			//TODO: TryParse incoming message
+			try
+			{
+				var incomingMessage = JsonConvert.DeserializeObject(message) as RabbitMessage;
+
+				switch (incomingMessage.Sender)
+				{
+					case "ProductAPI":
+						var productReserve = incomingMessage.Model as ProductReserve;
+						var transaction = _transactionContext.Transactions.FirstOrDefault(productReserve.)
+						break;
+					case "ProfileAPI":
+						var balanceReserve = incomingMessage.Model as BalanceReserve;
+						break;
+					default:
+						break;
+				}
+			}
+			catch (JsonException jsonExc)
+			{
+				//TODO: Вывести в лог
+			}
+			catch (Exception exc)
+			{
+				throw exc;
+			}
 		}
 
-		private void TODOSomething (string str)
+		public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
 		{
-
+			var newTransaction = new Models.Transaction { };
+			_transactionContext.Transactions.Add(newTransaction);
+			await _transactionContext.SaveChangesAsync();
+			MakeReserve(newTransaction);
+			return (true, "Добавлена новая транзакция.");
 		}
 
-		public Task<(bool success, string result)> AddNewTransactionAsync(TransactionViewModel transaction)
+		private void MakeReserve(Models.Transaction transaction)
 		{
-			throw new NotImplementedException();
-		}
-
-		private async Task<bool> MakeReservesAsync(Models.Transaction transaction)
-		{
-			var balanceReserve = _mapper.Map<BalanceReserve>(transaction);
-			var productReserve = _mapper.Map<ProductReserve>(transaction);
+			var messageToProfile = new RabbitMessage { Action = "Apply", Sender = "TransactionAPI", Model = _mapper.Map<BalanceReserve>(transaction) };
+			var messageToProduct = new RabbitMessage { Action = "Apply", Sender = "TransactionAPI", Model = _mapper.Map<ProductReserve>(transaction) };
 
 			//TODO: Decrease balance
-			_rabbitService.SendMessage(JsonConvert.SerializeObject(new BalanceReserve { }),"ProfileAPI");
+			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile),"ProfileAPI");
 			//TODO: Decrease product
-			await _transactionContext.BalanceReserves.AddAsync(balanceReserve);
-			await _transactionContext.ProductReserves.AddAsync(productReserve);
-			
-			await _transactionContext.SaveChangesAsync();
-
-			if (balanceReserve.Id != null && productReserve.Id != null)
-			{
-				var newTransaction = _mapper.Map<Models.Transaction>(transaction);
-				await _transactionContext.Transactions.AddAsync(newTransaction);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
-		private Task CancelReserveAsync(Models.Transaction transaction)
+		private Task RevertReserveAsync(Models.Transaction transaction)
 		{
-			var balanceReserve = _transactionContext.BalanceReserves.FirstOrDefault(br => br.Id == transaction.BalanceReserveId);
-			var productReserve = _transactionContext.ProductReserves.FirstOrDefault(br => br.Id == transaction.ProductReserveId);
-
-			if (balanceReserve != null)
-			{
-				//TODO: Increate balance
-			}
-
-			if (productReserve != null)
-			{
-				//TODO: Increate product
-			}
 			throw new NotImplementedException();
 		}
-		public Task<TransactionViewModel> GetTransactionByIdAsync(Guid id)
+		public async Task<TransactionViewModel> GetTransactionByIdAsync(Guid id)
 		{
-			throw new NotImplementedException();
+			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
+			return _mapper.Map<TransactionViewModel>(transaction);
 		}
 
 		public Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
@@ -92,7 +94,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			throw new NotImplementedException();
 		}
 
-		public Task<(bool success, string result)> RevertTransactionByIdAsync(Guid id)
+		public Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
 		{
 			throw new NotImplementedException();
 		}

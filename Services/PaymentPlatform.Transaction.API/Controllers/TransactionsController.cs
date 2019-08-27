@@ -17,7 +17,6 @@ namespace PaymentPlatform.Transaction.API.Controllers
 	[ApiController]
 	public class TransactionsController : ControllerBase
 	{
-		private readonly TransactionContext _context;
 		private readonly ITransactionService _transactionService;
 
 		public TransactionsController(ITransactionService transactionService)
@@ -26,7 +25,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
 		}
 
 		// GET: api/Transactions
-		//[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin")]
 		[HttpGet]
 		public async Task<IEnumerable<TransactionViewModel>> GetTransactions(int? take = null, int? skip = null)
 		{
@@ -34,7 +33,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
 		}
 
 		// GET: api/Transactions/5
-		//[Authorize(Roles = "Admin, User")]
+		[Authorize(Roles = "Admin, User")]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> GetTransaction([FromRoute] Guid id)
 		{
@@ -43,7 +42,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			var transaction = await _context.Transactions.FindAsync(id);
+			var transaction = await _transactionService.GetTransactionByIdAsync(id);
 
 			if (transaction == null)
 			{
@@ -54,6 +53,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
 		}
 
 		// PUT: api/Transactions/5
+		[Authorize(Roles = "Admin, User")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutTransaction([FromBody] TransactionViewModel transaction)
 		{
@@ -62,8 +62,8 @@ namespace PaymentPlatform.Transaction.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			_context.Entry(transaction).State = EntityState.Modified;
-
+			await _transactionService.UpdateTransactionAsync(transaction);
+			
 			return NoContent();
 		}
 
@@ -76,9 +76,15 @@ namespace PaymentPlatform.Transaction.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			await _context.SaveChangesAsync();
-
-			return CreatedAtAction("GetTransaction", new { id = transaction.Id }, transaction);
+			var result = await _transactionService.AddNewTransactionAsync(transaction);
+			if (result.success)
+			{
+				return CreatedAtAction("GetTransaction", new { id = transaction.Id }, transaction);
+			}
+			else
+			{
+				return BadRequest(result.message);
+			}
 		}
 
 		// DELETE: api/Transactions/5
@@ -89,22 +95,24 @@ namespace PaymentPlatform.Transaction.API.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-
-			var transaction = await _context.Transactions.FindAsync(id);
-			if (transaction == null)
+			if (!TransactionExists(id))
 			{
-				return NotFound();
+				return BadRequest();
 			}
-
-			_context.Transactions.Remove(transaction);
-			await _context.SaveChangesAsync();
-
-			return Ok(transaction);
+			var result = await _transactionService.RevertTransactionByIdAsync(id);
+			if (result.success)
+			{
+				return Ok(result.message);
+			}
+			else
+			{
+				return Conflict(result.message);
+			}
 		}
 
 		private bool TransactionExists(Guid id)
 		{
-			return _context.Transactions.Any(e => e.Id == id);
+			return _transactionService.GetTransactionByIdAsync(id) != null;
 		}
 
 		private (Guid, string) GetClaimsIdentity()

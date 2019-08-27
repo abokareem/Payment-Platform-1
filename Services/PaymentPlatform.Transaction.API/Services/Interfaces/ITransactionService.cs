@@ -10,8 +10,8 @@ namespace PaymentPlatform.Transaction.API.Services.Interfaces
 	{
 		Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null);
 		Task<TransactionViewModel> GetTransactionByIdAsync(Guid id);
-		Task<(bool success, string result)> AddNewTransactionAsync(TransactionViewModel transaction);
-		Task<(bool success, string result)> RevertTransactionByIdAsync(Guid id);
+		Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction);
+		Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id);
 		Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction); 
 	}
 }

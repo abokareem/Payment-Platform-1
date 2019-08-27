@@ -1,5 +1,6 @@
 ﻿using PaymentPlatform.Transaction.API.ViewModels;
 using PaymentPlatform.Transaction.API.Models;
+using PaymentPlatform.Core.Models.DatabaseModels;
 
 namespace PaymentPlatform.Transaction.API.Helpers
 {
@@ -16,7 +17,6 @@ namespace PaymentPlatform.Transaction.API.Helpers
             CreateMap<TransactionViewModel, Models.Transaction>().ReverseMap();
 			CreateMap<TransactionViewModel, ProductReserve>().ReverseMap();
 			CreateMap<TransactionViewModel, BalanceReserve>().ReverseMap();
-
 		}
 	}
 }

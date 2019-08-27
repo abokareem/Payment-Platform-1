@@ -2,24 +2,29 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PaymentPlatform.Transaction.API.Models
+namespace PaymentPlatform.Core.Models.DatabaseModels
 {
-	public class BalanceReserve
+	public class ProductReserve
 	{
 		/// <summary>
-		/// Идентификатор.
+		/// Идентификатор резерва.
 		/// </summary>
 		public Guid Id { get; set; }
 
 		/// <summary>
-		/// Идентификатор профиля.
+		/// Идентификатор товара.
 		/// </summary>
-		public Guid ProfileId { get; set; }
+		public Guid ProductId { get; set; }
 
 		/// <summary>
-		/// Полная сумма.
+		/// Полная стоимость.
 		/// </summary>
-		public float Total { get; set; }
+		public float TotalCost { get; set; }
+
+		/// <summary>
+		/// Количество.
+		/// </summary>
+		public int Amount { get; set; }
 
 		/// <summary>
 		/// Дата создания резерва.
@@ -32,6 +37,7 @@ namespace PaymentPlatform.Transaction.API.Models
 		public bool TransactionSuccess { get; set; }
 
 		// Навигационные свойства
+
 		public Transaction Transaction { get; set; }
 	}
 }
