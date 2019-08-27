@@ -49,6 +49,11 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// </summary>
 		public Guid? ProductReserveId { get; set; }
 
+		/// <summary>
+		/// Успешность транзакции на основе резерва.
+		/// </summary>
+		public bool TransactionSuccess { get; set; }
+
 		// Навигационные свойства.
 		public BalanceReserve BalanceReserve { get; set; }
 		public ProductReserve ProductReserve { get; set; }

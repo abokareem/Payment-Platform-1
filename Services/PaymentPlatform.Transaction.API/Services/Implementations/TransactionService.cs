@@ -39,15 +39,31 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 				switch (incomingMessage.Sender)
 				{
 					case "ProductAPI":
-						var productReserve = incomingMessage.Model as ProductReserve;
-						//var transaction = _transactionContext.Transactions.FirstOrDefault(productReserve.)
-						break;
+						{
+							var productReserve = incomingMessage.Model as ProductReserve;
+							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
+							transaction.ProductReserveId = productReserve.Id;
+							_transactionContext.Update(transaction);
+							_transactionContext.SaveChanges();
+							break;
+						}
 					case "ProfileAPI":
-						var balanceReserve = incomingMessage.Model as BalanceReserve;
-						break;
+						{
+							var balanceReserve = incomingMessage.Model as BalanceReserve;
+							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
+							transaction.BalanceReserveId = balanceReserve.Id;
+							if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+							{
+								transaction.TransactionSuccess = true;
+							}
+							_transactionContext.Update(transaction);
+							_transactionContext.SaveChanges();
+							break;
+						}
 					default:
-						break;
+						throw new JsonException("Unable to parse JSON.");
 				}
+
 			}
 			catch (JsonException jsonExc)
 			{
@@ -79,9 +95,15 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
-		private Task RevertReserveAsync(Core.Models.DatabaseModels.Transaction transaction)
+		private void RevertReserve(Core.Models.DatabaseModels.Transaction transaction)
 		{
-			throw new NotImplementedException();
+			var messageToProfile = new RabbitMessage { Action = "Revert", Sender = "TransactionAPI", Model = _mapper.Map<BalanceReserve>(transaction) };
+			var messageToProduct = new RabbitMessage { Action = "Revert", Sender = "TransactionAPI", Model = _mapper.Map<ProductReserve>(transaction) };
+
+			//TODO: Decrease balance
+			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
+			//TODO: Decrease product
+			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 		public async Task<TransactionViewModel> GetTransactionByIdAsync(Guid id)
 		{
@@ -89,19 +111,39 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			return _mapper.Map<TransactionViewModel>(transaction);
 		}
 
-		public Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
+		public async Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
 		{
-			throw new NotImplementedException();
+			var transactions = _transactionContext.Transactions.Select(t => t);
+			if (take > 0)
+			{
+				transactions = transactions.Take((int)take);
+			}
+			if (skip > 0)
+			{
+				transactions = transactions.Skip((int)skip);
+			}
+			return _mapper.Map<List<TransactionViewModel>>(transactions);
 		}
 
-		public Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
+		public async Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
 		{
-			throw new NotImplementedException();
+			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
+			RevertReserve(transaction);
+			transaction.TransactionSuccess = false;
+			return (true, "Transaction canceled successfully.");
 		}
 
-		public Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction)
+		public async Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction)
 		{
-			throw new NotImplementedException();
+			var transactionInDatabase = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == transaction.Id);
+			transactionInDatabase.ProductId = transaction.ProductId;
+			transactionInDatabase.ProfileId = transaction.ProfileId;
+			transactionInDatabase.TransactionTime = transaction.TransactionTime;
+			transactionInDatabase.Status = transaction.Status;
+			transactionInDatabase.TotalCost = transaction.TotalCost;
+			_transactionContext.Transactions.Update(transactionInDatabase);
+			await _transactionContext.SaveChangesAsync();
+			//TODO: Не успел
 		}
 
 	}
