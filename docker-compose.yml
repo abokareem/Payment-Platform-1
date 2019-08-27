@@ -7,27 +7,52 @@ services:
       dockerfile: GatewayDockerfile
     ports:
       - 81:81
+    depends_on:
+      - db
   transaction:
     build:
       context: .
       dockerfile: TransactionDockerfile
     ports:
       - 82:82
+    depends_on:
+      - db
   profile:
     build:
       context: .
       dockerfile: ProfileDockerfile
     ports:
       - 83:83
+    depends_on:
+      - db
   product:
     build:
       context: .
       dockerfile: ProductDockerfile
     ports:
       - 84:84
+    depends_on:
+      - db
   identity:
     build:
       context: .
       dockerfile: IdentityDockerfile
     ports:
       - 85:85
+    depends_on:
+      - db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      COUNT: "123"
+  db:
+    image: microsoft/mssql-server-linux
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - 1433:1433
