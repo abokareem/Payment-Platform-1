@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Transaction.API.Models
+namespace PaymentPlatform.Core.Models.DatabaseModels
 {
 	/// <summary>
 	/// Модель транзакции.

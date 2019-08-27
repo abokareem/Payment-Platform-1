@@ -32,7 +32,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// <inheritdoc/>
 		public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
 		{
-			var product = _mapper.Map<Models.Product>(productViewModel);
+			var product = _mapper.Map<Core.Models.DatabaseModels.Product>(productViewModel);
 
 			await _productContext.Products.AddAsync(product);
 			await _productContext.SaveChangesAsync();
@@ -45,7 +45,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// <inheritdoc/>
 		public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
 		{
-			IQueryable<Models.Product> queriableListOfProducts = null;
+			IQueryable<Core.Models.DatabaseModels.Product> queriableListOfProducts = null;
 
             if (isAdmin)
             {

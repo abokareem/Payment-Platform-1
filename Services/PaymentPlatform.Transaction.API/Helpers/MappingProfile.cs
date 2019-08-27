@@ -14,7 +14,7 @@ namespace PaymentPlatform.Transaction.API.Helpers
         /// </summary>
         public MappingProfile()
         {
-            CreateMap<TransactionViewModel, Models.Transaction>().ReverseMap();
+            CreateMap<TransactionViewModel, Core.Models.DatabaseModels.Transaction>().ReverseMap();
 			CreateMap<TransactionViewModel, ProductReserve>().ReverseMap();
 			CreateMap<TransactionViewModel, BalanceReserve>().ReverseMap();
 		}

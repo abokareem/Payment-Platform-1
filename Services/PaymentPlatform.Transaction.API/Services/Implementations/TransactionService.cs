@@ -40,7 +40,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 				{
 					case "ProductAPI":
 						var productReserve = incomingMessage.Model as ProductReserve;
-						var transaction = _transactionContext.Transactions.FirstOrDefault(productReserve.)
+						//var transaction = _transactionContext.Transactions.FirstOrDefault(productReserve.)
 						break;
 					case "ProfileAPI":
 						var balanceReserve = incomingMessage.Model as BalanceReserve;
@@ -61,14 +61,14 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
 		public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
 		{
-			var newTransaction = new Models.Transaction { };
+			var newTransaction = new Core.Models.DatabaseModels.Transaction { };
 			_transactionContext.Transactions.Add(newTransaction);
 			await _transactionContext.SaveChangesAsync();
 			MakeReserve(newTransaction);
 			return (true, "Добавлена новая транзакция.");
 		}
 
-		private void MakeReserve(Models.Transaction transaction)
+		private void MakeReserve(Core.Models.DatabaseModels.Transaction transaction)
 		{
 			var messageToProfile = new RabbitMessage { Action = "Apply", Sender = "TransactionAPI", Model = _mapper.Map<BalanceReserve>(transaction) };
 			var messageToProduct = new RabbitMessage { Action = "Apply", Sender = "TransactionAPI", Model = _mapper.Map<ProductReserve>(transaction) };
@@ -79,7 +79,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
-		private Task RevertReserveAsync(Models.Transaction transaction)
+		private Task RevertReserveAsync(Core.Models.DatabaseModels.Transaction transaction)
 		{
 			throw new NotImplementedException();
 		}

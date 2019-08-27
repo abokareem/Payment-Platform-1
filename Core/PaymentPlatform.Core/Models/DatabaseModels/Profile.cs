@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace PaymentPlatform.Profile.API.Models
+namespace PaymentPlatform.Core.Models.DatabaseModels
 {
     /// <summary>
 	/// Модель профиля пользователя.

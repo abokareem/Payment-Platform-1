@@ -12,6 +12,11 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		public Guid Id { get; set; }
 
 		/// <summary>
+		/// Идентификатор транзакции.
+		/// </summary>
+		public Guid TransactionId { get; set; }
+
+		/// <summary>
 		/// Идентификатор товара.
 		/// </summary>
 		public Guid ProductId { get; set; }
@@ -31,13 +36,9 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// </summary>
 		public DateTime ReservationDate { get; set; }
 
-		/// <summary>
-		/// Успешность транзакции на основе резерва.
-		/// </summary>
-		public bool TransactionSuccess { get; set; }
-
 		// Навигационные свойства
 
+		public Product Product { get; set; }
 		public Transaction Transaction { get; set; }
 	}
 }
