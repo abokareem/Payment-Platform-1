@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using PaymentPlatform.Core.Interfaces;
 
 namespace PaymentPlatform.Product.API.Services.Implementations
 {
@@ -17,16 +18,18 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 	{
 		private readonly ProductContext _productContext;
 		private readonly IMapper _mapper;
+		private readonly IRabbitService _rabbitService;
 
-        /// <summary>
-        /// Конструктор.
-        /// </summary>
-        /// <param name="productContext">контекст.</param>
-        /// <param name="mapper">профиль AutoMapper.</param>
-		public ProductService(ProductContext productContext, IMapper mapper)
+		/// <summary>
+		/// Конструктор.
+		/// </summary>
+		/// <param name="productContext">контекст.</param>
+		/// <param name="mapper">профиль AutoMapper.</param>
+		public ProductService(ProductContext productContext, IMapper mapper, IRabbitService rabbitService)
 		{
 			_productContext = productContext;
 			_mapper = mapper;
+			_rabbitService = rabbitService;
 		}
 
         /// <inheritdoc/>

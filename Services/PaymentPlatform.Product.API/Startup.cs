@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Core.Implementations;
+using PaymentPlatform.Core.Interfaces;
 using PaymentPlatform.Product.API.Helpers;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
@@ -31,31 +33,31 @@ namespace PaymentPlatform.Product.API
 			string connectionString = Configuration.GetConnectionString("DefaultConnection");
 			services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
 
-            var appSettingSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingSection);
+			var appSettingSection = Configuration.GetSection("AppSettings");
+			services.Configure<AppSettings>(appSettingSection);
 
-            var appSettings = appSettingSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+			var appSettings = appSettingSection.Get<AppSettings>();
+			var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
+			services.AddAuthentication(x =>
+			{
+				x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			.AddJwtBearer(x =>
+			{
+				x.RequireHttpsMetadata = false;
+				x.SaveToken = true;
+				x.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidateIssuerSigningKey = true,
+					IssuerSigningKey = new SymmetricSecurityKey(key),
+					ValidateIssuer = false,
+					ValidateAudience = false
+				};
+			});
 
-            var mappingConfig = new MapperConfiguration(mc =>
+			var mappingConfig = new MapperConfiguration(mc =>
 			{
 				mc.AddProfile(new MappingProfile());
 			});
@@ -64,6 +66,9 @@ namespace PaymentPlatform.Product.API
 			services.AddSingleton(mapper);
 
 			services.AddScoped<IProductService, ProductService>();
+
+			IRabbitService rabbitService = new RabbitService();
+			services.AddSingleton(rabbitService);
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -73,8 +78,8 @@ namespace PaymentPlatform.Product.API
 				app.UseDeveloperExceptionPage();
 			}
 
-            app.UseAuthentication();
-            app.UseMvc();
+			app.UseAuthentication();
+			app.UseMvc();
 		}
 	}
 }
