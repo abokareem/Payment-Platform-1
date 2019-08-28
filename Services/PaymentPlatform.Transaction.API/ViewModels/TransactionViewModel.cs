@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.ViewModels
 {
@@ -33,5 +30,10 @@ namespace PaymentPlatform.Transaction.API.ViewModels
 		/// Итоговая стоймость.
 		/// </summary>
 		public decimal TotalCost { get; set; }
-	}
+
+        /// <summary>
+		/// Общее количество.
+		/// </summary>
+		public decimal Amount { get; set; }
+    }
 }
