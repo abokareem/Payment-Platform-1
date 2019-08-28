@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Services\PaymentPlatform.Identity.API\PaymentPlatform.Identity.API.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Settings\RabbitMqConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

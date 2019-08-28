@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -59,5 +60,10 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// Активность.
 		/// </summary>
 		public bool IsActive { get; set; }
+
+		// Навигационные свойства.
+		public Profile Profile { get; set; }
+		public ICollection<Transaction> Transactions { get; set; }
+		public ICollection<ProductReserve> ProductReserves { get; set; }
 	}
 }

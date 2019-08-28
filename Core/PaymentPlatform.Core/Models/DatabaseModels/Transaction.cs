@@ -55,6 +55,8 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		public bool TransactionSuccess { get; set; }
 
 		// Навигационные свойства.
+		public Product Product { get; set; }
+		public Profile Profile { get; set; }
 		public BalanceReserve BalanceReserve { get; set; }
 		public ProductReserve ProductReserve { get; set; }
 	}

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PaymentPlatform.Identity.API.Models;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace PaymentPlatform.Core.Models.DatabaseModels
@@ -53,5 +55,11 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
         /// Баланс.
         /// </summary>
         public decimal Balance { get; set; }
-    }
+
+		// Навигационные свойства.
+		public Account Account { get; set; }
+		public ICollection<Transaction> Transactions { get; set; }
+		public ICollection<Product> Products { get; set; }
+		public ICollection<BalanceReserve> BalanceReserves { get; set; }
+	}
 }

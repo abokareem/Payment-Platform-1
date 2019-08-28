@@ -124,7 +124,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			{
 				transactions = transactions.Skip((int)skip);
 			}
-			return _mapper.Map<List<TransactionViewModel>>(transactions);
+			return _mapper.Map<List<TransactionViewModel>>(await transactions.ToListAsync());
 		}
 
 		public async Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
