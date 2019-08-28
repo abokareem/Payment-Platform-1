@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using PaymentPlatform.Core.Interfaces;
+using Newtonsoft.Json;
+using PaymentPlatform.Core.Models;
+using PaymentPlatform.Core.Models.DatabaseModels;
 
 namespace PaymentPlatform.Product.API.Services.Implementations
 {
@@ -30,6 +33,65 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			_productContext = productContext;
 			_mapper = mapper;
 			_rabbitService = rabbitService;
+			_rabbitService.SetListener("ProductAPI", OnIncomingMessage);
+		}
+
+		private void OnIncomingMessage(string incomingMessage)
+		{
+			try
+			{
+				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessage;
+
+				switch (incomingObject.Sender)
+				{
+					case "TransactionAPI":
+						{
+							if (incomingObject.Action == "Apply")
+							{
+								var productReserve = incomingObject.Model as ProductReserve;
+								var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
+								if (product != null && product.Amount >= productReserve.Amount)
+								{
+									product.Amount -= productReserve.Amount;
+									_productContext.Entry(product).State = EntityState.Modified;
+									_productContext.Entry(productReserve).State = EntityState.Added;
+									_productContext.SaveChanges();
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(productReserve), "TransactionAPI");
+								}
+							}
+							else if (incomingObject.Action == "Revert")
+							{
+								var productReserve = incomingObject.Model as ProductReserve;
+								var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
+								if (product != null && product.Amount >= productReserve.Amount)
+								{
+									product.Amount += productReserve.Amount;
+									//TODO: Реализовать статусы резерва
+									productReserve.Status = 0;
+									_productContext.Entry(product).State = EntityState.Modified;
+									_productContext.Entry(productReserve).State = EntityState.Deleted;
+									_productContext.SaveChanges();
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(productReserve), "TransactionAPI");
+								}
+							}
+							else
+							{
+								throw new JsonException("Unexpected action.");
+							}
+							break;
+						}
+					default:
+						throw new JsonException("Unexpected sender.");
+				}
+			}
+			catch (JsonException jsonExc)
+			{
+				//TODO: Вывести в лог
+			}
+			catch (Exception exc)
+			{
+				throw exc;
+			}
 		}
 
         /// <inheritdoc/>

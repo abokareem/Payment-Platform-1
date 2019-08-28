@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using PaymentPlatform.Core.Models.DatabaseModels;
 
 namespace PaymentPlatform.Initialization.DAL
 {

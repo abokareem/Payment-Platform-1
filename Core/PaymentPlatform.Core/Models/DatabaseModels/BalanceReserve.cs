@@ -31,6 +31,11 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// </summary>
 		public DateTime ReservationDate { get; set; }
 
+		/// <summary>
+		/// Статус.
+		/// </summary>
+		public int Status { get; set; }
+
 		// Навигационные свойства
 		public Profile Profile { get; set; }
 		public Transaction Transaction { get; set; }
