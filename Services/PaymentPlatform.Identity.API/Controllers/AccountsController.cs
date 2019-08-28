@@ -32,7 +32,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<AccountViewModel>> GetAccounts(int? take, int? skip)
         {
-            return await _accountService.GetAllAccountsAsync(100, 0);
+            return await _accountService.GetAllAccountsAsync(take, skip);
         }
 
         // GET: api/accounts/{id}
