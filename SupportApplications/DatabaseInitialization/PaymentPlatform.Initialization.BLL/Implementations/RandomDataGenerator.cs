@@ -1,6 +1,6 @@
-﻿using PaymentPlatform.Core.Models.DatabaseModels;
-using PaymentPlatform.Initialization.BLL.Interfaces;
+﻿using PaymentPlatform.Initialization.BLL.Interfaces;
 using PaymentPlatform.Initialization.DAL;
+using PaymentPlatform.Initialization.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

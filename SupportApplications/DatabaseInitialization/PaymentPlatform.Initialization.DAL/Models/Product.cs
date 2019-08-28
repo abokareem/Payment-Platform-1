@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Core.Models.DatabaseModels
+namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
 	/// Модель товара.
@@ -13,6 +13,7 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// <summary>
 		/// Идентификатор (GUID).
 		/// </summary>
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
 		/// <summary>
@@ -59,5 +60,10 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// Активность.
 		/// </summary>
 		public bool IsActive { get; set; }
+
+		// Навигационные свойства.
+		public Profile Profile { get; set; }
+		public ICollection<Transaction> Transactions { get; set; }
+		public ICollection<ProductReserve> ProductReserves { get; set; }
 	}
 }

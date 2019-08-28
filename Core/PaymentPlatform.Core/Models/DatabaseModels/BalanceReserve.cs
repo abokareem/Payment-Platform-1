@@ -35,9 +35,5 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// Статус.
 		/// </summary>
 		public int Status { get; set; }
-
-		// Навигационные свойства
-		public Profile Profile { get; set; }
-		public Transaction Transaction { get; set; }
 	}
 }

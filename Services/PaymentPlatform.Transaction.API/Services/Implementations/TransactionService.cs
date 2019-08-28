@@ -44,7 +44,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							if (incomingMessage.Action == "Apply")
 							{
 								transaction.ProductReserveId = productReserve.Id;
-								if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+								if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
 								{
 									transaction.TransactionSuccess = true;
 								}
@@ -68,7 +68,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							if (incomingMessage.Action == "Apply")
 							{
 								transaction.BalanceReserveId = balanceReserve.Id;
-								if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+								if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
 								{
 									transaction.TransactionSuccess = true;
 								}
@@ -101,8 +101,8 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
 		public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
 		{
-			var newTransaction = new Core.Models.DatabaseModels.Transaction { };
-			_transactionContext.Transactions.Add(newTransaction);
+			var newTransaction = _mapper.Map<Core.Models.DatabaseModels.Transaction>(transaction);
+			_transactionContext.Entry(newTransaction).State = EntityState.Added;
 			await _transactionContext.SaveChangesAsync();
 			MakeReserve(newTransaction);
 			return (true, "Добавлена новая транзакция.");

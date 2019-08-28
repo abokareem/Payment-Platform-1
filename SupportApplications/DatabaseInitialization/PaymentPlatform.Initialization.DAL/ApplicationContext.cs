@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PaymentPlatform.Initialization.DAL.Models;
 using System;
-using PaymentPlatform.Core.Models.DatabaseModels;
 
 namespace PaymentPlatform.Initialization.DAL
 {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Core.Models.DatabaseModels
+namespace PaymentPlatform.Initialization.DAL.Models
 {
 	/// <summary>
 	/// Модель транзакции.
@@ -24,10 +24,10 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// </summary>
 		public Guid ProductId { get; set; }
 
-		/// <summary>
-		/// Время совершения операции.
-		/// </summary>
-		public DateTime TransactionTime { get; set; }
+        /// <summary>
+        /// Время совершения операции.
+        /// </summary>
+        public DateTime TransactionTime { get; set; } = DateTime.Now;
 
 		/// <summary>
 		/// Статус.
@@ -53,5 +53,10 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// </summary>
 		public bool TransactionSuccess { get; set; }
 
+		// Навигационные свойства.
+		public Product Product { get; set; }
+		public Profile Profile { get; set; }
+		public BalanceReserve BalanceReserve { get; set; }
+		public ProductReserve ProductReserve { get; set; }
 	}
 }

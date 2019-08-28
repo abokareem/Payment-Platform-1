@@ -79,7 +79,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
 			var result = await _transactionService.AddNewTransactionAsync(transaction);
 			if (result.success)
 			{
-				return CreatedAtAction("GetTransaction", new { id = transaction.Id }, transaction);
+				return Ok(transaction);
 			}
 			else
 			{

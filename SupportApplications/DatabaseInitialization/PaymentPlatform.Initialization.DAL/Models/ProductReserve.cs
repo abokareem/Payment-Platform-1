@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace PaymentPlatform.Core.Models.DatabaseModels
+namespace PaymentPlatform.Initialization.DAL.Models
 {
 	public class ProductReserve
 	{
@@ -40,5 +40,9 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// Статус.
 		/// </summary>
 		public int Status { get; set; }
+
+		// Навигационные свойства
+		public Product Product { get; set; }
+		public Transaction Transaction { get; set; }
 	}
 }
