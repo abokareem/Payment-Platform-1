@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Initialization.DAL.Models
+namespace PaymentPlatform.Core.Models.DatabaseModels
 {
     /// <summary>
     /// Личный кабинет пользователя.
