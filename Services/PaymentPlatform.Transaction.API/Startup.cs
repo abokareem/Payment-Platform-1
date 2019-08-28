@@ -70,7 +70,7 @@ namespace PaymentPlatform.Transaction.API
 			services.AddSingleton(mapper);
 
 			services.AddScoped<ITransactionService, TransactionService>();
-
+var sa = new RabbitService();
 			services.AddSingleton<IRabbitService, RabbitService>();
 		}
 

@@ -17,6 +17,7 @@ services:
       - 82:82
     depends_on:
       - db
+      - rabbit_mq
   profile:
     build:
       context: .
@@ -56,3 +57,11 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - 1433:1433
+  rabbit_mq:
+    image: rabbitmq:3.7.8-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - 5672:5672
+      - 15672:15672

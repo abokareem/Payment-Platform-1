@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using PaymentPlatform.Core.Interfaces;
+using PaymentPlatform.Core.Settings;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -72,6 +73,7 @@ namespace PaymentPlatform.Core.Implementations
 				Password = userPassword
 
 			};
+			
 			return (true, "Конфигурация установлена успешно.");
 		}
 
@@ -149,20 +151,16 @@ namespace PaymentPlatform.Core.Implementations
 				   .SetBasePath(Environment.CurrentDirectory)
 				   .AddJsonFile(@"Settings/RabbitMqConfig.json")
 				   .Build();
-
-			var host = jsonConfiguration.GetSection("host").Value;
-			var port = jsonConfiguration.GetSection("port").Value;
-			var virtualHost = jsonConfiguration.GetSection("virtualHost").Value;
-			var userName = jsonConfiguration.GetSection("userName").Value;
-			var password = jsonConfiguration.GetSection("password").Value;
-
+ 			var settings = new RabbitMqConfig();
+            jsonConfiguration.Bind(settings);
+			
 			connectionFactory = new ConnectionFactory()
 			{
-				HostName = host,
-				Port = int.Parse(port),
-				VirtualHost = virtualHost,
-				UserName = userName,
-				Password = password
+				HostName = settings.Host,
+				Port = settings.Port,
+				VirtualHost = settings.VirtualHost,
+				UserName = settings.UserName,
+				Password = settings.Password
 			};
 			return (true, "Конфигурация установлена успешно.");
 		}
