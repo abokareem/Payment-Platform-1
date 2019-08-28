@@ -31,7 +31,6 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
 		private void OnIncomingMessage(string message)
 		{
-			//TODO: TryParse incoming message
 			try
 			{
 				var incomingMessage = JsonConvert.DeserializeObject(message) as RabbitMessage;
@@ -43,6 +42,10 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							var productReserve = incomingMessage.Model as ProductReserve;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
 							transaction.ProductReserveId = productReserve.Id;
+							if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+							{
+								transaction.TransactionSuccess = true;
+							}
 							_transactionContext.Update(transaction);
 							_transactionContext.SaveChanges();
 							break;
@@ -61,9 +64,8 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							break;
 						}
 					default:
-						throw new JsonException("Unable to parse JSON.");
+						throw new JsonException("Unexpected sender.");
 				}
-
 			}
 			catch (JsonException jsonExc)
 			{
@@ -143,7 +145,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			transactionInDatabase.TotalCost = transaction.TotalCost;
 			_transactionContext.Transactions.Update(transactionInDatabase);
 			await _transactionContext.SaveChangesAsync();
-			//TODO: Не успел
+			return _mapper.Map<TransactionViewModel>(transactionInDatabase);
 		}
 
 	}
