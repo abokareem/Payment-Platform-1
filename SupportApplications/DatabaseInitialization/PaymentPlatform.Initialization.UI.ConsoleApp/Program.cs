@@ -17,7 +17,7 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
             IRandomDataGenerator rndDataGenerator = new RandomDataGenerator();
 
             Console.Write(Constants.ENTER_COUNT);
-            var value = Console.ReadLine();
+            var value = Environment.GetEnvironmentVariable("COUNT");
             int.TryParse(value, out int count);
 
             if (count > 0)
@@ -48,10 +48,8 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
                 case 2: { await rndDataGenerator.AddNewProductsAsync(count); } break;
                 case 3: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
             }
-
             watch.Stop();
             Console.WriteLine(Constants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + Constants.MS);
-
             return watch.ElapsedMilliseconds;
         }
     }

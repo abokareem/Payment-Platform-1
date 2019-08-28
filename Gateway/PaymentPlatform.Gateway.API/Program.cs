@@ -19,6 +19,7 @@ namespace PaymentPlatform.Gateway.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://*:81")
                 .UseStartup<Startup>();
     }
 }

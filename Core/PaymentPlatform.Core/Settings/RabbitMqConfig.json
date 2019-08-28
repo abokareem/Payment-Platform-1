@@ -1,7 +1,7 @@
 {
-  "host": "localhost",
-  "port": 5673,
-  "virtualHost": "/",
-  "userName": "guest",
-  "password": "guest"
+  "Host": "rabbit_mq",
+  "Port": 5672,
+  "VirtualHost": "/",
+  "UserName": "admin",
+  "Password": "admin"
 }
