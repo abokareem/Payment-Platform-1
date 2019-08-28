@@ -41,12 +41,23 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 						{
 							var productReserve = incomingMessage.Model as ProductReserve;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
-							transaction.ProductReserveId = productReserve.Id;
-							if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+							if (incomingMessage.Action == "Apply")
 							{
-								transaction.TransactionSuccess = true;
+								transaction.ProductReserveId = productReserve.Id;
+								if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+								{
+									transaction.TransactionSuccess = true;
+								}
 							}
-							_transactionContext.Update(transaction);
+							else if (incomingMessage.Action == "Revert")
+							{
+								transaction.TransactionSuccess = false;
+							}
+							else
+							{
+								throw new JsonException("Unexpected action.");
+							}
+							_transactionContext.Entry(transaction).State = EntityState.Modified;
 							_transactionContext.SaveChanges();
 							break;
 						}
@@ -54,12 +65,23 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 						{
 							var balanceReserve = incomingMessage.Model as BalanceReserve;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
-							transaction.BalanceReserveId = balanceReserve.Id;
-							if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+							if (incomingMessage.Action == "Apply")
 							{
-								transaction.TransactionSuccess = true;
+								transaction.BalanceReserveId = balanceReserve.Id;
+								if (transaction.BalanceReserve != null && transaction.ProductReserveId != null)
+								{
+									transaction.TransactionSuccess = true;
+								}
 							}
-							_transactionContext.Update(transaction);
+							else if (incomingMessage.Action == "Revert")
+							{
+								transaction.TransactionSuccess = false;
+							}
+							else
+							{
+								throw new JsonException("Unexpected action.");
+							}
+							_transactionContext.Entry(transaction).State = EntityState.Modified;
 							_transactionContext.SaveChanges();
 							break;
 						}

@@ -24,7 +24,7 @@ namespace PaymentPlatform.Core.Models.DatabaseModels
 		/// <summary>
 		/// Полная сумма.
 		/// </summary>
-		public float Total { get; set; }
+		public decimal Total { get; set; }
 
 		/// <summary>
 		/// Дата создания резерва.

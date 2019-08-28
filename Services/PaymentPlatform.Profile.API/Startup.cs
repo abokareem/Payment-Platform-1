@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Core.Implementations;
+using PaymentPlatform.Core.Interfaces;
 using PaymentPlatform.Profile.API.Helpers;
 using PaymentPlatform.Profile.API.Models;
 using PaymentPlatform.Profile.API.Services.Implementations;
@@ -64,6 +66,9 @@ namespace PaymentPlatform.Profile.API
             services.AddSingleton(mapper);
 
             services.AddScoped<IProfileService, ProfileService>();
+
+			IRabbitService rabbitService = new RabbitService();
+			services.AddSingleton(rabbitService);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

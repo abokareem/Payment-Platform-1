@@ -53,10 +53,12 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 								if (product != null && product.Amount >= productReserve.Amount)
 								{
 									product.Amount -= productReserve.Amount;
+									//TODO: Реализовать статусы резерва
+									productReserve.Status = 1;
 									_productContext.Entry(product).State = EntityState.Modified;
 									_productContext.Entry(productReserve).State = EntityState.Added;
 									_productContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(productReserve), "TransactionAPI");
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessage { Action = "Apply", Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
 								}
 							}
 							else if (incomingObject.Action == "Revert")
@@ -69,9 +71,9 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 									//TODO: Реализовать статусы резерва
 									productReserve.Status = 0;
 									_productContext.Entry(product).State = EntityState.Modified;
-									_productContext.Entry(productReserve).State = EntityState.Deleted;
+									_productContext.Entry(productReserve).State = EntityState.Modified;
 									_productContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(productReserve), "TransactionAPI");
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessage { Action = "Revert", Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
 								}
 							}
 							else
