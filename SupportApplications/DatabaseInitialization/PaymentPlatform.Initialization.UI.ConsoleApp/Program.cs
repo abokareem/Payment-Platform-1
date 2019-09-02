@@ -17,7 +17,7 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
             IRandomDataGenerator rndDataGenerator = new RandomDataGenerator();
 
             Console.Write(Constants.ENTER_COUNT);
-            var value = Environment.GetEnvironmentVariable("COUNT");
+            var value = Environment.GetEnvironmentVariable("COUNT") ?? Console.ReadLine();
             int.TryParse(value, out int count);
 
             if (count > 0)
