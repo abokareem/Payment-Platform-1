@@ -1,5 +1,5 @@
 {
-  "Host": "rabbit_mq",
+  "Host": "localhost",
   "Port": 5672,
   "VirtualHost": "/",
   "UserName": "admin",
