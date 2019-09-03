@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\PaymentPlatform.Core\PaymentPlatform.Core.csproj" />
+    <ProjectReference Include="..\..\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj" />
     <ProjectReference Include="..\PaymentPlatform.Identity.API\PaymentPlatform.Identity.API.csproj" />
   </ItemGroup>
 

@@ -1,10 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using AutoMapper;
+using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.ViewModels;
 
 namespace PaymentPlatform.Framework.Mapping
 {
-    class UserProfile
+    /// <summary>
+    /// Профиль AutoMapper для Profile.
+    /// </summary>
+    public class UserProfile : Profile
     {
+        /// <summary>
+        /// Пустой конструктор.
+        /// </summary>
+        public UserProfile()
+        {
+            CreateMap<ProfileViewModel, ProfileModel>().ReverseMap();
+        }
     }
 }

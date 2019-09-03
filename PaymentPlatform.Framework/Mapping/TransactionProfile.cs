@@ -5,7 +5,7 @@ using PaymentPlatform.Framework.ViewModels;
 namespace PaymentPlatform.Framework.Mapping
 {
     /// <summary>
-    /// Профиль AutoMapper.
+    /// Профиль AutoMapper для Transaction.
     /// </summary>
     public class TransactionProfile : Profile
     {

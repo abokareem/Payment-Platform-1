@@ -7,6 +7,8 @@ using RabbitMQ.Client.Exceptions;
 using System;
 using System.Text;
 
+//TODO: Переписать с учетом проекта *.Framework
+
 namespace PaymentPlatform.Core.Implementations
 {
 	public class RabbitService : IRabbitService

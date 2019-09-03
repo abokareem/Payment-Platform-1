@@ -9,7 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Core.Implementations;
 using PaymentPlatform.Core.Interfaces;
-using PaymentPlatform.Product.API.Helpers;
+using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Mapping;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
 using PaymentPlatform.Product.API.Services.Interfaces;
@@ -59,7 +60,7 @@ namespace PaymentPlatform.Product.API
 
 			var mappingConfig = new MapperConfiguration(mc =>
 			{
-				mc.AddProfile(new MappingProfile());
+				mc.AddProfile(new ProductProfile());
 			});
 
 			var mapper = mappingConfig.CreateMapper();

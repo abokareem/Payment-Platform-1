@@ -1,4 +1,4 @@
-﻿using PaymentPlatform.Product.API.ViewModels;
+﻿using PaymentPlatform.Framework.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

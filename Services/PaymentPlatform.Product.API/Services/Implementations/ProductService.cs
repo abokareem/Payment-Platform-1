@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Interfaces;
-using PaymentPlatform.Product.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,8 +8,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using PaymentPlatform.Core.Interfaces;
 using Newtonsoft.Json;
-using PaymentPlatform.Core.Models;
-using PaymentPlatform.Core.Models.DatabaseModels;
+using PaymentPlatform.Framework.ViewModels;
+using PaymentPlatform.Framework.Models;
 
 namespace PaymentPlatform.Product.API.Services.Implementations
 {
@@ -40,7 +39,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 		{
 			try
 			{
-				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessage;
+				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
 
 				switch (incomingObject.Sender)
 				{
@@ -48,7 +47,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 						{
 							if (incomingObject.Action == "Apply")
 							{
-								var productReserve = incomingObject.Model as ProductReserve;
+								var productReserve = incomingObject.Model as ProductReservedModel;
 								var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
 								if (product != null && product.Amount >= productReserve.Amount)
 								{
@@ -58,12 +57,12 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 									_productContext.Entry(product).State = EntityState.Modified;
 									_productContext.Entry(productReserve).State = EntityState.Added;
 									_productContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessage { Action = "Apply", Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = "Apply", Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
 								}
 							}
 							else if (incomingObject.Action == "Revert")
 							{
-								var productReserve = incomingObject.Model as ProductReserve;
+								var productReserve = incomingObject.Model as ProductReservedModel;
 								var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
 								if (product != null && product.Amount >= productReserve.Amount)
 								{
@@ -73,7 +72,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 									_productContext.Entry(product).State = EntityState.Modified;
 									_productContext.Entry(productReserve).State = EntityState.Modified;
 									_productContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessage { Action = "Revert", Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = "Revert", Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
 								}
 							}
 							else
@@ -99,7 +98,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// <inheritdoc/>
 		public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
 		{
-			var product = _mapper.Map<Core.Models.DatabaseModels.Product>(productViewModel);
+			var product = _mapper.Map<ProductModel>(productViewModel);
 
 			await _productContext.Products.AddAsync(product);
 			await _productContext.SaveChangesAsync();
@@ -112,7 +111,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// <inheritdoc/>
 		public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
 		{
-			IQueryable<Core.Models.DatabaseModels.Product> queriableListOfProducts = null;
+			IQueryable<ProductModel> queriableListOfProducts = null;
 
             if (isAdmin)
             {
