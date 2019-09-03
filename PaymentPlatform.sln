@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{3DAC76B7-4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaymentPlatform.Core", "Core\PaymentPlatform.Core\PaymentPlatform.Core.csproj", "{2E1C480E-6032-45F8-8504-FF4C3679AF54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentPlatform.Framework", "PaymentPlatform.Framework\PaymentPlatform.Framework.csproj", "{D2C45577-7517-47C1-85DB-C0955E2FE22F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentPlatform.Framework", "Core\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj", "{D2C45577-7517-47C1-85DB-C0955E2FE22F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
