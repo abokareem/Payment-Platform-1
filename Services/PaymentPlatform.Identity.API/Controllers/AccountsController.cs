@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.ViewModels;
-using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -69,7 +69,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			if (token == null)
 			{
-				return BadRequest(AppConstants.USER_DATA_INCORRECT);
+				return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
 			}
 
 			Response.ContentType = "application/json";

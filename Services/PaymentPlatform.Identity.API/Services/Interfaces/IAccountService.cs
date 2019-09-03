@@ -16,7 +16,7 @@ namespace PaymentPlatform.Identity.API.Services.Interfaces
         /// </summary>
         /// <param name="loginViewModel">данные пользователя.</param>
         /// <returns>Результат аутентификации.</returns>
-        Task<AppUserToken> AuthenticateAsync(LoginViewModel loginViewModel);
+        Task<UserTokenModel> AuthenticateAsync(LoginViewModel loginViewModel);
 
         /// <summary>
         /// Регистрация пользователя.

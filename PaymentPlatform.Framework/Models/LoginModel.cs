@@ -1,9 +1,9 @@
 ﻿namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-    /// Учетная запись пользователя.
+    /// Модель учетной записи пользователя.
     /// </summary>
-    public class AppLogin
+    public class LoginModel
     {
         /// <summary>
         /// Электронная почта.

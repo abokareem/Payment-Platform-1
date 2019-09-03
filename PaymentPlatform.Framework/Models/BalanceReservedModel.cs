@@ -3,9 +3,9 @@
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-    /// Зарезервированный баланс.
+    /// Модель зарезервированного баланса.
     /// </summary>
-    public class AppBalanceReserved
+    public class BalanceReservedModel
     {
         /// <summary>
         /// Идентификатор.

@@ -1,9 +1,9 @@
 ﻿namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-    /// Пользовательский токен.
+    /// Модель пользовательского токена.
     /// </summary>
-    public class AppUserToken
+    public class UserTokenModel
     {
         /// <summary>
         /// Имя пользователя

@@ -14,7 +14,7 @@ namespace PaymentPlatform.Framework.Mapping
         /// </summary>
         public ProductProfile()
         {
-            CreateMap<ProductViewModel, AppProduct>().ReverseMap();
+            CreateMap<ProductViewModel, ProductModel>().ReverseMap();
         }
     }
 }

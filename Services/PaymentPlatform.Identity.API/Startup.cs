@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
-using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;

@@ -5,7 +5,7 @@ namespace PaymentPlatform.Framework.Models
     /// <summary>
 	/// Модель транзакции.
 	/// </summary>
-    public class AppTransaction
+    public class TransactionModel
     {
         /// <summary>
         /// Идентификатор (GUID).

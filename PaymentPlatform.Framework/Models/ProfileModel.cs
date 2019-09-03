@@ -5,7 +5,7 @@ namespace PaymentPlatform.Framework.Models
     /// <summary>
 	/// Модель профиля пользователя.
 	/// </summary>
-    public class AppProfile
+    public class ProfileModel
     {
         /// <summary>
         /// Идентификатор (GUID).

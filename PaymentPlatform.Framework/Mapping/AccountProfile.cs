@@ -14,9 +14,9 @@ namespace PaymentPlatform.Framework.Mapping
         /// </summary>
         public AccountProfile()
         {
-            CreateMap<LoginViewModel, AppLogin>().ReverseMap();
+            CreateMap<LoginViewModel, LoginModel>().ReverseMap();
 
-            CreateMap<AccountViewModel, AppAccount>().ReverseMap();
+            CreateMap<AccountViewModel, AccountModel>().ReverseMap();
         }
     }
 }

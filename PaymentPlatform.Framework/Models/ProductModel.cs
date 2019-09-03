@@ -7,7 +7,7 @@ namespace PaymentPlatform.Framework.Models
     /// <summary>
 	/// Модель товара.
 	/// </summary>
-    public class AppProduct
+    public class ProductModel
     {
         /// <summary>
         /// Идентификатор (GUID).

@@ -1,11 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-    /// Личный кабинет пользователя.
+    /// Модель личного кабинета пользователя.
     /// </summary>
-    public class AppAccount
+    [Table("Accounts")]
+    public class AccountModel
     {
         /// <summary>
         /// Идентификатор (GUID).
