@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using PaymentPlatform.Core.Implementations;
-using PaymentPlatform.Core.Interfaces;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
+using PaymentPlatform.Framework.Services.RabbitMQ.Implementations;
+using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
 using PaymentPlatform.Product.API.Services.Interfaces;
@@ -67,9 +67,7 @@ namespace PaymentPlatform.Product.API
 			services.AddSingleton(mapper);
 
 			services.AddScoped<IProductService, ProductService>();
-
-			IRabbitService rabbitService = new RabbitService();
-			services.AddSingleton(rabbitService);
+            services.AddSingleton<IRabbitMQService, RabbitMQService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
