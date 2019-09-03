@@ -1,7 +1,7 @@
-﻿namespace PaymentPlatform.Identity.API.Helpers
+﻿namespace PaymentPlatform.Framework.Helpers
 {
     /// <summary>
-    /// Настройки в проекте Identity.
+    /// Настройки приложения.
     /// </summary>
     public class AppSettings
     {

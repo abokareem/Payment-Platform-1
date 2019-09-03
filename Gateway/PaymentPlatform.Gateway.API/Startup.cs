@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using PaymentPlatform.Identity.API.Helpers;
+using PaymentPlatform.Framework.Helpers;
 using System.Text;
 
 // TODO: Добавить в conf Transaction
