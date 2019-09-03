@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaymentPlatform.Framework.Models;
 
 namespace PaymentPlatform.Identity.API.Models
 {
@@ -10,7 +11,7 @@ namespace PaymentPlatform.Identity.API.Models
         /// <summary>
         /// DbSet.
         /// </summary>
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<AppAccount> Accounts { get; set; }
 
         /// <summary>
         /// Базовый конструктор.

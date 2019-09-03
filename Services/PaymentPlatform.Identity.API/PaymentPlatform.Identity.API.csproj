@@ -27,4 +27,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Identity.API.Helpers;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Interfaces;
-using PaymentPlatform.Identity.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -49,7 +51,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 				return (false, AppConstants.USER_EXIST);
 			}
 
-			var model = _mapper.Map<Account>(accountViewModel);
+			var model = _mapper.Map<AppAccount>(accountViewModel);
 
 			await _identityContext.Accounts.AddAsync(model);
 			await _identityContext.SaveChangesAsync();
@@ -58,7 +60,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 		}
 
 		/// <inheritdoc/>
-		public async Task<UserToken> AuthenticateAsync(LoginViewModel loginViewModel)
+		public async Task<AppUserToken> AuthenticateAsync(LoginViewModel loginViewModel)
 		{
 			var account = await _identityContext.Accounts.SingleOrDefaultAsync(x => x.Email == loginViewModel.Email && x.Password == loginViewModel.Password);
 
@@ -82,7 +84,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwtSecurityToken = tokenHandler.WriteToken(token);
 
-            var userToken = new UserToken()
+            var userToken = new AppUserToken()
             {
                 UserName = account.Login,
                 Role = account.Role.ConvertRole(),

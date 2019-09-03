@@ -1,5 +1,5 @@
-﻿using PaymentPlatform.Identity.API.Models;
-using PaymentPlatform.Identity.API.ViewModels;
+﻿using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace PaymentPlatform.Identity.API.Services.Interfaces
         /// </summary>
         /// <param name="loginViewModel">данные пользователя.</param>
         /// <returns>Результат аутентификации.</returns>
-        Task<UserToken> AuthenticateAsync(LoginViewModel loginViewModel);
+        Task<AppUserToken> AuthenticateAsync(LoginViewModel loginViewModel);
 
         /// <summary>
         /// Регистрация пользователя.
