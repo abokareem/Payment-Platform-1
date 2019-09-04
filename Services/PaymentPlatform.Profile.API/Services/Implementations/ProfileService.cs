@@ -83,7 +83,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 						throw new JsonException("Unexpected sender.");
 				}
 			}
-			catch (JsonException jsonExc)
+			catch (JsonException)
 			{
 				//TODO: Вывести в лог
 			}
