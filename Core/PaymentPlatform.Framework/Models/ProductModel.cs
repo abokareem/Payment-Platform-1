@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
 	/// Модель товара.
 	/// </summary>
+    [Table("Products")]
     public class ProductModel
     {
         /// <summary>

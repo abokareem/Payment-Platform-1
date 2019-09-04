@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
 	/// Модель транзакции.
 	/// </summary>
+    [Table("Transactions")]
     public class TransactionModel
     {
         /// <summary>

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
 	/// Модель профиля пользователя.
 	/// </summary>
+    [Table("Profiles")]
     public class ProfileModel
     {
         /// <summary>
