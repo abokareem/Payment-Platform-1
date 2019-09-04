@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using PaymentPlatform.Core.Interfaces;
-using PaymentPlatform.Core.Models;
-using PaymentPlatform.Core.Models.DatabaseModels;
+using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
+using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Profile.API.Models;
 using PaymentPlatform.Profile.API.Services.Interfaces;
-using PaymentPlatform.Profile.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +20,14 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 	{
 		private readonly ProfileContext _profileContext;
 		private readonly IMapper _mapper;
-		private readonly IRabbitService _rabbitService;
+		private readonly IRabbitMQService _rabbitService;
 
 		/// <summary>
 		/// Конструктор.
 		/// </summary>
 		/// <param name="profileContext">контекст.</param>
 		/// <param name="mapper">профиль AutoMapper.</param>
-		public ProfileService(ProfileContext profileContext, IMapper mapper, IRabbitService rabbitService)
+		public ProfileService(ProfileContext profileContext, IMapper mapper, IRabbitMQService rabbitService)
 		{
 			_profileContext = profileContext;
 			_mapper = mapper;
@@ -40,13 +39,13 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 		{
 			try
 			{
-				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessage;
+				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
 
 				switch (incomingObject.Sender)
 				{
 					case "TransactionAPI":
 						{
-							var balanceReserve = incomingObject.Model as BalanceReserve;
+							var balanceReserve = incomingObject.Model as BalanceReservedModel;
 							var profile = _profileContext.Profiles.FirstOrDefault(p => p.Id == balanceReserve.ProfileId);
 							if (incomingObject.Action == "Apply")
 							{
@@ -58,7 +57,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 									_profileContext.Entry(profile).State = EntityState.Modified;
 									_profileContext.Entry(balanceReserve).State = EntityState.Added;
 									_profileContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessage { Action = "Apply", Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = "Apply", Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
 								}
 							}
 							else if (incomingObject.Action == "Revert")
@@ -71,7 +70,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 									_profileContext.Entry(profile).State = EntityState.Modified;
 									_profileContext.Entry(balanceReserve).State = EntityState.Modified;
 									_profileContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessage { Action = "Revert", Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = "Revert", Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
 								}
 							}
 							else
@@ -97,7 +96,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 		/// <inheritdoc/>
 		public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
 		{
-			var profile = _mapper.Map<Core.Models.DatabaseModels.Profile>(profileViewModel);
+			var profile = _mapper.Map<ProfileModel>(profileViewModel);
 
 			if (await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id) != null)
 			{

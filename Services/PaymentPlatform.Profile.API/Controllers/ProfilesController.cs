@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Profile.API.Services.Interfaces;
-using PaymentPlatform.Profile.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
