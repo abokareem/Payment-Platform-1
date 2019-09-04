@@ -1,16 +1,15 @@
 ﻿using PaymentPlatform.Transaction.API.Services.Interfaces;
-using PaymentPlatform.Transaction.API.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PaymentPlatform.Transaction.API.Models;
 using AutoMapper;
-using PaymentPlatform.Core.Interfaces;
 using Newtonsoft.Json;
-using PaymentPlatform.Core.Models;
-using PaymentPlatform.Core.Models.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
+using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
+using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.ViewModels;
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
@@ -18,9 +17,9 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 	{
 		private readonly TransactionContext _transactionContext;
 		private readonly IMapper _mapper;
-		private readonly IRabbitService _rabbitService;
+		private readonly IRabbitMQService _rabbitService;
 
-		public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitService rabbitService)
+		public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService)
 		{
 			_transactionContext = transactionContext;
 			_mapper = mapper;
@@ -33,13 +32,13 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 		{
 			try
 			{
-				var incomingMessage = JsonConvert.DeserializeObject(message) as RabbitMessage;
+				var incomingMessage = JsonConvert.DeserializeObject(message) as RabbitMessageModel;
 
 				switch (incomingMessage.Sender)
 				{
 					case "ProductAPI":
 						{
-							var productReserve = incomingMessage.Model as ProductReserve;
+							var productReserve = incomingMessage.Model as ProductReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
 
                             var incomingRabbitMessage = string.Empty;
@@ -77,7 +76,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 						}
 					case "ProfileAPI":
 						{
-							var balanceReserve = incomingMessage.Model as BalanceReserve;
+							var balanceReserve = incomingMessage.Model as BalanceReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
 
                             var incomingRabbitMessage = string.Empty;
@@ -130,7 +129,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
 		public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
 		{
-			var newTransaction = _mapper.Map<Core.Models.DatabaseModels.Transaction>(transaction);
+			var newTransaction = _mapper.Map<TransactionModel>(transaction);
 			_transactionContext.Entry(newTransaction).State = EntityState.Added;
 
 			await _transactionContext.SaveChangesAsync();
@@ -139,13 +138,13 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			return (true, "Добавлена новая транзакция.");
 		}
 
-		private void MakeReserve(Core.Models.DatabaseModels.Transaction transaction)
+		private void MakeReserve(TransactionModel transaction)
 		{
-            var balanceReserveModel = _mapper.Map<BalanceReserve>(transaction);
-            var productReserveModel = _mapper.Map<ProductReserve>(transaction);
+            var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
+            var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-            var messageToProfile = new RabbitMessage { Action = "Apply", Sender = "TransactionAPI", Model = balanceReserveModel };
-			var messageToProduct = new RabbitMessage { Action = "Apply", Sender = "TransactionAPI", Model = productReserveModel };
+            var messageToProfile = new RabbitMessageModel { Action = "Apply", Sender = "TransactionAPI", Model = balanceReserveModel };
+			var messageToProduct = new RabbitMessageModel { Action = "Apply", Sender = "TransactionAPI", Model = productReserveModel };
 
 			//TODO: Decrease balance
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile),"ProfileAPI");
@@ -153,13 +152,13 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
-		private void RevertReserve(Core.Models.DatabaseModels.Transaction transaction)
+		private void RevertReserve(TransactionModel transaction)
 		{
-            var balanceReserveModel = _mapper.Map<BalanceReserve>(transaction);
-            var productReserveModel = _mapper.Map<ProductReserve>(transaction);
+            var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
+            var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-            var messageToProfile = new RabbitMessage { Action = "Revert", Sender = "TransactionAPI", Model = balanceReserveModel };
-			var messageToProduct = new RabbitMessage { Action = "Revert", Sender = "TransactionAPI", Model = productReserveModel };
+            var messageToProfile = new RabbitMessageModel { Action = "Revert", Sender = "TransactionAPI", Model = balanceReserveModel };
+			var messageToProduct = new RabbitMessageModel { Action = "Revert", Sender = "TransactionAPI", Model = productReserveModel };
 
 			//TODO: Decrease balance
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");

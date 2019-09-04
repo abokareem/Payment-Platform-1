@@ -1,4 +1,4 @@
-﻿using PaymentPlatform.Transaction.API.ViewModels;
+﻿using PaymentPlatform.Framework.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Services.Interfaces
 {
+    // TODO: XML комментарии
+
 	public interface ITransactionService
 	{
 		Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null);

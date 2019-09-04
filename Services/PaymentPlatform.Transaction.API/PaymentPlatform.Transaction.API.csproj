@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\PaymentPlatform.Core\PaymentPlatform.Core.csproj" />
+    <ProjectReference Include="..\..\Core\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj" />
   </ItemGroup>
 
 </Project>

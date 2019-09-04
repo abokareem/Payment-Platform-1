@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using PaymentPlatform.Transaction.API.Helpers;
 using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Implementations;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
-using PaymentPlatform.Core.Interfaces;
-using PaymentPlatform.Core.Implementations;
+using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Mapping;
+using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
+using PaymentPlatform.Framework.Services.RabbitMQ.Implementations;
 
 namespace PaymentPlatform.Transaction.API
 {
@@ -63,7 +59,7 @@ namespace PaymentPlatform.Transaction.API
 
 			var mappingConfig = new MapperConfiguration(mc =>
 			{
-				mc.AddProfile(new MappingProfile());
+				mc.AddProfile(new TransactionProfile());
 			});
 
 			IMapper mapper = mappingConfig.CreateMapper();
@@ -71,7 +67,7 @@ namespace PaymentPlatform.Transaction.API
 
 			services.AddScoped<ITransactionService, TransactionService>();
 
-			services.AddSingleton<IRabbitService, RabbitService>();
+			services.AddSingleton<IRabbitMQService, RabbitMQService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
