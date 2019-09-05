@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PaymentPlatform.Initialization.BLL\PaymentPlatform.Initialization.BLL.csproj" />
-    <ProjectReference Include="..\PaymentPlatform.Initialization.DAL\PaymentPlatform.Initialization.DAL.csproj" />
+    <ProjectReference Include="..\..\..\Core\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj" />
   </ItemGroup>
 
 </Project>

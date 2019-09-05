@@ -1,7 +1,7 @@
 ﻿namespace PaymentPlatform.Framework.Constants
 {
     /// <summary>
-    /// Константы для проекта Identity.
+    /// Константы для Identity.
     /// </summary>
     public static class IdentityConstants
     {
