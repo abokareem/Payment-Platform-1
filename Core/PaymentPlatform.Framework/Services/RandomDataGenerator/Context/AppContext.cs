@@ -22,7 +22,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         /// </summary>
         public MainContext()
         {
-            //Database.EnsureCreated();
+            Database.EnsureCreated();
         }
 
         /// <summary>
