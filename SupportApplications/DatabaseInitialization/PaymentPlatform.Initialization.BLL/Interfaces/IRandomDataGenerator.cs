@@ -24,5 +24,6 @@ namespace PaymentPlatform.Initialization.BLL.Interfaces
         /// </summary>
         /// <param name="count">количество.</param>
         Task AddNewTransactionsAsync(int count);
+
     }
 }

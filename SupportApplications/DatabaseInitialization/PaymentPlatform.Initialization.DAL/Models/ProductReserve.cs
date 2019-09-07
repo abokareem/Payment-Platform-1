@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace PaymentPlatform.Initialization.DAL.Models
@@ -11,6 +12,10 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// </summary>
 		public Guid Id { get; set; }
 
+		/// <summary>
+		/// Идентификатор транзакции.
+		/// </summary>
+		public Guid TransactionId { get; set; }
 		/// <summary>
 		/// Идентификатор товара.
 		/// </summary>
@@ -32,12 +37,11 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		public DateTime ReservationDate { get; set; }
 
 		/// <summary>
-		/// Успешность транзакции на основе резерва.
+		/// Статус.
 		/// </summary>
-		public bool TransactionSuccess { get; set; }
+		public int Status { get; set; }
 
 		// Навигационные свойства
-
 		public Product Product { get; set; }
 		public Transaction Transaction { get; set; }
 	}

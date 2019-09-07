@@ -5,7 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PaymentPlatform.Identity.API\PaymentPlatform.Identity.API.csproj" />
+    <ProjectReference Include="..\..\Core\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj" />
   </ItemGroup>
 
 </Project>

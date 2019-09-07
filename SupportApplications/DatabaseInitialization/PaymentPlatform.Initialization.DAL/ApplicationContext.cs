@@ -1,6 +1,6 @@
-﻿using PaymentPlatform.Initialization.DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PaymentPlatform.Initialization.DAL.Models;
 using System;
 
 namespace PaymentPlatform.Initialization.DAL

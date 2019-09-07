@@ -12,6 +12,11 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		public Guid Id { get; set; }
 
 		/// <summary>
+		/// Идентификатор транзакции.
+		/// </summary>
+		public Guid TransactionId { get; set; }
+
+		/// <summary>
 		/// Идентификатор профиля.
 		/// </summary>
 		public Guid ProfileId { get; set; }
@@ -19,7 +24,7 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Полная сумма.
 		/// </summary>
-		public float Total { get; set; }
+		public decimal Total { get; set; }
 
 		/// <summary>
 		/// Дата создания резерва.
@@ -27,9 +32,9 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		public DateTime ReservationDate { get; set; }
 
 		/// <summary>
-		/// Успешность транзакции на основе резерва.
+		/// Статус.
 		/// </summary>
-		public bool TransactionSuccess { get; set; }
+		public int Status { get; set; }
 
 		// Навигационные свойства
 		public Profile Profile { get; set; }

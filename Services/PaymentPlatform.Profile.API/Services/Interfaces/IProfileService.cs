@@ -1,4 +1,4 @@
-﻿using PaymentPlatform.Profile.API.ViewModels;
+﻿using PaymentPlatform.Framework.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,7 +33,7 @@ namespace PaymentPlatform.Profile.API.Services.Interfaces
         Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null);
 
         /// <summary>
-        /// Обновить свойства профиля.
+        /// Обновить профиль.
         /// </summary>
         /// <param name="profileViewModel">профиль.</param>
         /// <returns>Результат операции.</returns>

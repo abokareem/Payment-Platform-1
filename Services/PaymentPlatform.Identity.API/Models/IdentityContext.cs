@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PaymentPlatform.Framework.Models;
 
 namespace PaymentPlatform.Identity.API.Models
 {
@@ -8,9 +9,17 @@ namespace PaymentPlatform.Identity.API.Models
     public class IdentityContext : DbContext
     {
         /// <summary>
+        /// Пустой конструктор.
+        /// </summary>
+        public IdentityContext()
+        {
+            Database.EnsureCreated();
+        }
+
+        /// <summary>
         /// DbSet.
         /// </summary>
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<AccountModel> Accounts { get; set; }
 
         /// <summary>
         /// Базовый конструктор.

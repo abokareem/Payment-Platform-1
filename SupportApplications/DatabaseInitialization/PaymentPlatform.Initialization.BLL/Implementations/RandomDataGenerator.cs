@@ -54,6 +54,7 @@ namespace PaymentPlatform.Initialization.BLL.Implementations
                 await db.Profiles.AddRangeAsync(profiles);
 
                 await db.SaveChangesAsync();
+               
             }
         }
 

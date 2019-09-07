@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1 AS base
+WORKDIR /app
+EXPOSE 85
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
+WORKDIR /src
+COPY Services/PaymentPlatform.Identity.API/PaymentPlatform.Identity.API.csproj Services/PaymentPlatform.Identity.API/
+COPY . .
+WORKDIR /src/Services/PaymentPlatform.Identity.API
+
+FROM build AS publish
+RUN dotnet publish PaymentPlatform.Identity.API.csproj -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "PaymentPlatform.Identity.API.dll"]
