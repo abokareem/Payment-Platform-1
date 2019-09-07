@@ -30,16 +30,20 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<string> AddNewProfileAsync(ProfileViewModel profileViewModel)
+        public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
         {
             var profile = _mapper.Map<Models.Profile>(profileViewModel);
-
+			if (await _profileContext.Profiles.FirstOrDefaultAsync(p=>p.Id == profileViewModel.Id) != null)
+			{
+				///TODO: Вынести результат в константы
+				return ("fail", false);
+			}
             await _profileContext.Profiles.AddAsync(profile);
             await _profileContext.SaveChangesAsync();
 
             var id = profile.Id.ToString();
 
-            return id;
+            return (id, true);
         }
 
         /// <inheritdoc/>

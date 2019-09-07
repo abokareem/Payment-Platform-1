@@ -11,6 +11,12 @@ namespace PaymentPlatform.Product.API.ViewModels
 		/// Идентификатор (GUID).
 		/// </summary>
 		public Guid Id { get; set; }
+
+		/// <summary>
+		/// Идентификатор профиля.
+		/// </summary>
+		public Guid ProfileId { get; set; }
+
 		/// <summary>
 		/// Название товара.
 		/// </summary>
