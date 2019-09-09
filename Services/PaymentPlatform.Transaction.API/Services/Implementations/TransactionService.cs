@@ -11,6 +11,8 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.ViewModels;
 
+// TODO: Добавить XML комментарии
+
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
 	public class TransactionService : ITransactionService
