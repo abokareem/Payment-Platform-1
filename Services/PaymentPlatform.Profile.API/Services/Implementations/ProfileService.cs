@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
@@ -47,30 +48,34 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 						{
 							var balanceReserve = incomingObject.Model as BalanceReservedModel;
 							var profile = _profileContext.Profiles.FirstOrDefault(p => p.Id == balanceReserve.ProfileId);
-							if (incomingObject.Action == "Apply")
+							if (incomingObject.Action == (int)RabbitMessageActions.Apply)
 							{
 								if (profile != null && profile.Balance >= balanceReserve.Total)
 								{
 									profile.Balance -= balanceReserve.Total;
-									//TODO: Реализовать статусы резерва
-									balanceReserve.Status = 1;
+									balanceReserve.Status = (int)ProductReserveStatus.Peserved;
+
 									_profileContext.Entry(profile).State = EntityState.Modified;
 									_profileContext.Entry(balanceReserve).State = EntityState.Added;
+
 									_profileContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = "Apply", Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
 								}
 							}
-							else if (incomingObject.Action == "Revert")
+							else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
 							{
 								if (profile != null)
 								{
 									profile.Balance += balanceReserve.Total;
-									//TODO: Реализовать статусы резерва
-									balanceReserve.Status = 0;
+									balanceReserve.Status = (int)ProductReserveStatus.NotReserved;
+
 									_profileContext.Entry(profile).State = EntityState.Modified;
 									_profileContext.Entry(balanceReserve).State = EntityState.Modified;
+
 									_profileContext.SaveChanges();
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = "Revert", Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+
+									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
 								}
 							}
 							else
