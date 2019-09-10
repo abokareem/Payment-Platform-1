@@ -53,11 +53,13 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 								if (profile != null && profile.Balance >= balanceReserve.Total)
 								{
 									profile.Balance -= balanceReserve.Total;
-									//TODO: Реализовать статусы резерва
-									balanceReserve.Status = 1;
+									balanceReserve.Status = (int)ProductReserveStatus.Peserved;
+
 									_profileContext.Entry(profile).State = EntityState.Modified;
 									_profileContext.Entry(balanceReserve).State = EntityState.Added;
+
 									_profileContext.SaveChanges();
+
 									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
 								}
 							}
@@ -66,11 +68,13 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 								if (profile != null)
 								{
 									profile.Balance += balanceReserve.Total;
-									//TODO: Реализовать статусы резерва
-									balanceReserve.Status = 0;
+									balanceReserve.Status = (int)ProductReserveStatus.NotReserved;
+
 									_profileContext.Entry(profile).State = EntityState.Modified;
 									_profileContext.Entry(balanceReserve).State = EntityState.Modified;
+
 									_profileContext.SaveChanges();
+
 									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
 								}
 							}

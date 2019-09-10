@@ -53,11 +53,13 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 								if (product != null && product.Amount >= productReserve.Amount)
 								{
 									product.Amount -= productReserve.Amount;
-									//TODO: Реализовать статусы резерва
-									productReserve.Status = 1;
+									productReserve.Status = (int)ProductReserveStatus.Peserved;
+
 									_productContext.Entry(product).State = EntityState.Modified;
 									_productContext.Entry(productReserve).State = EntityState.Added;
+
 									_productContext.SaveChanges();
+
 									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
 								}
 							}
@@ -68,11 +70,13 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 								if (product != null && product.Amount >= productReserve.Amount)
 								{
 									product.Amount += productReserve.Amount;
-									//TODO: Реализовать статусы резерва
-									productReserve.Status = 0;
+									productReserve.Status = (int)ProductReserveStatus.NotReserved;
+
 									_productContext.Entry(product).State = EntityState.Modified;
 									_productContext.Entry(productReserve).State = EntityState.Modified;
+
 									_productContext.SaveChanges();
+
 									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
 								}
 							}
