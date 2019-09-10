@@ -1,18 +1,16 @@
-﻿using PaymentPlatform.Transaction.API.Services.Interfaces;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using PaymentPlatform.Framework.Enums;
+using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
+using PaymentPlatform.Framework.ViewModels;
+using PaymentPlatform.Transaction.API.Models;
+using PaymentPlatform.Transaction.API.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PaymentPlatform.Transaction.API.Models;
-using AutoMapper;
-using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore;
-using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
-using PaymentPlatform.Framework.Models;
-using PaymentPlatform.Framework.ViewModels;
-using PaymentPlatform.Framework.Enums;
-
-// TODO: Добавить XML комментарии
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
@@ -44,32 +42,32 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							var productReserve = incomingMessage.Model as ProductReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
 
-                            var incomingRabbitMessage = incomingMessage.Action;
+							var incomingRabbitMessage = incomingMessage.Action;
 
-                            switch (incomingRabbitMessage)
-                            {
-                                case (int)RabbitMessageActions.Apply:
-                                    {
-                                        transaction.ProductReserveId = productReserve.Id;
+							switch (incomingRabbitMessage)
+							{
+								case (int)RabbitMessageActions.Apply:
+									{
+										transaction.ProductReserveId = productReserve.Id;
 
-                                        if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
-                                        {
-                                            transaction.TransactionSuccess = true;
-                                        }
-                                    }
-                                    break;
+										if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
+										{
+											transaction.TransactionSuccess = true;
+										}
+									}
+									break;
 
-                                case (int)RabbitMessageActions.Revert:
-                                    {
-                                        transaction.TransactionSuccess = false;
-                                    }
-                                    break;
+								case (int)RabbitMessageActions.Revert:
+									{
+										transaction.TransactionSuccess = false;
+									}
+									break;
 
-                                default:
-                                    {
-                                        throw new JsonException("Unexpected action.");
-                                    }
-                            }
+								default:
+									{
+										throw new JsonException("Unexpected action.");
+									}
+							}
 
 							_transactionContext.Entry(transaction).State = EntityState.Modified;
 							_transactionContext.SaveChanges();
@@ -81,32 +79,32 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							var balanceReserve = incomingMessage.Model as BalanceReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
 
-                            var incomingRabbitMessage = incomingMessage.Action;
+							var incomingRabbitMessage = incomingMessage.Action;
 
-                            switch (incomingRabbitMessage)
-                            {
-                                case (int)RabbitMessageActions.Apply:
-                                    {
-                                        transaction.BalanceReserveId = balanceReserve.Id;
+							switch (incomingRabbitMessage)
+							{
+								case (int)RabbitMessageActions.Apply:
+									{
+										transaction.BalanceReserveId = balanceReserve.Id;
 
-                                        if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
-                                        {
-                                            transaction.TransactionSuccess = true;
-                                        }
-                                    }
-                                    break;
+										if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
+										{
+											transaction.TransactionSuccess = true;
+										}
+									}
+									break;
 
-                                case (int)RabbitMessageActions.Revert:
-                                    {
-                                        transaction.TransactionSuccess = false;
-                                    }
-                                    break;
+								case (int)RabbitMessageActions.Revert:
+									{
+										transaction.TransactionSuccess = false;
+									}
+									break;
 
-                                default:
-                                    {
-                                        throw new JsonException("Unexpected action.");
-                                    }
-                            }
+								default:
+									{
+										throw new JsonException("Unexpected action.");
+									}
+							}
 
 							_transactionContext.Entry(transaction).State = EntityState.Modified;
 							_transactionContext.SaveChanges();
@@ -141,29 +139,27 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
 		private void MakeReserve(TransactionModel transaction)
 		{
-            var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
-            var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
+			var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
+			var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-            var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = balanceReserveModel };
+			var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = balanceReserveModel };
 			var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = productReserveModel };
 
-			//TODO: Decrease balance
-			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile),"ProfileAPI");
-			//TODO: Decrease product
+			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
+
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
 		private void RevertReserve(TransactionModel transaction)
 		{
-            var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
-            var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
+			var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
+			var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-            var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = balanceReserveModel };
+			var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = balanceReserveModel };
 			var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = productReserveModel };
 
-			//TODO: Decrease balance
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
-			//TODO: Decrease product
+
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
@@ -187,10 +183,10 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 				transactions = transactions.Skip((int)skip);
 			}
 
-            var transactionResult = await transactions.ToListAsync();
-            var transactionResultViewModels = _mapper.Map<List<TransactionViewModel>>(transactionResult);
+			var transactionResult = await transactions.ToListAsync();
+			var transactionResultViewModels = _mapper.Map<List<TransactionViewModel>>(transactionResult);
 
-            return transactionResultViewModels;
+			return transactionResultViewModels;
 		}
 
 		public async Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
