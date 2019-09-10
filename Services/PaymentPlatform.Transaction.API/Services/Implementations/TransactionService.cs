@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.ViewModels;
+using PaymentPlatform.Framework.Enums;
 
 // TODO: Добавить XML комментарии
 
@@ -43,12 +44,11 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							var productReserve = incomingMessage.Model as ProductReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
 
-                            var incomingRabbitMessage = string.Empty;
-                            incomingRabbitMessage = incomingMessage.Action;
+                            var incomingRabbitMessage = incomingMessage.Action;
 
                             switch (incomingRabbitMessage)
                             {
-                                case "Apply":
+                                case (int)RabbitMessageActions.Apply:
                                     {
                                         transaction.ProductReserveId = productReserve.Id;
 
@@ -59,7 +59,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
                                     }
                                     break;
 
-                                case "Revert":
+                                case (int)RabbitMessageActions.Revert:
                                     {
                                         transaction.TransactionSuccess = false;
                                     }
@@ -81,12 +81,11 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 							var balanceReserve = incomingMessage.Model as BalanceReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
 
-                            var incomingRabbitMessage = string.Empty;
-                            incomingRabbitMessage = incomingMessage.Action;
+                            var incomingRabbitMessage = incomingMessage.Action;
 
                             switch (incomingRabbitMessage)
                             {
-                                case "Apply":
+                                case (int)RabbitMessageActions.Apply:
                                     {
                                         transaction.BalanceReserveId = balanceReserve.Id;
 
@@ -97,7 +96,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
                                     }
                                     break;
 
-                                case "Revert":
+                                case (int)RabbitMessageActions.Revert:
                                     {
                                         transaction.TransactionSuccess = false;
                                     }
@@ -145,8 +144,8 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
             var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-            var messageToProfile = new RabbitMessageModel { Action = "Apply", Sender = "TransactionAPI", Model = balanceReserveModel };
-			var messageToProduct = new RabbitMessageModel { Action = "Apply", Sender = "TransactionAPI", Model = productReserveModel };
+            var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = balanceReserveModel };
+			var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = productReserveModel };
 
 			//TODO: Decrease balance
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile),"ProfileAPI");
@@ -159,8 +158,8 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
             var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-            var messageToProfile = new RabbitMessageModel { Action = "Revert", Sender = "TransactionAPI", Model = balanceReserveModel };
-			var messageToProduct = new RabbitMessageModel { Action = "Revert", Sender = "TransactionAPI", Model = productReserveModel };
+            var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = balanceReserveModel };
+			var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = productReserveModel };
 
 			//TODO: Decrease balance
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
