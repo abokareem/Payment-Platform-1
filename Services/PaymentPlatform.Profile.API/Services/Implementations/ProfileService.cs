@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
@@ -105,8 +106,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 
 			if (await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id) != null)
 			{
-				///TODO: Вынести результат в константы
-				return ("fail", false);
+				return (GlobalConstants.PROFILE_SERVICE_FAIL, false);
 			}
 
 			await _profileContext.Profiles.AddAsync(profile);
