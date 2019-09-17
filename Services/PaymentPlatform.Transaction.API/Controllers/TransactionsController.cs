@@ -115,7 +115,9 @@ namespace PaymentPlatform.Transaction.API.Controllers
 			return _transactionService.GetTransactionByIdAsync(id) != null;
 		}
 
-		private (Guid, string) GetClaimsIdentity()
+        // TODO: Это необходимо удалить? (To: s207883)
+
+        private (Guid, string) GetClaimsIdentity()
 		{
 			var id = User.Identity.Name;
 
