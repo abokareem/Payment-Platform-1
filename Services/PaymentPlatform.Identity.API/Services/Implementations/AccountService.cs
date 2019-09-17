@@ -24,7 +24,6 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 	/// </summary>
 	public class AccountService : IAccountService
 	{
-        //TODO: Удалить неиспользуемые свойства.
         private readonly AppSettings _appSettings;
         private readonly IdentityContext _identityContext;
 		private readonly IMapper _mapper;

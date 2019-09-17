@@ -10,8 +10,6 @@ using Ocelot.Middleware;
 using PaymentPlatform.Framework.Helpers;
 using System.Text;
 
-// TODO: Добавить в conf Transaction
-
 namespace PaymentPlatform.Gateway.API
 {
     public class Startup

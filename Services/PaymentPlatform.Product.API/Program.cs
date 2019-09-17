@@ -19,7 +19,7 @@ namespace PaymentPlatform.Product.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:84")
+                .UseUrls("http://*:49070")
                 .UseStartup<Startup>();
     }
 }

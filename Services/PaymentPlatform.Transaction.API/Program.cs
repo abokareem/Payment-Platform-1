@@ -19,7 +19,7 @@ namespace PaymentPlatform.Transaction.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:82")
+                .UseUrls("http://*:49090")
                 .UseStartup<Startup>();
     }
 }

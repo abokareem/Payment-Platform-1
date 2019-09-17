@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PaymentPlatform.Framework.Models;
 
-// TODO: Изменить директиву
-
 namespace PaymentPlatform.Product.API.Models
 {
 	public class ProductContext : DbContext

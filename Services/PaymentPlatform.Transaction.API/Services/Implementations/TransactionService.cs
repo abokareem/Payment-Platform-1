@@ -28,7 +28,6 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
 		}
 
-
 		private void OnIncomingMessage(string message)
 		{
 			try

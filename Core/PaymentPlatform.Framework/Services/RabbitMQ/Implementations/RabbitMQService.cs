@@ -146,7 +146,6 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
         public (bool success, string message) ConfigureServiceDefault()
         {
-            //TODO: Сделать нормальный путь
             var jsonConfiguration = new ConfigurationBuilder()
                    .SetBasePath(Environment.CurrentDirectory)
                    .AddJsonFile(@"Settings/RabbitMQConfig.json")
