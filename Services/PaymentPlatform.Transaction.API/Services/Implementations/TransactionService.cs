@@ -49,21 +49,21 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 		/// <summary>
 		/// Метод, вызываемый при получении сообщения от брокера.
 		/// </summary>
-		/// <param name="message">Текст сообщения.</param>
-		private void OnIncomingMessage(string message)
+		/// <param name="incomingMessage">Текст сообщения.</param>
+		private void OnIncomingMessage(string incomingMessage)
 		{
 			try
 			{
-				var incomingMessage = JsonConvert.DeserializeObject(message) as RabbitMessageModel;
+				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
 
-				switch (incomingMessage.Sender)
+				switch (incomingObject.Sender)
 				{
 					case "ProductAPI":
 						{
-							var productReserve = incomingMessage.Model as ProductReservedModel;
+							var productReserve = incomingObject.Model as ProductReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
 
-							var incomingRabbitMessage = incomingMessage.Action;
+							var incomingRabbitMessage = incomingObject.Action;
 
 							switch (incomingRabbitMessage)
 							{
@@ -97,10 +97,10 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 						}
 					case "ProfileAPI":
 						{
-							var balanceReserve = incomingMessage.Model as BalanceReservedModel;
+							var balanceReserve = incomingObject.Model as BalanceReservedModel;
 							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
 
-							var incomingRabbitMessage = incomingMessage.Action;
+							var incomingRabbitMessage = incomingObject.Action;
 
 							switch (incomingRabbitMessage)
 							{
