@@ -9,23 +9,38 @@ using System.Text;
 
 namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 {
+	/// <summary>
+	/// Брокер сообщений.
+	/// </summary>
     public class RabbitMQService : IRabbitMQService
     {
         private static ConnectionFactory connectionFactory = new ConnectionFactory();
         private static IConnection connection;
         private static IModel channel;
 
-
+		/// <summary>
+		/// Конструктор.
+		/// </summary>
+		/// <param name="hostName">Имя хоста.</param>
+		/// <param name="port">Порт.</param>
+		/// <param name="virtualHost">Виртуальный хост.</param>
+		/// <param name="userName">Имя пользователя.</param>
+		/// <param name="password">Пароль.</param>
         public RabbitMQService(string hostName, int port, string virtualHost, string userName, string password)
         {
             _ = ConfigureService(hostName, port, virtualHost, userName, password);
         }
 
+		/// <summary>
+		/// Пустой конструктор.
+		/// </summary>
         public RabbitMQService()
         {
             _ = ConfigureServiceDefault();
-        }
-        public (bool success, string message) CheckConnection()
+		}
+
+		/// <inheritdoc/>
+		public (bool success, string message) CheckConnection()
         {
             if (connection.IsOpen)
             {
@@ -37,7 +52,8 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
         }
 
-        public (bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword)
+		/// <inheritdoc/>
+		public (bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword)
         {
             #region Parameters check
             if (string.IsNullOrEmpty(host))
@@ -77,7 +93,8 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             return (true, "Конфигурация установлена успешно.");
         }
 
-        public (bool success, string message) SendMessage(string message, string recipient)
+		/// <inheritdoc/>
+		public (bool success, string message) SendMessage(string message, string recipient)
         {
             #region Parameters check
             if (string.IsNullOrEmpty(message))
@@ -114,7 +131,8 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
         }
 
-        public (bool success, string message) SetListener(string channelToListen, Action<string> onIncomingMessage)
+		/// <inheritdoc/>
+		public (bool success, string message) SetListener(string channelToListen, Action<string> onIncomingMessage)
         {
             try
             {
@@ -144,7 +162,8 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
         }
 
-        public (bool success, string message) ConfigureServiceDefault()
+		/// <inheritdoc/>
+		public (bool success, string message) ConfigureServiceDefault()
         {
             var jsonConfiguration = new ConfigurationBuilder()
                    .SetBasePath(Environment.CurrentDirectory)
