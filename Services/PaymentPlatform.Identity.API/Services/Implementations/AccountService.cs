@@ -35,7 +35,6 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
         /// <param name="identityContext">контекст бд.</param>
         public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext, IMapper mapper)
 		{
-			//_appSettings = appSettings.Value;
 			_identityContext = identityContext;
 			_mapper = mapper;
             _appSettings = appSettings.Value;

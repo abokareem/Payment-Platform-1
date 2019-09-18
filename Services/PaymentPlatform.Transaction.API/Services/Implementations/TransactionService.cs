@@ -14,12 +14,30 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
+	/// <summary>
+	/// Сервис транзакций.
+	/// </summary>
 	public class TransactionService : ITransactionService
 	{
+		/// <summary>
+		/// Контекст транзакций.
+		/// </summary>
 		private readonly TransactionContext _transactionContext;
+		/// <summary>
+		/// Экземпляр автомаппера.
+		/// </summary>
 		private readonly IMapper _mapper;
+		/// <summary>
+		/// Сервис брокера сообщений.
+		/// </summary>
 		private readonly IRabbitMQService _rabbitService;
 
+		/// <summary>
+		/// Конструктор.
+		/// </summary>
+		/// <param name="transactionContext">Контекст транзакций.</param>
+		/// <param name="mapper">Экземпляр автомаппера.</param>
+		/// <param name="rabbitService">Сервис брокера сообщений.</param>
 		public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService)
 		{
 			_transactionContext = transactionContext;
@@ -28,6 +46,10 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
 		}
 
+		/// <summary>
+		/// Метод, вызываемый при получении сообщения от брокера.
+		/// </summary>
+		/// <param name="message">Текст сообщения.</param>
 		private void OnIncomingMessage(string message)
 		{
 			try
@@ -125,6 +147,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			}
 		}
 
+		/// <inheritdoc/>
 		public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
 		{
 			var newTransaction = _mapper.Map<TransactionModel>(transaction);
@@ -136,6 +159,10 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			return (true, "Добавлена новая транзакция.");
 		}
 
+		/// <summary>
+		/// Создает резерв товара и средств со счета пользователя.
+		/// </summary>
+		/// <param name="transaction">Транзакция.</param>
 		private void MakeReserve(TransactionModel transaction)
 		{
 			var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
@@ -149,6 +176,10 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
+		/// <summary>
+		/// Отменяет резеврирование товара и средств пользователя.
+		/// </summary>
+		/// <param name="transaction">Транзакция.</param>
 		private void RevertReserve(TransactionModel transaction)
 		{
 			var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
@@ -162,6 +193,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
 		}
 
+		/// <inheritdoc/>
 		public async Task<TransactionViewModel> GetTransactionByIdAsync(Guid id)
 		{
 			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
@@ -169,6 +201,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			return _mapper.Map<TransactionViewModel>(transaction);
 		}
 
+		/// <inheritdoc/>
 		public async Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
 		{
 			var transactions = _transactionContext.Transactions.Select(t => t);
@@ -188,6 +221,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			return transactionResultViewModels;
 		}
 
+		/// <inheritdoc/>
 		public async Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
 		{
 			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
@@ -198,6 +232,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			return (true, "Transaction canceled successfully.");
 		}
 
+		/// <inheritdoc/>
 		public async Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction)
 		{
 			var transactionInDatabase = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == transaction.Id);

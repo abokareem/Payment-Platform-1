@@ -3,8 +3,14 @@ using PaymentPlatform.Framework.Models;
 
 namespace PaymentPlatform.Transaction.API.Models
 {
+	/// <summary>
+	/// Контекст транзакций.
+	/// </summary>
     public class TransactionContext : DbContext
     {
+		/// <summary>
+		/// Транзакции.
+		/// </summary>
         public DbSet<TransactionModel> Transactions { get; set; }
 
 		public TransactionContext(DbContextOptions<TransactionContext> options) : base(options) { }
