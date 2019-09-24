@@ -33,7 +33,7 @@ namespace PaymentPlatform.Product.API.Controllers
 		[HttpGet]
 		public async Task<IEnumerable<ProductViewModel>> GetAllProducts(int? take, int? skip)
 		{
-            var (userId, userRole) = GetClaimsIdentity();
+            var (userId, _) = GetClaimsIdentity();
 
             return await _productService.GetAllProductsAsyc(true, userId, take, skip);
 		}
