@@ -72,7 +72,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                Subject = new ClaimsIdentity(new []
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, account.Id.ToString()),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, account.Role.ConvertRole())
@@ -83,7 +83,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwtSecurityToken = tokenHandler.WriteToken(token);
 
-            var userToken = new UserTokenModel()
+            var userToken = new UserTokenModel
             {
                 UserName = account.Login,
                 Role = account.Role.ConvertRole(),
