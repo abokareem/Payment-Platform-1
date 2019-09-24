@@ -183,7 +183,6 @@ namespace PaymentPlatform.Product.API.Controllers
 
             var userIdentity = (ClaimsIdentity)User.Identity;
             var claims = userIdentity.Claims;
-            var roleClaimType = userIdentity.RoleClaimType;
             var role = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
 
             return (new Guid(id), role);
