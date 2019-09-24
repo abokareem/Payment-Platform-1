@@ -14,9 +14,9 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 	/// </summary>
     public class RabbitMQService : IRabbitMQService
     {
-        private static ConnectionFactory connectionFactory = new ConnectionFactory();
-        private static IConnection connection;
-        private static IModel channel;
+		private ConnectionFactory connectionFactory;
+        private IConnection connection;
+        private IModel channel;
 
 		/// <summary>
 		/// Конструктор.
@@ -80,7 +80,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
             #endregion
 
-            connectionFactory = new ConnectionFactory()
+            connectionFactory = new ConnectionFactory
             {
                 HostName = host,
                 Port = port,
@@ -110,8 +110,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
             try
             {
-                using (var connection = connectionFactory.CreateConnection())
-                using (var channel = connection.CreateModel())
+                using (var channel = connectionFactory.CreateConnection().CreateModel())
                 {
                     channel.QueueDeclare(recipient, false, false, false, null);
 
@@ -158,7 +157,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             catch (Exception exc)
             {
                 Console.WriteLine(exc.Message);
-                throw;
+                throw exc;
             }
         }
 
@@ -172,7 +171,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             var settings = new RabbitMQConfig();
             jsonConfiguration.Bind(settings);
 
-            connectionFactory = new ConnectionFactory()
+            connectionFactory = new ConnectionFactory
             {
                 HostName = settings.Host,
                 Port = settings.Port,
