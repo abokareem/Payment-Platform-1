@@ -53,6 +53,7 @@ namespace PaymentPlatform.DatabaseInitialization
                 case DataGeneratorMethod.AddNewAccountsAndProfilesAsync: { await rndDataGenerator.AddNewAccountsAndProfilesAsync(count); } break;
                 case DataGeneratorMethod.AddNewProductsAsync: { await rndDataGenerator.AddNewProductsAsync(count); } break;
                 case DataGeneratorMethod.AddNewTransactionsAsync: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
+				default: break;
             }
             watch.Stop();
             Console.WriteLine(DbInitializationConstants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + DbInitializationConstants.MS);

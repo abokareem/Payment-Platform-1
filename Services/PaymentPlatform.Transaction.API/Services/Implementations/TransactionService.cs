@@ -143,7 +143,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			}
 			catch (Exception exc)
 			{
-				throw exc;
+				throw new Exception("Unexpected exception", exc);
 			}
 		}
 
