@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Product.API.Services.Interfaces;
-using PaymentPlatform.Product.API.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Controllers
@@ -12,8 +14,8 @@ namespace PaymentPlatform.Product.API.Controllers
     /// Основной контроллер для Product.
     /// </summary>
 	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
+    [Authorize]
+    [ApiController]
 	public class ProductsController : ControllerBase
 	{
 		private readonly IProductService _productService;
@@ -27,15 +29,40 @@ namespace PaymentPlatform.Product.API.Controllers
 			_productService = productService;
 		}
 
-		// GET: api/Products
+		// GET: api/products
 		[HttpGet]
-		public async Task<IEnumerable<ProductViewModel>> GetProducts(int? take, int? skip)
+		public async Task<IEnumerable<ProductViewModel>> GetAllProducts(int? take, int? skip)
 		{
-			return await _productService.GetAllProductsAsyc(take, skip);
+            var (userId, _) = GetClaimsIdentity();
+
+            return await _productService.GetAllProductsAsyc(true, userId, take, skip);
 		}
 
-		// GET: api/Products/5
-		[HttpGet("{id}")]
+        // GET: api/products/user
+        [HttpGet("user")]
+        public async Task<IEnumerable<ProductViewModel>> GetUsersProducts(int? take, int? skip)
+        {
+            var (userId, userRole) = GetClaimsIdentity();
+            var isAdmin = false;
+
+            if (userRole == "Admin")
+            {
+                isAdmin = true;
+            }
+
+            return await _productService.GetAllProductsAsyc(isAdmin, userId, take, skip);
+        }
+
+        // GET: api/products/user/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpGet("user/{id}")]
+        public async Task<IEnumerable<ProductViewModel>> GetProductsByUserId([FromRoute] Guid id, int? take, int? skip)
+        {
+            return await _productService.GetAllProductsAsyc(false , id, take, skip);
+        }
+
+        // GET: api/products/{id}
+        [HttpGet("{id}")]
 		public async Task<IActionResult> GetProduct([FromRoute] Guid id)
 		{
 			if (!ModelState.IsValid)
@@ -53,20 +80,22 @@ namespace PaymentPlatform.Product.API.Controllers
 			return Ok(product);
 		}
 
-		// PUT: api/Products/5
+		// PUT: api/products/{id}
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutProduct([FromBody] ProductViewModel product)
+		public async Task<IActionResult> UpdateProduct([FromBody] ProductViewModel product)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
 
-			var isProdustExists = await ProductExists(product.Id).ConfigureAwait(false);
+            var (userId, userRole) = GetClaimsIdentity();
 
-			if (!isProdustExists)
+            var productExists = await ProductExists(product.Id, userId, userRole);
+
+			if (!productExists)
 			{
-				return NotFound();
+				return Forbid();
 			}
 
 			var successfullyUpdated = await _productService.UpdateProductAsync(product);
@@ -75,37 +104,32 @@ namespace PaymentPlatform.Product.API.Controllers
 			{
 				return Ok(product);
 			}
-			else
-			{
-				return Conflict();
-			}
-		}
 
-		// POST: api/Products
-		[Authorize(Roles = "User, Admin")]
+            return Conflict();
+        }
+
+		// POST: api/products
 		[HttpPost]
-		public async Task<IActionResult> PostProduct([FromBody] ProductViewModel product)
+		public async Task<IActionResult> AddNewProduct([FromBody] ProductViewModel product)
 		{
-			if (!ModelState.IsValid)
+            var (userId, userRole) = GetClaimsIdentity();
+
+            if (!ModelState.IsValid || (product.ProfileId != userId && userRole != "Admin"))
 			{
 				return BadRequest(ModelState);
 			}
 
-			var id = await _productService.AddNewProductAsync(product, new UserViewModel());
+			var id = await _productService.AddNewProductAsync(product, new UserViewModel { Id = userId, Role = userRole });
+
 			if (id != null)
 			{
-				product.Id = new Guid(id);
-				return CreatedAtAction("PostProduct", product);
-			}
-			else
-			{
-				return Conflict();
+				return CreatedAtAction(nameof(AddNewProduct), product);
 			}
 
-		}
+            return Conflict();
+        }
 
-		// DELETE: api/Products/5
-		[Authorize(Roles = "User, Admin")]
+		// DELETE: api/products/{id}
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
 		{
@@ -114,9 +138,11 @@ namespace PaymentPlatform.Product.API.Controllers
 				return BadRequest(ModelState);
 			}
 
-			var isProdustExists = await ProductExists(id).ConfigureAwait(false);
+            var (userId, userRole) = GetClaimsIdentity();
 
-			if (isProdustExists)
+            var productExists = await ProductExists(id, userId, userRole);
+
+			if (productExists)
 			{
 				var product = await _productService.GetProductByIdAsync(id);
 				product.IsActive = false;
@@ -127,14 +153,39 @@ namespace PaymentPlatform.Product.API.Controllers
 				{
 					return Ok();
 				}
-			}
-			return NotFound();
-		}
 
-		private async Task<bool> ProductExists(Guid id)
+				return BadRequest();
+			}
+
+            return NotFound();
+        }
+
+		private async Task<bool> ProductExists(Guid productId, Guid userId, string userRole)
 		{
-			var product = await _productService.GetProductByIdAsync(id);
-			return product != null ? true : false;
-		}
+			var product = await _productService.GetProductByIdAsync(productId);
+
+			if (product == null)
+			{
+				return false;
+			}
+
+			if (userRole == "Admin")
+			{
+				return true;
+			}
+
+            return product != null && product.ProfileId == userId;
+        }
+
+        private (Guid, string) GetClaimsIdentity()
+        {
+            var id = User.Identity.Name;
+
+            var userIdentity = (ClaimsIdentity)User.Identity;
+            var claims = userIdentity.Claims;
+            var role = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+
+            return (new Guid(id), role);
+        }
 	}
 }

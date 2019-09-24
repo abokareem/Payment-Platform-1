@@ -1,10 +1,13 @@
-﻿using PaymentPlatform.Product.API.ViewModels;
+﻿using PaymentPlatform.Framework.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Services.Interfaces
 {
+	/// <summary>
+	/// Интерфейс сервиса товаров.
+	/// </summary>
 	public interface IProductService
 	{
 		/// <summary>
@@ -37,7 +40,7 @@ namespace PaymentPlatform.Product.API.Services.Interfaces
         /// <param name="take">параметр пагинации (кол-во взять).</param>
         /// <param name="skip">параметр пагинации (кол-во пропустить).</param>
         /// <returns>Список товаров.</returns>
-        Task<List<ProductViewModel>> GetAllProductsAsyc(int? take = null, int? skip = null);
+        Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null);
 
         /// <summary>
         /// Обновить свойства товара.

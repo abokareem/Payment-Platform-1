@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1 AS base
+WORKDIR /app
+EXPOSE 82
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
+WORKDIR /src
+COPY Services/PaymentPlatform.Transaction.API/PaymentPlatform.Transaction.API.csproj Services/PaymentPlatform.Transaction.API/
+COPY . .
+WORKDIR /src/Services/PaymentPlatform.Transaction.API
+
+FROM build AS publish
+RUN dotnet publish PaymentPlatform.Transaction.API.csproj -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "PaymentPlatform.Transaction.API.dll"]

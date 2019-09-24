@@ -1,6 +1,6 @@
-﻿using PaymentPlatform.Initialization.DAL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using PaymentPlatform.Initialization.DAL.Models;
 using System;
 
 namespace PaymentPlatform.Initialization.DAL
@@ -11,7 +11,9 @@ namespace PaymentPlatform.Initialization.DAL
 	public class ApplicationContext : DbContext
 	{
 		public DbSet<Account> Accounts { get; set; }
+		public DbSet<BalanceReserve> BalanceReserves { get; set; }
 		public DbSet<Product> Products { get; set; }
+		public DbSet<ProductReserve> ProductReserves { get; set; }
 		public DbSet<Profile> Profiles { get; set; }
 		public DbSet<Transaction> Transactions { get; set; }
 
@@ -75,13 +77,25 @@ namespace PaymentPlatform.Initialization.DAL
 				.WithOne(a => a.Account)
 				.HasForeignKey<Profile>(p => p.Id);
 
-            #endregion
+			#endregion
 
+			#region BalanceReserve table
+			modelBuilder.Entity<BalanceReserve>()
+				.Property(p => p.Id)
+				.HasDefaultValueSql("newsequentialid()")
+				.IsRequired();
+			#endregion
 
+			#region ProductReserve table
+			modelBuilder.Entity<ProductReserve>()
+				.Property(p => p.Id)
+				.HasDefaultValueSql("newsequentialid()")
+				.IsRequired();
+			#endregion
 
-            #region Profile table
+			#region Profile table
 
-            modelBuilder.Entity<Profile>()
+			modelBuilder.Entity<Profile>()
                 .Property(p => p.Id)
                 .IsRequired();
 
@@ -204,6 +218,18 @@ namespace PaymentPlatform.Initialization.DAL
 				.HasOne(t => t.Product)
 				.WithMany(s => s.Transactions)
 				.HasForeignKey(p => p.ProductId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Transaction>()
+				.HasOne(t => t.BalanceReserve)
+				.WithOne(s => s.Transaction)
+				.HasForeignKey<BalanceReserve>(p => p.Id)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Transaction>()
+				.HasOne(pr => pr.ProductReserve)
+				.WithOne(t => t.Transaction)
+				.HasForeignKey<ProductReserve>(pr => pr.Id)
 				.OnDelete(DeleteBehavior.Restrict);
 
 			#endregion

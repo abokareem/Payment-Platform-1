@@ -19,6 +19,7 @@ namespace PaymentPlatform.Profile.API
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://*:49080")
                 .UseStartup<Startup>();
     }
 }

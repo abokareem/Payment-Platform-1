@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using PaymentPlatform.Identity.API.Helpers;
+using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Identity.API.Services.Interfaces;
-using PaymentPlatform.Identity.API.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
@@ -27,12 +27,36 @@ namespace PaymentPlatform.Identity.API.Controllers
 			_accountService = accountService;
 		}
 
-		/// <summary>
-		/// Аутентификация.
-		/// </summary>
-		/// <param name="data">данные.</param>
-		/// <returns>Результат получения JWT токена.</returns>
-		[AllowAnonymous]
+        // GET: api/accounts
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IEnumerable<AccountViewModel>> GetAccounts(int? take, int? skip)
+        {
+            return await _accountService.GetAllAccountsAsync(take, skip);
+        }
+
+        // GET: api/accounts/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProfile([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var account = await _accountService.GetAccountByIdAsync(id);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(account);
+        }
+
+        // POST: api/accounts/auth
+        [AllowAnonymous]
 		[HttpPost("auth")]
 		public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
 		{
@@ -45,19 +69,15 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			if (token == null)
 			{
-				return BadRequest(AppConstants.USER_DATA_INCORRECT);
+				return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
 			}
 
 			Response.ContentType = "application/json";
 			return Accepted(token);
 		}
 
-		/// <summary>
-		/// Аутентификация.
-		/// </summary>
-		/// <param name="data">данные.</param>
-		/// <returns>Результат получения JWT токена.</returns>
-		[AllowAnonymous]
+        // POST: api/accounts/registration
+        [AllowAnonymous]
 		[HttpPost("registration")]
 		public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
 		{
@@ -74,5 +94,33 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			return Ok(new { message });
 		}
-	}
+
+        // PUT: api/accounts/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAccount([FromBody] AccountViewModel account)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var accountViewModel = await _accountService.GetAccountByEmailAsync(account.Email);
+            var accountExist = accountViewModel != null;
+
+            if (!accountExist)
+            {
+                return NotFound();
+            }
+
+            var updatedResult = await _accountService.UpdateAccountAsync(account);
+
+            if (!updatedResult)
+            {
+                return Conflict();
+            }
+
+            return Ok(account);
+        }
+    }
 }

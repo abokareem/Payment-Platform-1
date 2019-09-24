@@ -12,7 +12,6 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// <summary>
 		/// Идентификатор (GUID).
 		/// </summary>
-		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public Guid Id { get; set; }
 
 		/// <summary>
@@ -40,10 +39,24 @@ namespace PaymentPlatform.Initialization.DAL.Models
 		/// </summary>
 		public decimal TotalCost { get; set; }
 
+		/// <summary>
+		/// Идентификатор резерва денег.
+		/// </summary>
+		public Guid? BalanceReserveId { get; set; }
+		/// <summary>
+		/// Идентификатор резерва товара.
+		/// </summary>
+		public Guid? ProductReserveId { get; set; }
 
+		/// <summary>
+		/// Успешность транзакции на основе резерва.
+		/// </summary>
+		public bool TransactionSuccess { get; set; }
 
-        // Навигационные свойства.
-        public Product Product { get; set; }
+		// Навигационные свойства.
+		public Product Product { get; set; }
 		public Profile Profile { get; set; }
+		public BalanceReserve BalanceReserve { get; set; }
+		public ProductReserve ProductReserve { get; set; }
 	}
 }

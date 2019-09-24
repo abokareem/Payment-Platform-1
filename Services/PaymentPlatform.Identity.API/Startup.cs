@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using PaymentPlatform.Identity.API.Helpers;
+using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Mapping;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
@@ -28,36 +29,39 @@ namespace PaymentPlatform.Identity.API
 		{
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-			var secretKey = Configuration.GetSection("AppSettings");
-			services.Configure<AppSettings>(secretKey);
-
 			string connectionString = Configuration.GetConnectionString("DefaultConnection");
 			services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 
-			var mappingConfig = new MapperConfiguration(mc =>
+            var appSettingSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingSection);
+
+            var appSettings = appSettingSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            var mappingConfig = new MapperConfiguration(mc =>
 			{
-				mc.AddProfile(new MappingProfile());
+				mc.AddProfile(new AccountProfile());
 			});
 
-			var authOtions = new AuthOptions();
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-			.AddJwtBearer(options =>
-			{
-				//TODO: Вынести в конфиг
-				options.RequireHttpsMetadata = false;
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuer = true,
-					ValidIssuer = authOtions.ValidIssuer,
-					ValidateAudience = true,
-					ValidAudience = authOtions.ValidAudience,
-					ValidateLifetime = true,
-					IssuerSigningKey = authOtions.GetIssuerSigningKey(),
-					ValidateIssuerSigningKey = true,
-				};
-			});
-
-			IMapper mapper = mappingConfig.CreateMapper();
+			var mapper = mappingConfig.CreateMapper();
 			services.AddSingleton(mapper);
 
 			services.AddScoped<IAccountService, AccountService>();
@@ -70,7 +74,8 @@ namespace PaymentPlatform.Identity.API
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseMvc();
+            app.UseAuthentication();
+            app.UseMvc();
 		}
 	}
 }

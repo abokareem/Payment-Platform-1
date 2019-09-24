@@ -1,10 +1,9 @@
-﻿using PaymentPlatform.Initialization.BLL.Implementations;
-using PaymentPlatform.Initialization.BLL.Interfaces;
-using PaymentPlatform.Initialization.DAL;
+﻿using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations;
+using PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
 
 namespace PaymentPlatform.Initialization.UI.ConsoleApp
 {
@@ -14,10 +13,10 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
         {
             Console.Title = "RandomDataGenerator Application v1.0";
 
-            IRandomDataGenerator rndDataGenerator = new RandomDataGenerator();
+            IRandomDataGeneratorService rndDataGenerator = new RandomDataGeneratorService();
 
-            Console.Write(Constants.ENTER_COUNT);
-            var value = Console.ReadLine();
+            Console.Write(DbInitializationConstants.ENTER_COUNT);
+            var value = Environment.GetEnvironmentVariable("COUNT") ?? Console.ReadLine();
             int.TryParse(value, out int count);
 
             if (count > 0)
@@ -28,17 +27,17 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
                 allTime += await StartFillingDatabase(2, rndDataGenerator, count).ConfigureAwait(false);
                 allTime += await StartFillingDatabase(3, rndDataGenerator, count).ConfigureAwait(false);
 
-                Console.WriteLine(Constants.SUCCESSFUL_COMPLETION + allTime.ToString() + Constants.MS);
+                Console.WriteLine(DbInitializationConstants.SUCCESSFUL_COMPLETION + allTime.ToString() + DbInitializationConstants.MS);
             }
             else
             {
-                Console.WriteLine(Constants.INVALID_COMMAND);
+                Console.WriteLine(DbInitializationConstants.INVALID_COMMAND);
             }
 
             Console.ReadLine();
         }
 
-        private static async Task<long> StartFillingDatabase(int param, IRandomDataGenerator rndDataGenerator, int count)
+        private static async Task<long> StartFillingDatabase(int param, IRandomDataGeneratorService rndDataGenerator, int count)
         {
             var watch = Stopwatch.StartNew();
 
@@ -48,10 +47,8 @@ namespace PaymentPlatform.Initialization.UI.ConsoleApp
                 case 2: { await rndDataGenerator.AddNewProductsAsync(count); } break;
                 case 3: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
             }
-
             watch.Stop();
-            Console.WriteLine(Constants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + Constants.MS);
-
+            Console.WriteLine(DbInitializationConstants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + DbInitializationConstants.MS);
             return watch.ElapsedMilliseconds;
         }
     }
