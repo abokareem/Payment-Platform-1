@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Identity.API.Services.Interfaces;
@@ -17,14 +18,16 @@ namespace PaymentPlatform.Identity.API.Controllers
 	public class AccountsController : Controller
 	{
 		private readonly IAccountService _accountService;
+        ILogger<AccountsController> _logger;
 
-		/// <summary>
-		/// Конструктор с параметрами.
-		/// </summary>
-		/// <param name="accountService">account сервис.</param>
-		public AccountsController(IAccountService accountService)
+        /// <summary>
+        /// Конструктор с параметрами.
+        /// </summary>
+        /// <param name="accountService">account сервис.</param>
+        public AccountsController(IAccountService accountService, ILogger<AccountsController> logger)
 		{
 			_accountService = accountService;
+            _logger = logger;
 		}
 
         // GET: api/accounts
@@ -60,7 +63,9 @@ namespace PaymentPlatform.Identity.API.Controllers
 		[HttpPost("auth")]
 		public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
 		{
-			if (!ModelState.IsValid)
+            _logger.LogInformation("Authenticate method was called");
+
+            if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
 			}
