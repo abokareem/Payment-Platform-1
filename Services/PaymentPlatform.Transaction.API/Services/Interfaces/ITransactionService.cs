@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Services.Interfaces
 {
+	/// <summary>
+	/// Интерфейс сервиса транзакций.
+	/// </summary>
 	public interface ITransactionService
 	{
 		/// <summary>

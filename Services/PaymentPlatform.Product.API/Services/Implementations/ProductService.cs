@@ -36,6 +36,10 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			_rabbitService.SetListener("ProductAPI", OnIncomingMessage);
 		}
 
+		/// <summary>
+		/// Метод, вызываемый при получении сообщения от брокера.
+		/// </summary>
+		/// <param name="incomingMessage">Текст сообщения.</param>
 		private void OnIncomingMessage(string incomingMessage)
 		{
 			try
@@ -96,7 +100,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 			}
 			catch (Exception exc)
 			{
-				throw exc;
+				throw new Exception("Unexpected exception", exc);
 			}
 		}
 

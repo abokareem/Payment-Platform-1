@@ -37,6 +37,10 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 			_rabbitService.SetListener("ProfileAPI", OnIncomingMessage);
 		}
 
+		/// <summary>
+		/// Метод, вызываемый при получении сообщения от брокера.
+		/// </summary>
+		/// <param name="incomingMessage">Текст сообщения.</param>
 		private void OnIncomingMessage(string incomingMessage)
 		{
 			try

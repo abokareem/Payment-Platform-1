@@ -2,6 +2,9 @@
 
 namespace PaymentPlatform.Framework.Services.RabbitMQ.Interfaces
 {
+	/// <summary>
+	/// Интерфейс брокера сообщений.
+	/// </summary>
     public interface IRabbitMQService
     {
 		/// <summary>

@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Services.Interfaces
 {
+	/// <summary>
+	/// Интерфейс сервиса товаров.
+	/// </summary>
 	public interface IProductService
 	{
 		/// <summary>
