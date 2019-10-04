@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Framework.Constants;
@@ -27,17 +28,22 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
         private readonly AppSettings _appSettings;
         private readonly IdentityContext _identityContext;
 		private readonly IMapper _mapper;
+        private readonly ILogger<AccountService> _logger;
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="appSettings">настройки проекта.</param>
         /// <param name="identityContext">контекст бд.</param>
-        public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext, IMapper mapper)
+        public AccountService(IOptions<AppSettings> appSettings, 
+                              IdentityContext identityContext, 
+                              IMapper mapper, 
+                              ILogger<AccountService> logger)
 		{
 			_identityContext = identityContext;
 			_mapper = mapper;
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
 
 		/// <inheritdoc/>

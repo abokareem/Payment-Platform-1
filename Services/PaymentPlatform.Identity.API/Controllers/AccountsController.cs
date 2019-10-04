@@ -18,16 +18,14 @@ namespace PaymentPlatform.Identity.API.Controllers
 	public class AccountsController : Controller
 	{
 		private readonly IAccountService _accountService;
-        ILogger<AccountsController> _logger;
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="accountService">account сервис.</param>
-        public AccountsController(IAccountService accountService, ILogger<AccountsController> logger)
+        public AccountsController(IAccountService accountService, )
 		{
 			_accountService = accountService;
-            _logger = logger;
 		}
 
         // GET: api/accounts
@@ -63,8 +61,6 @@ namespace PaymentPlatform.Identity.API.Controllers
 		[HttpPost("auth")]
 		public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
 		{
-            _logger.LogInformation("Authenticate method was called");
-
             if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
