@@ -1,4 +1,6 @@
-﻿https://github.com/serilog/serilog/wiki/Configuration-Basics
+﻿#Полезные ссылки и информация о Serilog
+
+https://github.com/serilog/serilog/wiki/Configuration-Basics
 https://github.com/serilog/serilog-settings-configuration/issues/116
 https://www.c-sharpcorner.com/article/file-logging-and-ms-sql-logging-using-serilog-with-asp-net-core-2-0/
 https://github.com/serilog/serilog-sinks-mssqlserver
@@ -12,5 +14,5 @@ CREATE TABLE [Serilog] (
    [Exception] nvarchar(max) NULL,
    [Properties] nvarchar(max) NULL
 
-   CONSTRAINT [PK_Logs] PRIMARY KEY CLUSTERED ([Id] ASC) 
+   CONSTRAINT [PK_Serilog] PRIMARY KEY CLUSTERED ([Id] ASC) 
 );

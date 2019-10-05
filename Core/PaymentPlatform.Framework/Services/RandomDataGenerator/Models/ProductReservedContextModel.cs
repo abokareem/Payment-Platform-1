@@ -1,6 +1,7 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Models;
+using System;
 
-namespace PaymentPlatform.Framework.Models
+namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {
     /// <summary>
     /// Модель зарезервированного продукта для Context.

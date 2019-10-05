@@ -1,10 +1,10 @@
-﻿using PaymentPlatform.Framework.Models;
-using PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces;
+﻿using PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Context;
 using System.Linq;
+using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
 {

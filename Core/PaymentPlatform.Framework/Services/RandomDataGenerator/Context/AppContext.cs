@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
 using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
@@ -39,6 +39,11 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 		/// Транзакции.
 		/// </summary>
         public DbSet<TransactionContextModel> Transactions { get; set; }
+
+        /// <summary>
+		/// Таблица Serilog.
+		/// </summary>
+        public DbSet<SerilogContextModel> Serilogs { get; set; }
 
         /// <summary>
         /// Пустой конструктор.
@@ -250,6 +255,32 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .WithOne(t => t.Transaction)
                 .HasForeignKey<ProductReservedContextModel>(pr => pr.Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            #endregion
+
+            #region Serilog table
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Id)
+                .IsRequired();
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Message);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Level)
+                .HasMaxLength(128);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.TimeStamp)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Exception);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Properties);
 
             #endregion
         }
