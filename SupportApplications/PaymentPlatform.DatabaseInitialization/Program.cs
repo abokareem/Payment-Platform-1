@@ -1,4 +1,5 @@
 ﻿using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces;
 using System;
@@ -23,9 +24,9 @@ namespace PaymentPlatform.DatabaseInitialization
             {
                 var allTime = 0L;
 
-                allTime += await StartFillingDatabase(DataGeneratorMethod.AddNewAccountsAndProfilesAsync, rndDataGenerator, count).ConfigureAwait(false);
-                allTime += await StartFillingDatabase(DataGeneratorMethod.AddNewProductsAsync, rndDataGenerator, count).ConfigureAwait(false);
-                allTime += await StartFillingDatabase(DataGeneratorMethod.AddNewTransactionsAsync, rndDataGenerator, count).ConfigureAwait(false);
+                allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewAccountsAndProfilesAsync, rndDataGenerator, count).ConfigureAwait(false);
+                allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewProductsAsync, rndDataGenerator, count).ConfigureAwait(false);
+                allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewTransactionsAsync, rndDataGenerator, count).ConfigureAwait(false);
 
                 Console.WriteLine(DbInitializationConstants.SUCCESSFUL_COMPLETION + allTime.ToString() + DbInitializationConstants.MS);
             }
@@ -44,30 +45,20 @@ namespace PaymentPlatform.DatabaseInitialization
 		/// <param name="rndDataGenerator">Сервис генерации случайных значений.</param>
 		/// <param name="count">Количество значений для генерации.</param>
 		/// <returns>Затраченное время.</returns>
-        private static async Task<long> StartFillingDatabase(DataGeneratorMethod method, IRandomDataGeneratorService rndDataGenerator, int count)
+        private static async Task<long> StartFillingDatabase(DataGeneratorTypes method, IRandomDataGeneratorService rndDataGenerator, int count)
         {
             var watch = Stopwatch.StartNew();
 
             switch (method)
             {
-                case DataGeneratorMethod.AddNewAccountsAndProfilesAsync: { await rndDataGenerator.AddNewAccountsAndProfilesAsync(count); } break;
-                case DataGeneratorMethod.AddNewProductsAsync: { await rndDataGenerator.AddNewProductsAsync(count); } break;
-                case DataGeneratorMethod.AddNewTransactionsAsync: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
+                case DataGeneratorTypes.AddNewAccountsAndProfilesAsync: { await rndDataGenerator.AddNewAccountsAndProfilesAsync(count); } break;
+                case DataGeneratorTypes.AddNewProductsAsync: { await rndDataGenerator.AddNewProductsAsync(count); } break;
+                case DataGeneratorTypes.AddNewTransactionsAsync: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
 				default: break;
             }
             watch.Stop();
             Console.WriteLine(DbInitializationConstants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + DbInitializationConstants.MS);
             return watch.ElapsedMilliseconds;
         }
-
-		/// <summary>
-		/// Перечисление методов генератора данных.
-		/// </summary>
-		private enum DataGeneratorMethod
-		{
-			AddNewAccountsAndProfilesAsync = 1,
-			AddNewProductsAsync = 2,
-			AddNewTransactionsAsync = 3
-		}
     }
 }
