@@ -28,22 +28,17 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
         private readonly AppSettings _appSettings;
         private readonly IdentityContext _identityContext;
 		private readonly IMapper _mapper;
-        private readonly ILogger<AccountService> _logger;
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="appSettings">настройки проекта.</param>
         /// <param name="identityContext">контекст бд.</param>
-        public AccountService(IOptions<AppSettings> appSettings, 
-                              IdentityContext identityContext, 
-                              IMapper mapper, 
-                              ILogger<AccountService> logger)
+        public AccountService(IOptions<AppSettings> appSettings, IdentityContext identityContext, IMapper mapper)
 		{
 			_identityContext = identityContext;
 			_mapper = mapper;
             _appSettings = appSettings.Value;
-            _logger = logger;
         }
 
 		/// <inheritdoc/>
@@ -53,7 +48,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 
 			if (user != null)
 			{
-				return (false, IdentityConstants.USER_EXIST);
+                return (false, IdentityConstants.USER_EXIST);
 			}
 
 			var model = _mapper.Map<AccountModel>(accountViewModel);
@@ -61,7 +56,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 			await _identityContext.Accounts.AddAsync(model);
 			await _identityContext.SaveChangesAsync();
 
-			return (true, IdentityConstants.USER_REGISTRATION_SUCCESS);
+            return (true, IdentityConstants.USER_REGISTRATION_SUCCESS);
 		}
 
 		/// <inheritdoc/>
@@ -71,7 +66,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 
 			if (account == null)
 			{
-				return null;
+                return null;
 			}
 
             var tokenHandler = new JwtSecurityTokenHandler();

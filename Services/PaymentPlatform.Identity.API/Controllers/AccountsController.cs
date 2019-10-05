@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using System;
@@ -18,21 +19,28 @@ namespace PaymentPlatform.Identity.API.Controllers
 	public class AccountsController : Controller
 	{
 		private readonly IAccountService _accountService;
+        private readonly ILogger<AccountsController> _logger;
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="accountService">account сервис.</param>
-        public AccountsController(IAccountService accountService, )
+        public AccountsController(IAccountService accountService, ILogger<AccountsController> logger)
 		{
 			_accountService = accountService;
-		}
+            _logger = logger;
+        }
 
         // GET: api/accounts
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IEnumerable<AccountViewModel>> GetAccounts(int? take, int? skip)
         {
+            var accounts = await _accountService.GetAllAccountsAsync(take, skip);
+            var count = accounts.Count;
+
+            _logger.LogInformation($"{count} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
+
             return await _accountService.GetAllAccountsAsync(take, skip);
         }
 
@@ -50,8 +58,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (account == null)
             {
+                _logger.LogWarning($"{account.Login} {IdentityLoggerConstants.ACCOUNT_NOT_FOUND}");
+
                 return NotFound();
             }
+
+            _logger.LogInformation($"{account.Login} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
 
             return Ok(account);
         }
@@ -70,10 +82,14 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			if (token == null)
 			{
-				return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
+                _logger.LogWarning($"{data.Email} {IdentityLoggerConstants.EMAIL_NOT_FOUND}");
+
+                return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
 			}
 
-			Response.ContentType = "application/json";
+            _logger.LogInformation($"{data.Email} {IdentityLoggerConstants.EMAIL_FOUND}");
+
+            Response.ContentType = "application/json";
 			return Accepted(token);
 		}
 
@@ -90,10 +106,14 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			if (!successfullyRegistered)
 			{
-				return BadRequest(new { message });
+                _logger.LogWarning($"{account.Email} {IdentityLoggerConstants.EMAIL_EXIST}");
+
+                return BadRequest(new { message });
 			}
 
-			return Ok(new { message });
+            _logger.LogInformation($"{account.Email} {IdentityLoggerConstants.EMAIL_REGISTRATION_SUCCESS}");
+
+            return Ok(new { message });
 		}
 
         // PUT: api/accounts/{id}
@@ -111,6 +131,8 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (!accountExist)
             {
+                _logger.LogWarning($"{account.Email} {IdentityLoggerConstants.EMAIL_NOT_EXIST}");
+
                 return NotFound();
             }
 
@@ -118,8 +140,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (!updatedResult)
             {
+                _logger.LogWarning($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_NOT_SUCCESS}");
+
                 return Conflict();
             }
+
+            _logger.LogInformation($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_SUCCESS}");
 
             return Ok(account);
         }
