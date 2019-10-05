@@ -14,7 +14,7 @@ namespace PaymentPlatform.Identity.API
         public static void Main(string[] args)
         {
             var connectionString = "Server=(localdb)\\mssqllocaldb;Database=PaymentPlatformApplication;Trusted_Connection=True;MultipleActiveResultSets=true";
-            var tableName = "Log";
+            var tableName = "Serilog";
 
             var columnOption = new ColumnOptions();
             columnOption.Store.Remove(StandardColumn.MessageTemplate);
