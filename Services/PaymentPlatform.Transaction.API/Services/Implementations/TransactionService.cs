@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
@@ -31,6 +32,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 		/// Сервис брокера сообщений.
 		/// </summary>
 		private readonly IRabbitMQService _rabbitService;
+		private readonly ILogger<TransactionService> _logger;
 
 		/// <summary>
 		/// Конструктор.
@@ -38,11 +40,12 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 		/// <param name="transactionContext">Контекст транзакций.</param>
 		/// <param name="mapper">Экземпляр автомаппера.</param>
 		/// <param name="rabbitService">Сервис брокера сообщений.</param>
-		public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService)
+		public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService, ILogger<TransactionService> logger)
 		{
 			_transactionContext = transactionContext;
 			_mapper = mapper;
 			_rabbitService = rabbitService;
+			_logger = logger;
 			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
 		}
 
@@ -137,12 +140,13 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 						throw new JsonException("Unexpected sender.");
 				}
 			}
-			catch (JsonException)
+			catch (JsonException jsonExc)
 			{
-				//TODO: Вывести в лог
+				_logger.LogError(jsonExc, jsonExc.Message);
 			}
 			catch (Exception exc)
 			{
+				_logger.LogError(exc, exc.Message);
 				throw new Exception("Unexpected exception", exc);
 			}
 		}
@@ -156,6 +160,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			await _transactionContext.SaveChangesAsync();
 			MakeReserve(newTransaction);
 
+			_logger.LogInformation("Добавлена новая транзакция.");
 			return (true, "Добавлена новая транзакция.");
 		}
 
@@ -198,6 +203,11 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 		{
 			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
 
+			if (transaction != default)
+			{
+				_logger.LogInformation($"Transaction fount {transaction.Id}.");
+			}
+
 			return _mapper.Map<TransactionViewModel>(transaction);
 		}
 
@@ -218,6 +228,8 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			var transactionResult = await transactions.ToListAsync();
 			var transactionResultViewModels = _mapper.Map<List<TransactionViewModel>>(transactionResult);
 
+			_logger.LogInformation($"Found {transactionResultViewModels.Count} transations.");
+
 			return transactionResultViewModels;
 		}
 
@@ -228,7 +240,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
 			RevertReserve(transaction);
 			transaction.TransactionSuccess = false;
-
+			_logger.LogInformation("Transaction canceled successfully.");
 			return (true, "Transaction canceled successfully.");
 		}
 
@@ -244,7 +256,9 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 			transactionInDatabase.TotalCost = transaction.TotalCost;
 
 			_transactionContext.Transactions.Update(transactionInDatabase);
-			await _transactionContext.SaveChangesAsync();
+			var count = await _transactionContext.SaveChangesAsync();
+
+			_logger.LogInformation($"{count} transactions updated.");
 
 			return _mapper.Map<TransactionViewModel>(transactionInDatabase);
 		}
