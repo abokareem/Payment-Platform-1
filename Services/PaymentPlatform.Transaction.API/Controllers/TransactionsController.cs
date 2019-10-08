@@ -114,19 +114,5 @@ namespace PaymentPlatform.Transaction.API.Controllers
 		{
 			return _transactionService.GetTransactionByIdAsync(id) != null;
 		}
-
-        // TODO: Это необходимо удалить? (To: s207883)
-
-        private (Guid, string) GetClaimsIdentity()
-		{
-			var id = User.Identity.Name;
-
-			var userIdentity = (ClaimsIdentity)User.Identity;
-			var claims = userIdentity.Claims;
-			var roleClaimType = userIdentity.RoleClaimType;
-			var role = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
-
-			return (new Guid(id), role);
-		}
 	}
 }
