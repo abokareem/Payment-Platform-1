@@ -7,6 +7,9 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using PaymentPlatform.Framework.Services.SerilogLogger.Implementations;
+using PaymentPlatform.Framework.Services.SerilogLogger.Interfaces;
+using Serilog;
 
 namespace PaymentPlatform.Transaction.API
 {
@@ -14,8 +17,18 @@ namespace PaymentPlatform.Transaction.API
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
-        }
+			ISerilogService serilogConfiguration = new SerilogService();
+			Log.Logger = serilogConfiguration.SerilogConfiguration();
+
+			try
+			{
+				CreateWebHostBuilder(args).Build().Run();
+			}
+			finally
+			{
+				Log.CloseAndFlush();
+			}
+		}
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
