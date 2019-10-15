@@ -8,6 +8,7 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,253 +16,253 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
-	/// <summary>
-	/// Сервис транзакций.
-	/// </summary>
-	public class TransactionService : ITransactionService
-	{
-		/// <summary>
-		/// Контекст транзакций.
-		/// </summary>
-		private readonly TransactionContext _transactionContext;
-		/// <summary>
-		/// Экземпляр автомаппера.
-		/// </summary>
-		private readonly IMapper _mapper;
-		/// <summary>
-		/// Сервис брокера сообщений.
-		/// </summary>
-		private readonly IRabbitMQService _rabbitService;
-		private readonly ILogger<TransactionService> _logger;
+    /// <summary>
+    /// Сервис транзакций.
+    /// </summary>
+    public class TransactionService : ITransactionService
+    {
+        /// <summary>
+        /// Контекст транзакций.
+        /// </summary>
+        private readonly TransactionContext _transactionContext;
+        /// <summary>
+        /// Экземпляр автомаппера.
+        /// </summary>
+        private readonly IMapper _mapper;
+        /// <summary>
+        /// Сервис брокера сообщений.
+        /// </summary>
+        private readonly IRabbitMQService _rabbitService;
 
-		/// <summary>
-		/// Конструктор.
-		/// </summary>
-		/// <param name="transactionContext">Контекст транзакций.</param>
-		/// <param name="mapper">Экземпляр автомаппера.</param>
-		/// <param name="rabbitService">Сервис брокера сообщений.</param>
-		public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService, ILogger<TransactionService> logger)
-		{
-			_transactionContext = transactionContext;
-			_mapper = mapper;
-			_rabbitService = rabbitService;
-			_logger = logger;
-			_rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
-		}
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="transactionContext">Контекст транзакций.</param>
+        /// <param name="mapper">Экземпляр автомаппера.</param>
+        /// <param name="rabbitService">Сервис брокера сообщений.</param>
+        public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService)
+        {
+            _transactionContext = transactionContext;
+            _mapper = mapper;
+            _rabbitService = rabbitService;
+            _rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
+        }
 
-		/// <summary>
-		/// Метод, вызываемый при получении сообщения от брокера.
-		/// </summary>
-		/// <param name="incomingMessage">Текст сообщения.</param>
-		private void OnIncomingMessage(string incomingMessage)
-		{
-			try
-			{
-				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
+        /// <summary>
+        /// Метод, вызываемый при получении сообщения от брокера.
+        /// </summary>
+        /// <param name="incomingMessage">Текст сообщения.</param>
+        private void OnIncomingMessage(string incomingMessage)
+        {
+            try
+            {
+                var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
 
-				switch (incomingObject.Sender)
-				{
-					case "ProductAPI":
-						{
-							var productReserve = incomingObject.Model as ProductReservedModel;
-							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
+                switch (incomingObject.Sender)
+                {
+                    case "ProductAPI":
+                        {
+                            var productReserve = incomingObject.Model as ProductReservedModel;
+                            var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
 
-							var incomingRabbitMessage = incomingObject.Action;
+                            var incomingRabbitMessage = incomingObject.Action;
 
-							switch (incomingRabbitMessage)
-							{
-								case (int)RabbitMessageActions.Apply:
-									{
-										transaction.ProductReserveId = productReserve.Id;
+                            switch (incomingRabbitMessage)
+                            {
+                                case (int)RabbitMessageActions.Apply:
+                                    {
+                                        transaction.ProductReserveId = productReserve.Id;
 
-										if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
-										{
-											transaction.TransactionSuccess = true;
-										}
-									}
-									break;
+                                        if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
+                                        {
+                                            transaction.TransactionSuccess = true;
+                                        }
+                                    }
+                                    break;
 
-								case (int)RabbitMessageActions.Revert:
-									{
-										transaction.TransactionSuccess = false;
-									}
-									break;
+                                case (int)RabbitMessageActions.Revert:
+                                    {
+                                        transaction.TransactionSuccess = false;
+                                    }
+                                    break;
 
-								default:
-									{
-										throw new JsonException("Unexpected action.");
-									}
-							}
+                                default:
+                                    {
+                                        throw new JsonException("Unexpected action.");
+                                    }
+                            }
 
-							_transactionContext.Entry(transaction).State = EntityState.Modified;
-							_transactionContext.SaveChanges();
+                            _transactionContext.Entry(transaction).State = EntityState.Modified;
+                            _transactionContext.SaveChanges();
 
-							break;
-						}
-					case "ProfileAPI":
-						{
-							var balanceReserve = incomingObject.Model as BalanceReservedModel;
-							var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
+                            break;
+                        }
+                    case "ProfileAPI":
+                        {
+                            var balanceReserve = incomingObject.Model as BalanceReservedModel;
+                            var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
 
-							var incomingRabbitMessage = incomingObject.Action;
+                            var incomingRabbitMessage = incomingObject.Action;
 
-							switch (incomingRabbitMessage)
-							{
-								case (int)RabbitMessageActions.Apply:
-									{
-										transaction.BalanceReserveId = balanceReserve.Id;
+                            switch (incomingRabbitMessage)
+                            {
+                                case (int)RabbitMessageActions.Apply:
+                                    {
+                                        transaction.BalanceReserveId = balanceReserve.Id;
 
-										if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
-										{
-											transaction.TransactionSuccess = true;
-										}
-									}
-									break;
+                                        if (transaction.BalanceReserveId != null && transaction.ProductReserveId != null)
+                                        {
+                                            transaction.TransactionSuccess = true;
+                                        }
+                                    }
+                                    break;
 
-								case (int)RabbitMessageActions.Revert:
-									{
-										transaction.TransactionSuccess = false;
-									}
-									break;
+                                case (int)RabbitMessageActions.Revert:
+                                    {
+                                        transaction.TransactionSuccess = false;
+                                    }
+                                    break;
 
-								default:
-									{
-										throw new JsonException("Unexpected action.");
-									}
-							}
+                                default:
+                                    {
+                                        throw new JsonException("Unexpected action.");
+                                    }
+                            }
 
-							_transactionContext.Entry(transaction).State = EntityState.Modified;
-							_transactionContext.SaveChanges();
+                            _transactionContext.Entry(transaction).State = EntityState.Modified;
+                            _transactionContext.SaveChanges();
 
-							break;
-						}
+                            break;
+                        }
 
-					default:
-						throw new JsonException("Unexpected sender.");
-				}
-			}
-			catch (JsonException jsonExc)
-			{
-				_logger.LogError(jsonExc, jsonExc.Message);
-			}
-			catch (Exception exc)
-			{
-				_logger.LogError(exc, exc.Message);
-				throw new Exception("Unexpected exception", exc);
-			}
-		}
+                    default:
+                        throw new JsonException("Unexpected sender.");
+                }
+            }
+            catch (JsonException jsonExc)
+            {
+                Log.Error(jsonExc, jsonExc.Message);
+            }
+            catch (Exception exc)
+            {
+                Log.Error(exc, exc.Message);
+                throw new Exception("Unexpected exception", exc);
+            }
+        }
 
-		/// <inheritdoc/>
-		public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
-		{
-			var newTransaction = _mapper.Map<TransactionModel>(transaction);
-			_transactionContext.Entry(newTransaction).State = EntityState.Added;
+        /// <inheritdoc/>
+        public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
+        {
+            var newTransaction = _mapper.Map<TransactionModel>(transaction);
+            _transactionContext.Entry(newTransaction).State = EntityState.Added;
 
-			await _transactionContext.SaveChangesAsync();
-			MakeReserve(newTransaction);
+            await _transactionContext.SaveChangesAsync();
+            MakeReserve(newTransaction);
 
-			_logger.LogInformation("Добавлена новая транзакция.");
-			return (true, "Добавлена новая транзакция.");
-		}
+            Log.Information("Добавлена новая транзакция.");
+            return (true, "Добавлена новая транзакция.");
+        }
 
-		/// <summary>
-		/// Создает резерв товара и средств со счета пользователя.
-		/// </summary>
-		/// <param name="transaction">Транзакция.</param>
-		private void MakeReserve(TransactionModel transaction)
-		{
-			var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
-			var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
+        /// <summary>
+        /// Создает резерв товара и средств со счета пользователя.
+        /// </summary>
+        /// <param name="transaction">Транзакция.</param>
+        private void MakeReserve(TransactionModel transaction)
+        {
+            var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
+            var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-			var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = balanceReserveModel };
-			var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = productReserveModel };
+            var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = balanceReserveModel };
+            var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "TransactionAPI", Model = productReserveModel };
 
-			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
+            _rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
 
-			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
-		}
+            _rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
+        }
 
-		/// <summary>
-		/// Отменяет резеврирование товара и средств пользователя.
-		/// </summary>
-		/// <param name="transaction">Транзакция.</param>
-		private void RevertReserve(TransactionModel transaction)
-		{
-			var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
-			var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
+        /// <summary>
+        /// Отменяет резеврирование товара и средств пользователя.
+        /// </summary>
+        /// <param name="transaction">Транзакция.</param>
+        private void RevertReserve(TransactionModel transaction)
+        {
+            var balanceReserveModel = _mapper.Map<BalanceReservedModel>(transaction);
+            var productReserveModel = _mapper.Map<ProductReservedModel>(transaction);
 
-			var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = balanceReserveModel };
-			var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = productReserveModel };
+            var messageToProfile = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = balanceReserveModel };
+            var messageToProduct = new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "TransactionAPI", Model = productReserveModel };
 
-			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
+            _rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProfile), "ProfileAPI");
 
-			_rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
-		}
+            _rabbitService.SendMessage(JsonConvert.SerializeObject(messageToProduct), "ProductAPI");
+        }
 
-		/// <inheritdoc/>
-		public async Task<TransactionViewModel> GetTransactionByIdAsync(Guid id)
-		{
-			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
+        /// <inheritdoc/>
+        public async Task<TransactionViewModel> GetTransactionByIdAsync(Guid id)
+        {
+            var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
 
-			if (transaction != default)
-			{
-				_logger.LogInformation($"Transaction fount {transaction.Id}.");
-			}
+            if (transaction != default)
+            {
+                Log.Information($"Transaction fount {transaction.Id}.");
+            }
 
-			return _mapper.Map<TransactionViewModel>(transaction);
-		}
+            return _mapper.Map<TransactionViewModel>(transaction);
+        }
 
-		/// <inheritdoc/>
-		public async Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
-		{
-			var transactions = _transactionContext.Transactions.Select(t => t);
+        /// <inheritdoc/>
+        public async Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
+        {
+            var transactions = _transactionContext.Transactions.Select(t => t);
 
-			if (take > 0)
-			{
-				transactions = transactions.Take((int)take);
-			}
-			if (skip > 0)
-			{
-				transactions = transactions.Skip((int)skip);
-			}
+            if (take > 0)
+            {
+                transactions = transactions.Take((int)take);
+            }
 
-			var transactionResult = await transactions.ToListAsync();
-			var transactionResultViewModels = _mapper.Map<List<TransactionViewModel>>(transactionResult);
+            if (skip > 0)
+            {
+                transactions = transactions.Skip((int)skip);
+            }
 
-			_logger.LogInformation($"Found {transactionResultViewModels.Count} transations.");
+            var transactionResult = await transactions.ToListAsync();
+            var transactionResultViewModels = _mapper.Map<List<TransactionViewModel>>(transactionResult);
 
-			return transactionResultViewModels;
-		}
+            Log.Information($"Found {transactionResultViewModels.Count} transations.");
 
-		/// <inheritdoc/>
-		public async Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
-		{
-			var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
+            return transactionResultViewModels;
+        }
 
-			RevertReserve(transaction);
-			transaction.TransactionSuccess = false;
-			_logger.LogInformation("Transaction canceled successfully.");
-			return (true, "Transaction canceled successfully.");
-		}
+        /// <inheritdoc/>
+        public async Task<(bool success, string message)> RevertTransactionByIdAsync(Guid id)
+        {
+            var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
 
-		/// <inheritdoc/>
-		public async Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction)
-		{
-			var transactionInDatabase = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == transaction.Id);
+            RevertReserve(transaction);
+            transaction.TransactionSuccess = false;
 
-			transactionInDatabase.ProductId = transaction.ProductId;
-			transactionInDatabase.ProfileId = transaction.ProfileId;
-			transactionInDatabase.TransactionTime = transaction.TransactionTime;
-			transactionInDatabase.Status = transaction.Status;
-			transactionInDatabase.TotalCost = transaction.TotalCost;
+            Log.Information("Transaction canceled successfully.");
 
-			_transactionContext.Transactions.Update(transactionInDatabase);
-			var count = await _transactionContext.SaveChangesAsync();
+            return (true, "Transaction canceled successfully.");
+        }
 
-			_logger.LogInformation($"{count} transactions updated.");
+        /// <inheritdoc/>
+        public async Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction)
+        {
+            var transactionInDatabase = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == transaction.Id);
 
-			return _mapper.Map<TransactionViewModel>(transactionInDatabase);
-		}
+            transactionInDatabase.ProductId = transaction.ProductId;
+            transactionInDatabase.ProfileId = transaction.ProfileId;
+            transactionInDatabase.TransactionTime = transaction.TransactionTime;
+            transactionInDatabase.Status = transaction.Status;
+            transactionInDatabase.TotalCost = transaction.TotalCost;
 
-	}
+            _transactionContext.Transactions.Update(transactionInDatabase);
+            var count = await _transactionContext.SaveChangesAsync();
+
+            Log.Information($"{count} transactions updated.");
+
+            return _mapper.Map<TransactionViewModel>(transactionInDatabase);
+        }
+    }
 }

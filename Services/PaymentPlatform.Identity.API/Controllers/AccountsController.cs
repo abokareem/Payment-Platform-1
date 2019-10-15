@@ -5,6 +5,7 @@ using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Identity.API.Services.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,16 +20,14 @@ namespace PaymentPlatform.Identity.API.Controllers
 	public class AccountsController : Controller
 	{
 		private readonly IAccountService _accountService;
-        private readonly ILogger<AccountsController> _logger;
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="accountService">account сервис.</param>
-        public AccountsController(IAccountService accountService, ILogger<AccountsController> logger)
-		{
-			_accountService = accountService;
-            _logger = logger;
+        public AccountsController(IAccountService accountService)
+        {
+            _accountService = accountService;
         }
 
         // GET: api/accounts
@@ -39,7 +38,7 @@ namespace PaymentPlatform.Identity.API.Controllers
             var accounts = await _accountService.GetAllAccountsAsync(take, skip);
             var count = accounts.Count;
 
-            _logger.LogInformation($"{count} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
+            Log.Information($"{count} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
 
             return await _accountService.GetAllAccountsAsync(take, skip);
         }
@@ -58,12 +57,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (account == null)
             {
-                _logger.LogWarning($"{account.Login} {IdentityLoggerConstants.ACCOUNT_NOT_FOUND}");
+                Log.Warning($"{account.Login} {IdentityLoggerConstants.ACCOUNT_NOT_FOUND}");
 
                 return NotFound();
             }
 
-            _logger.LogInformation($"{account.Login} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
+            Log.Information($"{account.Login} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
 
             return Ok(account);
         }
@@ -82,12 +81,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			if (token == null)
 			{
-                _logger.LogWarning($"{data.Email} {IdentityLoggerConstants.EMAIL_NOT_FOUND}");
+                Log.Warning($"{data.Email} {IdentityLoggerConstants.EMAIL_NOT_FOUND}");
 
                 return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
 			}
 
-            _logger.LogInformation($"{data.Email} {IdentityLoggerConstants.EMAIL_FOUND}");
+            Log.Information($"{data.Email} {IdentityLoggerConstants.EMAIL_FOUND}");
 
             Response.ContentType = "application/json";
 			return Accepted(token);
@@ -106,12 +105,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
 			if (!successfullyRegistered)
 			{
-                _logger.LogWarning($"{account.Email} {IdentityLoggerConstants.EMAIL_EXIST}");
+                Log.Warning($"{account.Email} {IdentityLoggerConstants.EMAIL_EXIST}");
 
                 return BadRequest(new { message });
 			}
 
-            _logger.LogInformation($"{account.Email} {IdentityLoggerConstants.EMAIL_REGISTRATION_SUCCESS}");
+            Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_REGISTRATION_SUCCESS}");
 
             return Ok(new { message });
 		}
@@ -131,7 +130,7 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (!accountExist)
             {
-                _logger.LogWarning($"{account.Email} {IdentityLoggerConstants.EMAIL_NOT_EXIST}");
+                Log.Warning($"{account.Email} {IdentityLoggerConstants.EMAIL_NOT_EXIST}");
 
                 return NotFound();
             }
@@ -140,12 +139,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (!updatedResult)
             {
-                _logger.LogWarning($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_NOT_SUCCESS}");
+                Log.Warning($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_NOT_SUCCESS}");
 
                 return Conflict();
             }
 
-            _logger.LogInformation($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_SUCCESS}");
+            Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_SUCCESS}");
 
             return Ok(account);
         }

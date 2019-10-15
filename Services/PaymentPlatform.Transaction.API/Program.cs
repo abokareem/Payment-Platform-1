@@ -1,38 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using PaymentPlatform.Framework.Services.SerilogLogger.Implementations;
 using PaymentPlatform.Framework.Services.SerilogLogger.Interfaces;
 using Serilog;
+using System;
 
 namespace PaymentPlatform.Transaction.API
 {
     public class Program
     {
+        private static readonly string url = "http://*:49090";
+
         public static void Main(string[] args)
         {
-			ISerilogService serilogConfiguration = new SerilogService();
-			Log.Logger = serilogConfiguration.SerilogConfiguration();
+            ISerilogService serilogConfiguration = new SerilogService();
+            Log.Logger = serilogConfiguration.SerilogConfiguration();
 
-			try
-			{
-				CreateWebHostBuilder(args).Build().Run();
-			}
-			finally
-			{
-				Log.CloseAndFlush();
-			}
-		}
+            try
+            {
+                Log.Information($"Server on {url} loaded successfully.");
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly.");
+            }
+            finally
+            {
+                Log.Information($"Server on {url} stopped successfully.");
+                Log.CloseAndFlush();
+            }
+        }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:49090")
+                .UseUrls(url)
                 .UseStartup<Startup>();
     }
 }
