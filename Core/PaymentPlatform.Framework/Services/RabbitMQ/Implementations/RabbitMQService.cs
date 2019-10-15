@@ -9,38 +9,38 @@ using System.Text;
 
 namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 {
-	/// <summary>
-	/// Брокер сообщений.
-	/// </summary>
+    /// <summary>
+    /// Брокер сообщений.
+    /// </summary>
     public class RabbitMQService : IRabbitMQService
     {
-		private ConnectionFactory connectionFactory;
+        private ConnectionFactory connectionFactory;
         private IConnection connection;
         private IModel channel;
 
-		/// <summary>
-		/// Конструктор.
-		/// </summary>
-		/// <param name="hostName">Имя хоста.</param>
-		/// <param name="port">Порт.</param>
-		/// <param name="virtualHost">Виртуальный хост.</param>
-		/// <param name="userName">Имя пользователя.</param>
-		/// <param name="password">Пароль.</param>
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="hostName">Имя хоста.</param>
+        /// <param name="port">Порт.</param>
+        /// <param name="virtualHost">Виртуальный хост.</param>
+        /// <param name="userName">Имя пользователя.</param>
+        /// <param name="password">Пароль.</param>
         public RabbitMQService(string hostName, int port, string virtualHost, string userName, string password)
         {
             _ = ConfigureService(hostName, port, virtualHost, userName, password);
         }
 
-		/// <summary>
-		/// Пустой конструктор.
-		/// </summary>
+        /// <summary>
+        /// Пустой конструктор.
+        /// </summary>
         public RabbitMQService()
         {
             _ = ConfigureServiceDefault();
-		}
+        }
 
-		/// <inheritdoc/>
-		public (bool success, string message) CheckConnection()
+        /// <inheritdoc/>
+        public (bool success, string message) CheckConnection()
         {
             if (connection.IsOpen)
             {
@@ -52,18 +52,21 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
         }
 
-		/// <inheritdoc/>
-		public (bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword)
+        /// <inheritdoc/>
+        public (bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword)
         {
             #region Parameters check
+
             if (string.IsNullOrEmpty(host))
             {
                 throw new ArgumentException("Host не может быть null или пустым.", nameof(host));
             }
+
             if (port <= 0)
             {
                 throw new ArgumentException("Port не может быть меньше либо равен нулю.", nameof(port));
             }
+
             if (string.IsNullOrEmpty(virtualHost))
             {
                 throw new ArgumentException("Virtual host не может быть null или пустым.", nameof(virtualHost));
@@ -78,6 +81,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             {
                 throw new ArgumentException("Пароль не может быть null или пустым.", nameof(userPassword));
             }
+
             #endregion
 
             connectionFactory = new ConnectionFactory
@@ -93,10 +97,11 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             return (true, "Конфигурация установлена успешно.");
         }
 
-		/// <inheritdoc/>
-		public (bool success, string message) SendMessage(string message, string recipient)
+        /// <inheritdoc/>
+        public (bool success, string message) SendMessage(string message, string recipient)
         {
             #region Parameters check
+
             if (string.IsNullOrEmpty(message))
             {
                 throw new ArgumentException("Сообщение не может быть null или пустым.", nameof(message));
@@ -106,6 +111,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             {
                 throw new ArgumentException("Получатель не может быть null или пустым.", nameof(recipient));
             }
+
             #endregion
 
             try
@@ -130,8 +136,8 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
         }
 
-		/// <inheritdoc/>
-		public (bool success, string message) SetListener(string channelToListen, Action<string> onIncomingMessage)
+        /// <inheritdoc/>
+        public (bool success, string message) SetListener(string channelToListen, Action<string> onIncomingMessage)
         {
             try
             {
@@ -147,6 +153,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                     var message = Encoding.UTF8.GetString(body);
                     onIncomingMessage.Invoke(message);
                 };
+
                 channel.BasicConsume(channelToListen, true, consumer);
                 return (true, "Успешно.");
             }
@@ -161,8 +168,8 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
             }
         }
 
-		/// <inheritdoc/>
-		public (bool success, string message) ConfigureServiceDefault()
+        /// <inheritdoc/>
+        public (bool success, string message) ConfigureServiceDefault()
         {
             var jsonConfiguration = new ConfigurationBuilder()
                    .SetBasePath(Environment.CurrentDirectory)
@@ -179,6 +186,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 UserName = settings.UserName,
                 Password = settings.Password
             };
+
             return (true, "Конфигурация установлена успешно.");
         }
     }
