@@ -20,7 +20,7 @@ namespace PaymentPlatform.Framework.Services.SerilogLogger.Implementations
                             .MinimumLevel.Override("Microsoft.AspNetCore.Mvc.Razor.Internal", LogEventLevel.Warning)
                             .MinimumLevel.Override("System", LogEventLevel.Warning)
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                            .WriteTo.MSSqlServer(connectionString, tableName)
+                            .WriteTo.MSSqlServer(connectionString, tableName, schemaName: "log")
                             .CreateLogger();
 
             return serilogConfig;
