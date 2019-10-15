@@ -72,15 +72,14 @@ namespace PaymentPlatform.Transaction.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _transactionService.AddNewTransactionAsync(transaction);
-            if (result.success)
+            var (success, message) = await _transactionService.AddNewTransactionAsync(transaction);
+
+            if (success)
             {
                 return Ok(transaction);
             }
-            else
-            {
-                return BadRequest(result.message);
-            }
+
+            return BadRequest(message);
         }
 
         // DELETE: api/Transactions/5
@@ -91,19 +90,20 @@ namespace PaymentPlatform.Transaction.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             if (!TransactionExists(id))
             {
                 return BadRequest();
             }
-            var result = await _transactionService.RevertTransactionByIdAsync(id);
-            if (result.success)
+
+            var (success, message) = await _transactionService.RevertTransactionByIdAsync(id);
+
+            if (success)
             {
-                return Ok(result.message);
+                return Ok(message);
             }
-            else
-            {
-                return Conflict(result.message);
-            }
+
+            return Conflict(message);
         }
 
         private bool TransactionExists(Guid id)

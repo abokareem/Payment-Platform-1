@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.ViewModels;
@@ -12,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
 {
-	/// <summary>
-	/// Основной контроллер для Identity.
-	/// </summary>
-	[Route("api/[controller]")]
-	[ApiController]
-	public class AccountsController : Controller
-	{
-		private readonly IAccountService _accountService;
+    /// <summary>
+    /// Основной контроллер для Identity.
+    /// </summary>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AccountsController : Controller
+    {
+        private readonly IAccountService _accountService;
 
         /// <summary>
         /// Конструктор с параметрами.
@@ -69,51 +68,52 @@ namespace PaymentPlatform.Identity.API.Controllers
 
         // POST: api/accounts/auth
         [AllowAnonymous]
-		[HttpPost("auth")]
-		public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
-		{
+        [HttpPost("auth")]
+        public async Task<IActionResult> Authenticate([FromBody] LoginViewModel data)
+        {
             if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+            {
+                return BadRequest(ModelState);
+            }
 
-			var token = await _accountService.AuthenticateAsync(data);
+            var token = await _accountService.AuthenticateAsync(data);
 
-			if (token == null)
-			{
+            if (token == null)
+            {
                 Log.Warning($"{data.Email} {IdentityLoggerConstants.EMAIL_NOT_FOUND}");
 
                 return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
-			}
+            }
 
             Log.Information($"{data.Email} {IdentityLoggerConstants.EMAIL_FOUND}");
 
             Response.ContentType = "application/json";
-			return Accepted(token);
-		}
+            return Accepted(token);
+        }
 
         // POST: api/accounts/registration
         [AllowAnonymous]
-		[HttpPost("registration")]
-		public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-			var (successfullyRegistered, message) = await _accountService.RegistrationAsync(account);
+        [HttpPost("registration")]
+        public async Task<IActionResult> Registration([FromBody] AccountViewModel account)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-			if (!successfullyRegistered)
-			{
+            var (successfullyRegistered, message) = await _accountService.RegistrationAsync(account);
+
+            if (!successfullyRegistered)
+            {
                 Log.Warning($"{account.Email} {IdentityLoggerConstants.EMAIL_EXIST}");
 
                 return BadRequest(new { message });
-			}
+            }
 
             Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_REGISTRATION_SUCCESS}");
 
             return Ok(new { message });
-		}
+        }
 
         // PUT: api/accounts/{id}
         [Authorize(Roles = "Admin")]

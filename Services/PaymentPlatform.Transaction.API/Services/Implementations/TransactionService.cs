@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
@@ -14,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+// TODO: Вынести Serilog в константы, добавить в контроллер.
+
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
     /// <summary>
@@ -25,10 +26,12 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
         /// Контекст транзакций.
         /// </summary>
         private readonly TransactionContext _transactionContext;
+
         /// <summary>
         /// Экземпляр автомаппера.
         /// </summary>
         private readonly IMapper _mapper;
+
         /// <summary>
         /// Сервис брокера сообщений.
         /// </summary>
@@ -139,14 +142,14 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
                         throw new JsonException("Unexpected sender.");
                 }
             }
-            catch (JsonException jsonExc)
+            catch (JsonException jsonEx)
             {
-                Log.Error(jsonExc, jsonExc.Message);
+                Log.Error(jsonEx, jsonEx.Message);
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                Log.Error(exc, exc.Message);
-                throw new Exception("Unexpected exception", exc);
+                Log.Error(ex, ex.Message);
+                throw new Exception("Unexpected exception", ex);
             }
         }
 
@@ -160,6 +163,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             MakeReserve(newTransaction);
 
             Log.Information("Добавлена новая транзакция.");
+
             return (true, "Добавлена новая транзакция.");
         }
 

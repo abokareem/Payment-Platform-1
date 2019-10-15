@@ -70,6 +70,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -80,6 +81,7 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
+
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwtSecurityToken = tokenHandler.WriteToken(token);
 
@@ -144,7 +146,6 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
             }
 
             var listOfAccounts = await queriableListOfAccounts.ToListAsync();
-
             var listOfAccountsViewModels = new List<AccountViewModel>();
 
             foreach (var account in listOfAccounts)
