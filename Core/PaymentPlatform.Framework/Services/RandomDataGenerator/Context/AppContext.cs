@@ -268,6 +268,9 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.Message);
 
             modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.MessageTemplate);
+
+            modelBuilder.Entity<SerilogContextModel>()
                 .Property(p => p.Level)
                 .HasMaxLength(128);
 

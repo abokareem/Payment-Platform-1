@@ -18,6 +18,11 @@ namespace PaymentPlatform.Framework.Models
         public string Message { get; set; }
 
         /// <summary>
+        /// Шаблон сообщения.
+        /// </summary>
+        public string MessageTemplate { get; set; }
+
+        /// <summary>
         /// Уровень.
         /// </summary>
         public string Level { get; set; }
