@@ -37,7 +37,7 @@ namespace PaymentPlatform.Identity.API.Controllers
             var accounts = await _accountService.GetAllAccountsAsync(take, skip);
             var count = accounts.Count;
 
-            Log.Information($"{count} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
+            Log.Information($"{count} {IdentityLoggerConstants.GET_ACCOUNTS}");
 
             return await _accountService.GetAllAccountsAsync(take, skip);
         }
@@ -56,12 +56,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (account == null)
             {
-                Log.Warning($"{account.Login} {IdentityLoggerConstants.ACCOUNT_NOT_FOUND}");
+                Log.Warning($"{account.Login} {IdentityLoggerConstants.GET_ACCOUNT_NOT_FOUND}");
 
                 return NotFound();
             }
 
-            Log.Information($"{account.Login} {IdentityLoggerConstants.ACCOUNT_RECEIVED}");
+            Log.Information($"{account.Login} {IdentityLoggerConstants.GET_ACCOUNT_FOUND}");
 
             return Ok(account);
         }
@@ -80,12 +80,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (token == null)
             {
-                Log.Warning($"{data.Email} {IdentityLoggerConstants.EMAIL_NOT_FOUND}");
+                Log.Warning($"{data.Email} {IdentityLoggerConstants.GET_EMAIL_NOT_FOUND}");
 
                 return BadRequest(IdentityConstants.USER_DATA_INCORRECT);
             }
 
-            Log.Information($"{data.Email} {IdentityLoggerConstants.EMAIL_FOUND}");
+            Log.Information($"{data.Email} {IdentityLoggerConstants.GET_EMAIL_FOUND}");
 
             Response.ContentType = "application/json";
             return Accepted(token);
@@ -110,7 +110,7 @@ namespace PaymentPlatform.Identity.API.Controllers
                 return BadRequest(new { message });
             }
 
-            Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_REGISTRATION_SUCCESS}");
+            Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_REGISTRATION_OK}");
 
             return Ok(new { message });
         }
@@ -139,12 +139,12 @@ namespace PaymentPlatform.Identity.API.Controllers
 
             if (!updatedResult)
             {
-                Log.Warning($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_NOT_SUCCESS}");
+                Log.Warning($"{account.Email} {IdentityLoggerConstants.UPDATE_EMAIL_CONFLICT}");
 
                 return Conflict();
             }
 
-            Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_SUCCESS}");
+            Log.Information($"{account.Email} {IdentityLoggerConstants.EMAIL_UPDATE_OK}");
 
             return Ok(account);
         }

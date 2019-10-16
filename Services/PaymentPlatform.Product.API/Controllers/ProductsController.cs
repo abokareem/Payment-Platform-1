@@ -39,7 +39,7 @@ namespace PaymentPlatform.Product.API.Controllers
             var products = await _productService.GetAllProductsAsyc(true, userId, take, skip);
             var count = products.Count;
 
-            Log.Information($"{count} {ProductLoggerConstants.GET_ALL_PRODUCTS}");
+            Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_ALL}");
 
             return products;
         }
@@ -59,7 +59,7 @@ namespace PaymentPlatform.Product.API.Controllers
             var products = await _productService.GetAllProductsAsyc(isAdmin, userId, take, skip);
             var count = products.Count;
 
-            Log.Information($"{count} {ProductLoggerConstants.GET_USERS_PRODUCTS}");
+            Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_USERS}");
 
             return products;
         }

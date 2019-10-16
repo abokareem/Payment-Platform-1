@@ -12,12 +12,12 @@ namespace PaymentPlatform.Framework.Constants.Logger
         /// <summary>
         /// N кол-во продуктов.
         /// </summary>
-        public const string GET_ALL_PRODUCTS = "products received.";
+        public const string GET_PRODUCTS_ALL = "products received.";
 
         /// <summary>
         /// N кол-во продуктов пользователей.
         /// </summary>
-        public const string GET_USERS_PRODUCTS = "users products received.";
+        public const string GET_PRODUCTS_USERS = "users products received.";
 
         /// <summary>
         /// N кол-во продуктов конкретного пользователя.

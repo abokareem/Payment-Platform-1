@@ -8,27 +8,27 @@
         /// <summary>
         /// N кол-во аккаунтов.
         /// </summary>
-        public const string ACCOUNT_RECEIVED = "accounts received.";
+        public const string GET_ACCOUNTS = "accounts received.";
 
         /// <summary>
         /// Аккаунт не найден.
         /// </summary>
-        public const string ACCOUNT_NOT_FOUND = "account not found.";
+        public const string GET_ACCOUNT_NOT_FOUND = "account not found.";
 
         /// <summary>
         /// Аккаунт найден.
         /// </summary>
-        public const string ACCOUNT_FOUND = "account found.";
-
-        /// <summary>
-        /// Эл. адрес не найден.
-        /// </summary>
-        public const string EMAIL_NOT_FOUND = "email not found.";
+        public const string GET_ACCOUNT_FOUND = "account found.";
 
         /// <summary>
         /// Эл. адрес найден.
         /// </summary>
-        public const string EMAIL_FOUND = "email found.";
+        public const string GET_EMAIL_FOUND = "email found.";
+
+        /// <summary>
+        /// Эл. адрес не найден.
+        /// </summary>
+        public const string GET_EMAIL_NOT_FOUND = "email not found.";
 
         /// <summary>
         /// Эл. адрес существует.
@@ -43,16 +43,16 @@
         /// <summary>
         /// Эл. адрес успешно зарегистрирован.
         /// </summary>
-        public const string EMAIL_REGISTRATION_SUCCESS = "successfully registered.";
+        public const string EMAIL_REGISTRATION_OK = "successfully registered.";
 
         /// <summary>
         /// Профиль обновлен.
         /// </summary>
-        public const string EMAIL_UPDATE_SUCCESS = "successfully updated.";
+        public const string EMAIL_UPDATE_OK = "successfully updated.";
 
         /// <summary>
         /// Профиль не обновлен.
         /// </summary>
-        public const string EMAIL_UPDATE_NOT_SUCCESS = "not updated.";
+        public const string UPDATE_EMAIL_CONFLICT = "not updated.";
     }
 }
