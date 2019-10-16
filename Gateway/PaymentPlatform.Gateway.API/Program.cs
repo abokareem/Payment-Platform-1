@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+// TODO: Временно не работает Serilog в проекте.
+
 namespace PaymentPlatform.Gateway.API
 {
     public class Program
