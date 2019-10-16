@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Product.API.Services.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,27 +18,31 @@ namespace PaymentPlatform.Product.API.Controllers
 	[Route("api/[controller]")]
     [Authorize]
     [ApiController]
-	public class ProductsController : ControllerBase
-	{
-		private readonly IProductService _productService;
+    public class ProductsController : ControllerBase
+    {
+        private readonly IProductService _productService;
 
         /// <summary>
         /// Конструктор.
         /// </summary>
         /// <param name="productService">product сервис.</param>
 		public ProductsController(IProductService productService)
-		{
-			_productService = productService;
-		}
+        {
+            _productService = productService;
+        }
 
-		// GET: api/products
-		[HttpGet]
-		public async Task<IEnumerable<ProductViewModel>> GetAllProducts(int? take, int? skip)
-		{
+        // GET: api/products
+        [HttpGet]
+        public async Task<IEnumerable<ProductViewModel>> GetAllProducts(int? take, int? skip)
+        {
             var (userId, _) = GetClaimsIdentity();
+            var products = await _productService.GetAllProductsAsyc(true, userId, take, skip);
+            var count = products.Count;
 
-            return await _productService.GetAllProductsAsyc(true, userId, take, skip);
-		}
+            Log.Information($"{count} {ProductLoggerConstants.GET_ALL_PRODUCTS}");
+
+            return products;
+        }
 
         // GET: api/products/user
         [HttpGet("user")]
@@ -50,7 +56,12 @@ namespace PaymentPlatform.Product.API.Controllers
                 isAdmin = true;
             }
 
-            return await _productService.GetAllProductsAsyc(isAdmin, userId, take, skip);
+            var products = await _productService.GetAllProductsAsyc(isAdmin, userId, take, skip);
+            var count = products.Count;
+
+            Log.Information($"{count} {ProductLoggerConstants.GET_USERS_PRODUCTS}");
+
+            return products;
         }
 
         // GET: api/products/user/{id}
@@ -58,121 +69,146 @@ namespace PaymentPlatform.Product.API.Controllers
         [HttpGet("user/{id}")]
         public async Task<IEnumerable<ProductViewModel>> GetProductsByUserId([FromRoute] Guid id, int? take, int? skip)
         {
-            return await _productService.GetAllProductsAsyc(false , id, take, skip);
+            var products = await _productService.GetAllProductsAsyc(false, id, take, skip);
+            var count = products.Count;
+
+            Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_BY_USER_ID}.");
+
+            return products;
         }
 
         // GET: api/products/{id}
         [HttpGet("{id}")]
-		public async Task<IActionResult> GetProduct([FromRoute] Guid id)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+        public async Task<IActionResult> GetProduct([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-			var product = await _productService.GetProductByIdAsync(id);
+            var product = await _productService.GetProductByIdAsync(id);
 
-			if (product == null)
-			{
-				return NotFound();
-			}
+            if (product == null)
+            {
+                Log.Warning($"{id} {ProductLoggerConstants.GET_PRODUCT_NOT_FOUND}");
 
-			return Ok(product);
-		}
+                return NotFound();
+            }
 
-		// PUT: api/products/{id}
-		[HttpPut("{id}")]
-		public async Task<IActionResult> UpdateProduct([FromBody] ProductViewModel product)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+            Log.Information($"{id} {ProductLoggerConstants.GET_PRODUCT_FOUND}");
+
+            return Ok(product);
+        }
+
+        // PUT: api/products/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductViewModel product)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             var (userId, userRole) = GetClaimsIdentity();
 
             var productExists = await ProductExists(product.Id, userId, userRole);
 
-			if (!productExists)
-			{
-				return Forbid();
-			}
+            if (!productExists)
+            {
+                Log.Warning($"{product.Id} {ProductLoggerConstants.GET_PRODUCT_NOT_FOUND}");
 
-			var successfullyUpdated = await _productService.UpdateProductAsync(product);
+                return Forbid();
+            }
 
-			if (successfullyUpdated)
-			{
-				return Ok(product);
-			}
+            var successfullyUpdated = await _productService.UpdateProductAsync(product);
 
-            return Conflict();
+            if (!successfullyUpdated)
+            {
+                Log.Warning($"{product.Id} {ProductLoggerConstants.UPDATE_PRODUCT_CONFLICT}");
+
+                return Conflict();
+            }
+
+            Log.Information($"{product.Id} {ProductLoggerConstants.UPDATE_PRODUCT_OK}");
+
+            return Ok(product);
         }
 
-		// POST: api/products
-		[HttpPost]
-		public async Task<IActionResult> AddNewProduct([FromBody] ProductViewModel product)
-		{
+        // POST: api/products
+        [HttpPost]
+        public async Task<IActionResult> AddNewProduct([FromBody] ProductViewModel product)
+        {
             var (userId, userRole) = GetClaimsIdentity();
 
             if (!ModelState.IsValid || (product.ProfileId != userId && userRole != "Admin"))
-			{
-				return BadRequest(ModelState);
-			}
+            {
+                return BadRequest(ModelState);
+            }
 
-			var id = await _productService.AddNewProductAsync(product, new UserViewModel { Id = userId, Role = userRole });
+            var id = await _productService.AddNewProductAsync(product, new UserViewModel { Id = userId, Role = userRole });
 
-			if (id != null)
-			{
-				return CreatedAtAction(nameof(AddNewProduct), product);
-			}
+            if (id == null)
+            {
+                Log.Warning($"{id} {ProductLoggerConstants.ADD_PRODUCT_CONFLICT}");
 
-            return Conflict();
+                return Conflict();
+            }
+
+            Log.Information($"{product.Id} {ProductLoggerConstants.ADD_PRODUCT_OK}");
+
+            return CreatedAtAction(nameof(AddNewProduct), product);
         }
 
-		// DELETE: api/products/{id}
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+        // DELETE: api/products/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             var (userId, userRole) = GetClaimsIdentity();
 
             var productExists = await ProductExists(id, userId, userRole);
 
-			if (productExists)
-			{
-				var product = await _productService.GetProductByIdAsync(id);
-				product.IsActive = false;
+            if (productExists)
+            {
+                var product = await _productService.GetProductByIdAsync(id);
+                product.IsActive = false;
 
-				var successfullyUpdated = await _productService.UpdateProductAsync(product);
+                var successfullyUpdated = await _productService.UpdateProductAsync(product);
 
-				if (successfullyUpdated)
-				{
-					return Ok();
-				}
+                if (!successfullyUpdated)
+                {
+                    Log.Warning($"{id} {ProductLoggerConstants.DELETE_PRODUCT_CONFLICT}");
 
-				return BadRequest();
-			}
+                    return BadRequest();
+                }
+
+                Log.Information($"{id} {ProductLoggerConstants.DELETE_PRODUCT_OK}");
+
+                return Ok();
+            }
+
+            Log.Warning($"{id} {ProductLoggerConstants.GET_PRODUCT_NOT_FOUND}");
 
             return NotFound();
         }
 
-		private async Task<bool> ProductExists(Guid productId, Guid userId, string userRole)
-		{
-			var product = await _productService.GetProductByIdAsync(productId);
+        private async Task<bool> ProductExists(Guid productId, Guid userId, string userRole)
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
 
-			if (product == null)
-			{
-				return false;
-			}
+            if (product == null)
+            {
+                return false;
+            }
 
-			if (userRole == "Admin")
-			{
-				return true;
-			}
+            if (userRole == "Admin")
+            {
+                return true;
+            }
 
             return product != null && product.ProfileId == userId;
         }
@@ -187,5 +223,5 @@ namespace PaymentPlatform.Product.API.Controllers
 
             return (new Guid(id), role);
         }
-	}
+    }
 }
