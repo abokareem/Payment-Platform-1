@@ -46,12 +46,12 @@
         public const string EMAIL_REGISTRATION_OK = "successfully registered.";
 
         /// <summary>
-        /// Профиль обновлен.
+        /// Аккаунт обновлен.
         /// </summary>
         public const string EMAIL_UPDATE_OK = "successfully updated.";
 
         /// <summary>
-        /// Профиль не обновлен.
+        /// Аккаунт не обновлен.
         /// </summary>
         public const string UPDATE_EMAIL_CONFLICT = "not updated.";
     }

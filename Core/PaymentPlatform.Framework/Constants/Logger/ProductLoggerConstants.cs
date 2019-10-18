@@ -35,7 +35,7 @@ namespace PaymentPlatform.Framework.Constants.Logger
         public const string GET_PRODUCT_NOT_FOUND = "product not found.";
 
         /// <summary>
-        /// Продукт не обновлен.
+        /// Продукт обновлен.
         /// </summary>
         public const string UPDATE_PRODUCT_OK = "product successfully updated.";
 
