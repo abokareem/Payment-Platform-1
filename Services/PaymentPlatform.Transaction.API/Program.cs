@@ -35,6 +35,7 @@ namespace PaymentPlatform.Transaction.API
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseUrls(url)
+                .UseSerilog()
                 .UseStartup<Startup>();
     }
 }
