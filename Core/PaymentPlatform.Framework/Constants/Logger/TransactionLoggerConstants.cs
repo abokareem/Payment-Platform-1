@@ -49,5 +49,7 @@
         /// Транзакция не отменена.
         /// </summary>
         public const string REVERT_TRANSACTION_CONFLICT = "transaction not reverted.";
+
+
     }
 }

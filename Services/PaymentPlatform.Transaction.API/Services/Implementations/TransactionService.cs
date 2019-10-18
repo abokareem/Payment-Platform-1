@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
@@ -149,6 +150,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             catch (Exception ex)
             {
                 Log.Error(ex, ex.Message);
+
                 throw new Exception("Unexpected exception", ex);
             }
         }
@@ -162,9 +164,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             await _transactionContext.SaveChangesAsync();
             MakeReserve(newTransaction);
 
-            Log.Information("Добавлена новая транзакция.");
-
-            return (true, "Добавлена новая транзакция.");
+            return (true, $"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
         }
 
         /// <summary>
@@ -206,11 +206,6 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
         {
             var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == id);
 
-            if (transaction != default)
-            {
-                Log.Information($"Transaction fount {transaction.Id}.");
-            }
-
             return _mapper.Map<TransactionViewModel>(transaction);
         }
 
@@ -232,8 +227,6 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             var transactionResult = await transactions.ToListAsync();
             var transactionResultViewModels = _mapper.Map<List<TransactionViewModel>>(transactionResult);
 
-            Log.Information($"Found {transactionResultViewModels.Count} transations.");
-
             return transactionResultViewModels;
         }
 
@@ -245,9 +238,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             RevertReserve(transaction);
             transaction.TransactionSuccess = false;
 
-            Log.Information("Transaction canceled successfully.");
-
-            return (true, "Transaction canceled successfully.");
+            return (true, $"{id} {TransactionLoggerConstants.REVERT_TRANSACTION_OK}");
         }
 
         /// <inheritdoc/>
