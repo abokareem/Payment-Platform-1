@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +11,6 @@ using System.Threading.Tasks;
 namespace PaymentPlatform.Transaction.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class TransactionsController : ControllerBase
     {
@@ -25,10 +26,15 @@ namespace PaymentPlatform.Transaction.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<TransactionViewModel>> GetTransactions(int? take = null, int? skip = null)
         {
-            return await _transactionService.GetTransactionsAsync(take, skip);
+            var transactions = await _transactionService.GetTransactionsAsync(take, skip);
+            var count = transactions.Count;
+
+            Log.Information($"{count} {TransactionLoggerConstants.GET_TRANSACTIONS}");
+
+            return transactions;
         }
 
-        // GET: api/Transactions/5
+        // GET: api/Transactions/{id}
         [Authorize(Roles = "Admin, User")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTransaction([FromRoute] Guid id)
@@ -42,30 +48,54 @@ namespace PaymentPlatform.Transaction.API.Controllers
 
             if (transaction == null)
             {
+                Log.Warning($"{id} {TransactionLoggerConstants.GET_TRANSACTION_NOT_FOUND}");
+
                 return NotFound();
             }
+
+            Log.Information($"{id} {TransactionLoggerConstants.GET_TRANSACTION_FOUND}");
 
             return Ok(transaction);
         }
 
-        // PUT: api/Transactions/5
-        [Authorize(Roles = "Admin, User")]
+        // PUT: api/Transactions/{id}
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTransaction([FromBody] TransactionViewModel transaction)
+        public async Task<IActionResult> UpdateTransaction([FromBody] TransactionViewModel transaction)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _transactionService.UpdateTransactionAsync(transaction);
+            var transactionViewModel = await _transactionService.GetTransactionByIdAsync(transaction.Id);
+            var transactionExist = transactionViewModel != null;
 
-            return NoContent();
+            if (!transactionExist)
+            {
+                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.GET_TRANSACTION_NOT_FOUND}");
+
+                return NotFound();
+            }
+
+            var updatedResult = await _transactionService.UpdateTransactionAsync(transaction);
+
+            if (!updatedResult)
+            {
+                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.UPDATE_TRANSACTION_CONFLICT}");
+
+                return Conflict();
+            }
+
+            Log.Information($"{transaction.Id} {TransactionLoggerConstants.UPDATE_TRANSACTION_OK}");
+
+            return Ok(transaction);
         }
 
         // POST: api/Transactions
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> PostTransaction([FromBody] TransactionViewModel transaction)
+        public async Task<IActionResult> AddNewTransaction([FromBody] TransactionViewModel transaction)
         {
             if (!ModelState.IsValid)
             {
@@ -74,15 +104,20 @@ namespace PaymentPlatform.Transaction.API.Controllers
 
             var (success, message) = await _transactionService.AddNewTransactionAsync(transaction);
 
-            if (success)
+            if (!success)
             {
-                return Ok(transaction);
+                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_CONFLICT}");
+
+                return Conflict(message);
             }
 
-            return BadRequest(message);
+            Log.Information($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
+
+            return Ok(transaction);
         }
 
         // DELETE: api/Transactions/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTransaction([FromRoute] Guid id)
         {
@@ -91,19 +126,27 @@ namespace PaymentPlatform.Transaction.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!TransactionExists(id))
+            var result = TransactionExists(id);
+
+            if (!result)
             {
-                return BadRequest();
+                Log.Warning($"{id} {TransactionLoggerConstants.GET_TRANSACTION_NOT_FOUND}");
+
+                return NotFound();
             }
 
             var (success, message) = await _transactionService.RevertTransactionByIdAsync(id);
 
-            if (success)
+            if (!success)
             {
-                return Ok(message);
+                Log.Warning($"{id} {TransactionLoggerConstants.REVERT_TRANSACTION_CONFLICT}");
+
+                return Conflict(message);
             }
 
-            return Conflict(message);
+            Log.Information($"{id} {TransactionLoggerConstants.REVERT_TRANSACTION_OK}");
+
+            return Ok(message);
         }
 
         private bool TransactionExists(Guid id)

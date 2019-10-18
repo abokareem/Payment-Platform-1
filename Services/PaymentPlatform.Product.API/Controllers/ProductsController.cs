@@ -172,28 +172,28 @@ namespace PaymentPlatform.Product.API.Controllers
 
             var productExists = await ProductExists(id, userId, userRole);
 
-            if (productExists)
+            if (!productExists)
             {
-                var product = await _productService.GetProductByIdAsync(id);
-                product.IsActive = false;
+                Log.Warning($"{id} {ProductLoggerConstants.GET_PRODUCT_NOT_FOUND}");
 
-                var successfullyUpdated = await _productService.UpdateProductAsync(product);
-
-                if (!successfullyUpdated)
-                {
-                    Log.Warning($"{id} {ProductLoggerConstants.DELETE_PRODUCT_CONFLICT}");
-
-                    return BadRequest();
-                }
-
-                Log.Information($"{id} {ProductLoggerConstants.DELETE_PRODUCT_OK}");
-
-                return Ok();
+                return NotFound();
             }
 
-            Log.Warning($"{id} {ProductLoggerConstants.GET_PRODUCT_NOT_FOUND}");
+            var product = await _productService.GetProductByIdAsync(id);
+            product.IsActive = false;
 
-            return NotFound();
+            var successfullyUpdated = await _productService.UpdateProductAsync(product);
+
+            if (!successfullyUpdated)
+            {
+                Log.Warning($"{id} {ProductLoggerConstants.DELETE_PRODUCT_CONFLICT}");
+
+                return BadRequest();
+            }
+
+            Log.Information($"{id} {ProductLoggerConstants.DELETE_PRODUCT_OK}");
+
+            return Ok();
         }
 
         private async Task<bool> ProductExists(Guid productId, Guid userId, string userRole)

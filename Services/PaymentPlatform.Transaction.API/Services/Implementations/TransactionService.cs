@@ -251,22 +251,25 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction)
+        public async Task<bool> UpdateTransactionAsync(TransactionViewModel transactionViewModel)
         {
-            var transactionInDatabase = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == transaction.Id);
+            var transaction = await _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == transactionViewModel.Id);
 
-            transactionInDatabase.ProductId = transaction.ProductId;
-            transactionInDatabase.ProfileId = transaction.ProfileId;
-            transactionInDatabase.TransactionTime = transaction.TransactionTime;
-            transactionInDatabase.Status = transaction.Status;
-            transactionInDatabase.TotalCost = transaction.TotalCost;
+            if (transaction == null)
+            {
+                return false;
+            }
 
-            _transactionContext.Transactions.Update(transactionInDatabase);
+            transaction.ProductId = transactionViewModel.ProductId;
+            transaction.ProfileId = transactionViewModel.ProfileId;
+            transaction.TransactionTime = transactionViewModel.TransactionTime;
+            transaction.Status = transactionViewModel.Status;
+            transaction.TotalCost = transactionViewModel.TotalCost;
+
+            _transactionContext.Transactions.Update(transaction);
             var count = await _transactionContext.SaveChangesAsync();
 
-            Log.Information($"{count} transactions updated.");
-
-            return _mapper.Map<TransactionViewModel>(transactionInDatabase);
+            return true;
         }
     }
 }

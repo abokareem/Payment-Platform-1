@@ -45,6 +45,6 @@ namespace PaymentPlatform.Transaction.API.Services.Interfaces
 		/// </summary>
 		/// <param name="transaction">Модель представления транзакции.</param>
 		/// <returns>Обновленную модель представленя.</returns>
-		Task<TransactionViewModel> UpdateTransactionAsync(TransactionViewModel transaction); 
+		Task<bool> UpdateTransactionAsync(TransactionViewModel transaction); 
 	}
 }
