@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
-using PaymentPlatform.Product.API.Models;
-using PaymentPlatform.Product.API.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using PaymentPlatform.Framework.ViewModels;
+using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
-using PaymentPlatform.Framework.Enums;
+using PaymentPlatform.Framework.ViewModels;
+using PaymentPlatform.Product.API.Models;
+using PaymentPlatform.Product.API.Services.Interfaces;
+using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Services.Implementations
 {
@@ -18,109 +19,111 @@ namespace PaymentPlatform.Product.API.Services.Implementations
     /// Реализация сервиса Product.
     /// </summary>
 	public class ProductService : IProductService
-	{
-		private readonly ProductContext _productContext;
-		private readonly IMapper _mapper;
-		private readonly IRabbitMQService _rabbitService;
+    {
+        private readonly ProductContext _productContext;
+        private readonly IMapper _mapper;
+        private readonly IRabbitMQService _rabbitService;
 
-		/// <summary>
-		/// Конструктор.
-		/// </summary>
-		/// <param name="productContext">контекст.</param>
-		/// <param name="mapper">профиль AutoMapper.</param>
-		public ProductService(ProductContext productContext, IMapper mapper, IRabbitMQService rabbitService)
-		{
-			_productContext = productContext;
-			_mapper = mapper;
-			_rabbitService = rabbitService;
-			_rabbitService.SetListener("ProductAPI", OnIncomingMessage);
-		}
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="productContext">контекст.</param>
+        /// <param name="mapper">профиль AutoMapper.</param>
+        public ProductService(ProductContext productContext, IMapper mapper, IRabbitMQService rabbitService)
+        {
+            _productContext = productContext;
+            _mapper = mapper;
+            _rabbitService = rabbitService;
+            _rabbitService.SetListener("ProductAPI", OnIncomingMessage);
+        }
 
-		/// <summary>
-		/// Метод, вызываемый при получении сообщения от брокера.
-		/// </summary>
-		/// <param name="incomingMessage">Текст сообщения.</param>
-		private void OnIncomingMessage(string incomingMessage)
-		{
-			try
-			{
-				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
-
-				switch (incomingObject.Sender)
-				{
-					case "TransactionAPI":
-						{
-							if (incomingObject.Action == (int)RabbitMessageActions.Apply)
-							{
-								var productReserve = incomingObject.Model as ProductReservedModel;
-								var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
-								if (product != null && product.Amount >= productReserve.Amount)
-								{
-									product.Amount -= productReserve.Amount;
-									productReserve.Status = (int)ProductReserveStatus.Peserved;
-
-									_productContext.Entry(product).State = EntityState.Modified;
-									_productContext.Entry(productReserve).State = EntityState.Added;
-
-									_productContext.SaveChanges();
-
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
-								}
-							}
-							else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
-							{
-								var productReserve = incomingObject.Model as ProductReservedModel;
-								var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
-								if (product != null && product.Amount >= productReserve.Amount)
-								{
-									product.Amount += productReserve.Amount;
-									productReserve.Status = (int)ProductReserveStatus.NotReserved;
-
-									_productContext.Entry(product).State = EntityState.Modified;
-									_productContext.Entry(productReserve).State = EntityState.Modified;
-
-									_productContext.SaveChanges();
-
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
-								}
-							}
-							else
-							{
-								throw new JsonException("Unexpected action.");
-							}
-							break;
-						}
-					default:
-						throw new JsonException("Unexpected sender.");
-				}
-			}
-			catch (JsonException)
+        /// <summary>
+        /// Метод, вызываемый при получении сообщения от брокера.
+        /// </summary>
+        /// <param name="incomingMessage">Текст сообщения.</param>
+        private void OnIncomingMessage(string incomingMessage)
+        {
+            try
             {
-				//TODO: Вывести в лог
-			}
-			catch (Exception exc)
-			{
-				throw new Exception("Unexpected exception", exc);
-			}
-		}
+                var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
+
+                switch (incomingObject.Sender)
+                {
+                    case "TransactionAPI":
+                        {
+                            if (incomingObject.Action == (int)RabbitMessageActions.Apply)
+                            {
+                                var productReserve = incomingObject.Model as ProductReservedModel;
+                                var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
+                                if (product != null && product.Amount >= productReserve.Amount)
+                                {
+                                    product.Amount -= productReserve.Amount;
+                                    productReserve.Status = (int)ProductReserveStatus.Peserved;
+
+                                    _productContext.Entry(product).State = EntityState.Modified;
+                                    _productContext.Entry(productReserve).State = EntityState.Added;
+
+                                    _productContext.SaveChanges();
+
+                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
+                                }
+                            }
+                            else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
+                            {
+                                var productReserve = incomingObject.Model as ProductReservedModel;
+                                var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
+                                if (product != null && product.Amount >= productReserve.Amount)
+                                {
+                                    product.Amount += productReserve.Amount;
+                                    productReserve.Status = (int)ProductReserveStatus.NotReserved;
+
+                                    _productContext.Entry(product).State = EntityState.Modified;
+                                    _productContext.Entry(productReserve).State = EntityState.Modified;
+
+                                    _productContext.SaveChanges();
+
+                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
+                                }
+                            }
+                            else
+                            {
+                                throw new JsonException("Unexpected action.");
+                            }
+                            break;
+                        }
+                    default:
+                        throw new JsonException("Unexpected sender.");
+                }
+            }
+            catch (JsonException jsonEx)
+            {
+                Log.Error(jsonEx, jsonEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+
+                throw ex;
+            }
+        }
 
         /// <inheritdoc/>
 		public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
-		{
-			var product = _mapper.Map<ProductModel>(productViewModel);
+        {
+            var product = _mapper.Map<ProductModel>(productViewModel);
 
-			await _productContext.Products.AddAsync(product);
-			await _productContext.SaveChangesAsync();
+            await _productContext.Products.AddAsync(product);
+            await _productContext.SaveChangesAsync();
 
-			var id = product.Id.ToString();
+            var id = product.Id.ToString();
 
-			return id;
-		}
+            return id;
+        }
 
         /// <inheritdoc/>
 		public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
-		{
-			IQueryable<ProductModel> queriableListOfProducts = null;
+        {
+            IQueryable<ProductModel> queriableListOfProducts = null;
 
             if (isAdmin)
             {
@@ -131,51 +134,51 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                 queriableListOfProducts = _productContext.Products.Select(x => x).Where(p => p.ProfileId == profileId);
             }
 
-			if (take != null && take > 0 && skip != null && skip > 0)
-			{
-				queriableListOfProducts = queriableListOfProducts.Skip((int)skip).Take((int)take);
-			}
+            if (take != null && take > 0 && skip != null && skip > 0)
+            {
+                queriableListOfProducts = queriableListOfProducts.Skip((int)skip).Take((int)take);
+            }
 
-			var listOfProducts = await queriableListOfProducts.ToListAsync();
-			var listOfViewModels = new List<ProductViewModel>();
+            var listOfProducts = await queriableListOfProducts.ToListAsync();
+            var listOfViewModels = new List<ProductViewModel>();
 
-			foreach (var productModel in listOfProducts)
-			{
-				var productViewModel = _mapper.Map<ProductViewModel>(productModel);
-				listOfViewModels.Add(productViewModel);
-			}
+            foreach (var productModel in listOfProducts)
+            {
+                var productViewModel = _mapper.Map<ProductViewModel>(productModel);
+                listOfViewModels.Add(productViewModel);
+            }
 
-			return listOfViewModels;
-		}
+            return listOfViewModels;
+        }
 
         /// <inheritdoc/>
 		public async Task<ProductViewModel> GetProductByIdAsync(Guid productId)
-		{
-			var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
-			var productViewModel = _mapper.Map<ProductViewModel>(product);
+        {
+            var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            var productViewModel = _mapper.Map<ProductViewModel>(product);
 
-			return productViewModel;
-		}
+            return productViewModel;
+        }
 
         /// <inheritdoc/>
 		public async Task<List<ProductViewModel>> GetProductsByUserIdAsyc(UserViewModel userViewModel, int? take = null, int? skip = null)
-		{
-			var listOfProductViewModel = new List<ProductViewModel>();
-			var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == userViewModel.Id).ToListAsync();
+        {
+            var listOfProductViewModel = new List<ProductViewModel>();
+            var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == userViewModel.Id).ToListAsync();
 
-			foreach (var product in listOfProducts)
-			{
-				var productViewModel = _mapper.Map<ProductViewModel>(product);
-				listOfProductViewModel.Add(productViewModel);
-			}
+            foreach (var product in listOfProducts)
+            {
+                var productViewModel = _mapper.Map<ProductViewModel>(product);
+                listOfProductViewModel.Add(productViewModel);
+            }
 
-			return listOfProductViewModel;
-		}
+            return listOfProductViewModel;
+        }
 
         /// <inheritdoc/>
 		public async Task<bool> UpdateProductAsync(ProductViewModel productViewModel)
-		{
-			var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productViewModel.Id);
+        {
+            var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productViewModel.Id);
 
             if (product == null)
             {
@@ -194,5 +197,5 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 
             return true;
         }
-	}
+    }
 }

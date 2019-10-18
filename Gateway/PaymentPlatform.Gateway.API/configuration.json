@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49060
+          "Port": 85
         }
       ],
       "UpstreamPathTemplate": "/accounts/auth",
@@ -18,7 +18,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49060
+          "Port": 85
         }
       ],
       "UpstreamPathTemplate": "/accounts/registration",
@@ -30,7 +30,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49060
+          "Port": 85
         }
       ],
       "UpstreamPathTemplate": "/accounts/{id}",
@@ -46,7 +46,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49070
+          "Port": 84
         }
       ],
       "UpstreamPathTemplate": "/products",
@@ -62,7 +62,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49070
+          "Port": 84
         }
       ],
       "UpstreamPathTemplate": "/products",
@@ -78,7 +78,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49070
+          "Port": 84
         }
       ],
       "UpstreamPathTemplate": "/products/{id}",
@@ -94,7 +94,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49070
+          "Port": 84
         }
       ],
       "UpstreamPathTemplate": "/products/{id}",
@@ -110,7 +110,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49070
+          "Port": 84
         }
       ],
       "UpstreamPathTemplate": "/products/{id}",
@@ -126,7 +126,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49080
+          "Port": 83
         }
       ],
       "UpstreamPathTemplate": "/profiles",
@@ -142,7 +142,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49080
+          "Port": 83
         }
       ],
       "UpstreamPathTemplate": "/profiles",
@@ -158,7 +158,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49080
+          "Port": 83
         }
       ],
       "UpstreamPathTemplate": "/profiles/{id}",
@@ -174,7 +174,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49080
+          "Port": 83
         }
       ],
       "UpstreamPathTemplate": "/profiles/{id}",
@@ -190,7 +190,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49090
+          "Port": 82
         }
       ],
       "UpstreamPathTemplate": "/transactions",
@@ -206,7 +206,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49090
+          "Port": 82
         }
       ],
       "UpstreamPathTemplate": "/transactions/{id}",
@@ -222,7 +222,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49090
+          "Port": 82
         }
       ],
       "UpstreamPathTemplate": "/transactions/{id}",
@@ -238,7 +238,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49090
+          "Port": 82
         }
       ],
       "UpstreamPathTemplate": "/transactions",
@@ -254,7 +254,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 49090
+          "Port": 82
         }
       ],
       "UpstreamPathTemplate": "/transactions/{id}",

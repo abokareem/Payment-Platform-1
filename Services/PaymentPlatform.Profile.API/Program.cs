@@ -9,7 +9,7 @@ namespace PaymentPlatform.Profile.API
 {
     public class Program
     {
-        private static readonly string url = "http://*:49060";
+        private static readonly string url = "http://*:83";
 
         public static void Main(string[] args)
         {

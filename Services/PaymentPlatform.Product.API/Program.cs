@@ -9,7 +9,7 @@ namespace PaymentPlatform.Product.API
 {
     public class Program
     {
-        private static readonly string url = "http://*:49070";
+        private static readonly string url = "http://*:84";
 
         public static void Main(string[] args)
         {

@@ -9,7 +9,6 @@ namespace PaymentPlatform.Framework.Services.SerilogLogger.Implementations
     {
         public Logger SerilogConfiguration()
         {
-            // TODO: Вынести (забирать) из конфигураций. Создать таблицу для Serilog.
             var connectionString = "Server=(localdb)\\mssqllocaldb;Database=PaymentPlatformApplication;Trusted_Connection=True;MultipleActiveResultSets=true";
             var tableName = "Serilog";
 

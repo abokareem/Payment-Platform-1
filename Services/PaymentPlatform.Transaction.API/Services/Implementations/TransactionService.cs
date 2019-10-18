@@ -14,8 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-// TODO: Вынести Serilog в константы, добавить в контроллер.
-
 namespace PaymentPlatform.Transaction.API.Services.Implementations
 {
     /// <summary>
