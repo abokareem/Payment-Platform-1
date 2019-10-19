@@ -3,14 +3,14 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1 AS build
 WORKDIR /src
-COPY SupportApplications/DatabaseInitialization/PaymentPlatform.Initialization.UI.ConsoleApp/PaymentPlatform.Initialization.UI.ConsoleApp.csproj SupportApplications/DatabaseInitialization/PaymentPlatform.Initialization.UI.ConsoleApp/
+COPY SupportApplications/PaymentPlatform.DatabaseInitialization/PaymentPlatform.DatabaseInitialization.csproj SupportApplications/PaymentPlatform.DatabaseInitialization/
 COPY . .
-WORKDIR /src/SupportApplications/DatabaseInitialization/PaymentPlatform.Initialization.UI.ConsoleApp
+WORKDIR /src/SupportApplications/PaymentPlatform.DatabaseInitialization
 
 FROM build AS publish
-RUN dotnet publish PaymentPlatform.Initialization.UI.ConsoleApp.csproj -c Release -o /app
+RUN dotnet publish PaymentPlatform.DatabaseInitialization.csproj -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "PaymentPlatform.Initialization.UI.ConsoleApp.dll"]
+ENTRYPOINT ["dotnet", "PaymentPlatform.DatabaseInitialization.dll"]
