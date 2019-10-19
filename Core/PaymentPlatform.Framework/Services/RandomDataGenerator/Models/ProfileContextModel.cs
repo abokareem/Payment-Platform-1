@@ -9,7 +9,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
     /// <summary>
 	/// Модель профиля пользователя для Context.
 	/// </summary>
-    [Table("Profiles")]
+    [Table("Profile")]
     public class ProfileContextModel : ProfileModel
     {
         /// <summary>

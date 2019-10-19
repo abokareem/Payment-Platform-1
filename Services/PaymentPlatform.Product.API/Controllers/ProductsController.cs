@@ -12,10 +12,7 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Controllers
 {
-    /// <summary>
-    /// Основной контроллер для Product.
-    /// </summary>
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
     [Authorize]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -26,9 +23,9 @@ namespace PaymentPlatform.Product.API.Controllers
         /// Конструктор.
         /// </summary>
         /// <param name="productService">product сервис.</param>
-		public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService)
         {
-            _productService = productService;
+            _productService = productService ?? throw new ArgumentException(nameof(productService));
         }
 
         // GET: api/products

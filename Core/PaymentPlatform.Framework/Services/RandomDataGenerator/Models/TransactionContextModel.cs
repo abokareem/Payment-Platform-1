@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {
     /// <summary>
-	/// Модель транзакции для Context.
-	/// </summary>
-    [Table("Transactions")]
+    /// Модель транзакции для Context.
+    /// </summary>
+    [Table("Transaction")]
     public class TransactionContextModel : TransactionModel
     {
         /// <summary>

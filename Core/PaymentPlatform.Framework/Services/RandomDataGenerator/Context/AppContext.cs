@@ -10,34 +10,34 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 	/// </summary>
     public class MainContext : DbContext
     {
-		/// <summary>
-		/// Аккаунты.
-		/// </summary>
+        /// <summary>
+        /// Аккаунты.
+        /// </summary>
         public DbSet<AccountContextModel> Accounts { get; set; }
 
-		/// <summary>
-		/// Резервирования баланса.
-		/// </summary>
+        /// <summary>
+        /// Резервирования баланса.
+        /// </summary>
         public DbSet<BalanceReservedContextModel> BalanceReserveds { get; set; }
 
-		/// <summary>
-		/// Товары.
-		/// </summary>
+        /// <summary>
+        /// Товары.
+        /// </summary>
         public DbSet<ProductContextModel> Products { get; set; }
 
-		/// <summary>
-		/// Резервирования товаров.
-		/// </summary>
+        /// <summary>
+        /// Резервирования товаров.
+        /// </summary>
         public DbSet<ProductReservedContextModel> ProductReserveds { get; set; }
 
-		/// <summary>
-		/// Профили.
-		/// </summary>
+        /// <summary>
+        /// Профили.
+        /// </summary>
         public DbSet<ProfileContextModel> Profiles { get; set; }
 
-		/// <summary>
-		/// Транзакции.
-		/// </summary>
+        /// <summary>
+        /// Транзакции.
+        /// </summary>
         public DbSet<TransactionContextModel> Transactions { get; set; }
 
         /// <summary>

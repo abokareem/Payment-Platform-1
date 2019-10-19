@@ -41,6 +41,5 @@ namespace PaymentPlatform.Framework.Models
         /// Параметры.
         /// </summary>
         public string Properties { get; set; }
-
     }
 }

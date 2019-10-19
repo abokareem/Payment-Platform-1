@@ -1,12 +1,16 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 
 namespace PaymentPlatform.Framework.ViewModels
 {
     /// <summary>
     /// ViewModel для транзакции.
     /// </summary>
-    public class TransactionViewModel
+    public class TransactionViewModel : IHasGuidIdentity
     {
+        /// <summary>
+        /// Идентификатор (GUID).
+        /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
@@ -35,8 +39,8 @@ namespace PaymentPlatform.Framework.ViewModels
         public decimal TotalCost { get; set; }
 
         /// <summary>
-		/// Общее количество.
-		/// </summary>
-		public decimal Amount { get; set; }
+        /// Общее количество.
+        /// </summary>
+        public decimal Amount { get; set; }
     }
 }

@@ -10,9 +10,6 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Profile.API.Controllers
 {
-    /// <summary>
-    /// Основной контроллер для Profile.
-    /// </summary>
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
@@ -23,10 +20,10 @@ namespace PaymentPlatform.Profile.API.Controllers
         /// <summary>
         /// Конструктор.
         /// </summary>
-        /// <param name="profileService">profile сервис.</param>
+        /// <param name="profileService">Profile сервис.</param>
         public ProfilesController(IProfileService profileService)
         {
-            _profileService = profileService;
+            _profileService = profileService ?? throw new ArgumentException(nameof(profileService));
         }
 
         // GET: api/profiles

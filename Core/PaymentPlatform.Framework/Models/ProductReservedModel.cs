@@ -1,16 +1,17 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
     /// Модель зарезервированного продукта.
     /// </summary>
-    public class ProductReservedModel
+    public class ProductReservedModel : IHasGuidIdentity
     {
         /// <summary>
-		/// Идентификатор резерва.
-		/// </summary>
-		public Guid Id { get; set; }
+        /// Идентификатор резерва.
+        /// </summary>
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Идентификатор транзакции.

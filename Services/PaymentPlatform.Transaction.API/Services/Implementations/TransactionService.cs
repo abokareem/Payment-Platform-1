@@ -42,11 +42,14 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
         /// <param name="transactionContext">Контекст транзакций.</param>
         /// <param name="mapper">Экземпляр автомаппера.</param>
         /// <param name="rabbitService">Сервис брокера сообщений.</param>
-        public TransactionService(TransactionContext transactionContext, IMapper mapper, IRabbitMQService rabbitService)
+        public TransactionService(TransactionContext transactionContext,
+                                  IMapper mapper,
+                                  IRabbitMQService rabbitService)
         {
-            _transactionContext = transactionContext;
-            _mapper = mapper;
-            _rabbitService = rabbitService;
+            _transactionContext = transactionContext ?? throw new ArgumentException(nameof(transactionContext));
+            _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
+            _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
+
             _rabbitService.SetListener("TransactionAPI", OnIncomingMessage);
         }
 

@@ -29,11 +29,15 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// </summary>
         /// <param name="productContext">контекст.</param>
         /// <param name="mapper">профиль AutoMapper.</param>
-        public ProductService(ProductContext productContext, IMapper mapper, IRabbitMQService rabbitService)
+        /// <param name="rabbitService">Сервис брокера сообщений.</param>
+        public ProductService(ProductContext productContext,
+                              IMapper mapper,
+                              IRabbitMQService rabbitService)
         {
-            _productContext = productContext;
-            _mapper = mapper;
-            _rabbitService = rabbitService;
+            _productContext = productContext ?? throw new ArgumentException(nameof(productContext));
+            _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
+            _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
+
             _rabbitService.SetListener("ProductAPI", OnIncomingMessage);
         }
 
@@ -108,7 +112,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-		public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
+        public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
         {
             var product = _mapper.Map<ProductModel>(productViewModel);
 
@@ -121,7 +125,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-		public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
+        public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
         {
             IQueryable<ProductModel> queriableListOfProducts = null;
 
@@ -152,7 +156,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-		public async Task<ProductViewModel> GetProductByIdAsync(Guid productId)
+        public async Task<ProductViewModel> GetProductByIdAsync(Guid productId)
         {
             var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
             var productViewModel = _mapper.Map<ProductViewModel>(product);
@@ -161,7 +165,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-		public async Task<List<ProductViewModel>> GetProductsByUserIdAsyc(UserViewModel userViewModel, int? take = null, int? skip = null)
+        public async Task<List<ProductViewModel>> GetProductsByUserIdAsyc(UserViewModel userViewModel, int? take = null, int? skip = null)
         {
             var listOfProductViewModel = new List<ProductViewModel>();
             var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == userViewModel.Id).ToListAsync();
@@ -176,7 +180,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-		public async Task<bool> UpdateProductAsync(ProductViewModel productViewModel)
+        public async Task<bool> UpdateProductAsync(ProductViewModel productViewModel)
         {
             var product = await _productContext.Products.FirstOrDefaultAsync(p => p.Id == productViewModel.Id);
 

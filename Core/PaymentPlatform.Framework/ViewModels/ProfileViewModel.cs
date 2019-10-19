@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 
 namespace PaymentPlatform.Framework.ViewModels
 {
     /// <summary>
 	/// ViewModel профиля пользователя.
 	/// </summary>
-    public class ProfileViewModel
+    public class ProfileViewModel : IHasGuidIdentity
     {
         /// <summary>
         /// Идентификатор (GUID).
@@ -13,9 +14,9 @@ namespace PaymentPlatform.Framework.ViewModels
         public Guid Id { get; set; }
 
         /// <summary>
-		/// Имя.
-		/// </summary>
-		public string FirstName { get; set; }
+        /// Имя.
+        /// </summary>
+        public string FirstName { get; set; }
 
         /// <summary>
         /// Фамилия.

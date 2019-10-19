@@ -171,20 +171,21 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         /// <inheritdoc/>
         public (bool success, string message) ConfigureServiceDefault()
         {
-            var jsonConfiguration = new ConfigurationBuilder()
-                   .SetBasePath(Environment.CurrentDirectory)
-                   .AddJsonFile(@"Settings/RabbitMQConfig.json")
-                   .Build();
-            var settings = new RabbitMQConfig();
-            jsonConfiguration.Bind(settings);
+            //var jsonConfiguration = new ConfigurationBuilder()
+            //       .SetBasePath(Environment.CurrentDirectory)
+            //       .AddJsonFile(@"Settings/RabbitMQConfig.json")
+            //       .Build();
+            //var settings = new RabbitMQConfig();
+            //jsonConfiguration.Bind(settings);
 
             connectionFactory = new ConnectionFactory
             {
-                HostName = settings.Host,
-                Port = settings.Port,
-                VirtualHost = settings.VirtualHost,
-                UserName = settings.UserName,
-                Password = settings.Password
+                //HostName = "localhost", // For Windows
+                HostName = "rabbit_mq", // For Docker
+                Port = 5672,
+                VirtualHost = "/",
+                UserName = "admin",
+                Password = "admin"
             };
 
             return (true, "Конфигурация установлена успешно.");

@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentPlatform.Framework.Enums
+﻿namespace PaymentPlatform.Framework.Enums
 {
-	/// <summary>
-	/// Статусы резервирования товаров.
-	/// </summary>
-	public enum ProductReserveStatus
-	{
-		NotReserved = 0,
-		Peserved = 1,
-	}
+    /// <summary>
+    /// Статусы резервирования товаров.
+    /// </summary>
+    public enum ProductReserveStatus
+    {
+        /// <summary>
+        /// Не зарезервирован.
+        /// </summary>
+        NotReserved = 0,
+
+        /// <summary>
+        /// Зарезервирован.
+        /// </summary>
+        Peserved = 1
+    }
 }

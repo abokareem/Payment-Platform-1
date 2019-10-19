@@ -16,21 +16,21 @@ using System.Text;
 
 namespace PaymentPlatform.Identity.API
 {
-	public class Startup
-	{
-		public IConfiguration Configuration { get; }
+    public class Startup
+    {
+        public IConfiguration Configuration { get; }
 
-		public Startup(IConfiguration configuration)
-		{
-			Configuration = configuration;
-		}
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-			string connectionString = Configuration.GetConnectionString("DefaultConnection");
-			services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 
             var appSettingSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
@@ -57,25 +57,25 @@ namespace PaymentPlatform.Identity.API
             });
 
             var mappingConfig = new MapperConfiguration(mc =>
-			{
-				mc.AddProfile(new AccountProfile());
-			});
+            {
+                mc.AddProfile(new AccountProfile());
+            });
 
-			var mapper = mappingConfig.CreateMapper();
-			services.AddSingleton(mapper);
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
-			services.AddScoped<IAccountService, AccountService>();
-		}
+            services.AddScoped<IAccountService, AccountService>();
+        }
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             app.UseAuthentication();
             app.UseMvc();
-		}
-	}
+        }
+    }
 }

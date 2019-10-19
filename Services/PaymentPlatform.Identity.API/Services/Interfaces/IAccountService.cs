@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PaymentPlatform.Identity.API.Services.Interfaces
 {
     /// <summary>
-    /// Интерфейс для DI.
+    /// Интерфейс сервиса Identity.
     /// </summary>
     public interface IAccountService
     {

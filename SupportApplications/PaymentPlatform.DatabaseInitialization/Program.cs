@@ -38,13 +38,13 @@ namespace PaymentPlatform.DatabaseInitialization
             Console.ReadLine();
         }
 
-		/// <summary>
-		/// Заполнить БД случайными значениями.
-		/// </summary>
-		/// <param name="method">Используемый метод генератора данных.</param>
-		/// <param name="rndDataGenerator">Сервис генерации случайных значений.</param>
-		/// <param name="count">Количество значений для генерации.</param>
-		/// <returns>Затраченное время.</returns>
+        /// <summary>
+        /// Заполнить БД случайными значениями.
+        /// </summary>
+        /// <param name="method">Используемый метод генератора данных.</param>
+        /// <param name="rndDataGenerator">Сервис генерации случайных значений.</param>
+        /// <param name="count">Количество значений для генерации.</param>
+        /// <returns>Затраченное время.</returns>
         private static async Task<long> StartFillingDatabase(DataGeneratorTypes method, IRandomDataGeneratorService rndDataGenerator, int count)
         {
             var watch = Stopwatch.StartNew();
@@ -54,10 +54,13 @@ namespace PaymentPlatform.DatabaseInitialization
                 case DataGeneratorTypes.AddNewAccountsAndProfilesAsync: { await rndDataGenerator.AddNewAccountsAndProfilesAsync(count); } break;
                 case DataGeneratorTypes.AddNewProductsAsync: { await rndDataGenerator.AddNewProductsAsync(count); } break;
                 case DataGeneratorTypes.AddNewTransactionsAsync: { await rndDataGenerator.AddNewTransactionsAsync(count); } break;
-				default: break;
+                default: break;
             }
+
             watch.Stop();
+
             Console.WriteLine(DbInitializationConstants.LEAD_TIME + watch.ElapsedMilliseconds.ToString() + DbInitializationConstants.MS);
+
             return watch.ElapsedMilliseconds;
         }
     }

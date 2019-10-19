@@ -1,5 +1,4 @@
 ﻿using PaymentPlatform.Framework.Models;
-using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {

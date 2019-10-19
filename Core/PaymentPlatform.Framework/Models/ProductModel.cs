@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
@@ -6,8 +7,8 @@ namespace PaymentPlatform.Framework.Models
     /// <summary>
 	/// Модель товара.
 	/// </summary>
-    [Table("Products")]
-    public class ProductModel
+    [Table("Product")]
+    public class ProductModel : IHasGuidIdentity
     {
         /// <summary>
         /// Идентификатор (GUID).
@@ -55,8 +56,8 @@ namespace PaymentPlatform.Framework.Models
         public string QrCode { get; set; }
 
         /// <summary>
-		/// Активность.
-		/// </summary>
-		public bool IsActive { get; set; }
+        /// Активность.
+        /// </summary>
+        public bool IsActive { get; set; }
     }
 }

@@ -18,67 +18,67 @@ using System.Text;
 
 namespace PaymentPlatform.Product.API
 {
-	public class Startup
-	{
-		public IConfiguration Configuration { get; }
+    public class Startup
+    {
+        public IConfiguration Configuration { get; }
 
-		public Startup(IConfiguration configuration)
-		{
-			Configuration = configuration;
-		}
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-			string connectionString = Configuration.GetConnectionString("DefaultConnection");
-			services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
 
-			var appSettingSection = Configuration.GetSection("AppSettings");
-			services.Configure<AppSettings>(appSettingSection);
+            var appSettingSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingSection);
 
-			var appSettings = appSettingSection.Get<AppSettings>();
-			var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var appSettings = appSettingSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
-			services.AddAuthentication(x =>
-			{
-				x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			})
-			.AddJwtBearer(x =>
-			{
-				x.RequireHttpsMetadata = false;
-				x.SaveToken = true;
-				x.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(key),
-					ValidateIssuer = false,
-					ValidateAudience = false
-				};
-			});
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
-			var mappingConfig = new MapperConfiguration(mc =>
-			{
-				mc.AddProfile(new ProductProfile());
-			});
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ProductProfile());
+            });
 
-			var mapper = mappingConfig.CreateMapper();
-			services.AddSingleton(mapper);
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
-			services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddSingleton<IRabbitMQService, RabbitMQService>();
-		}
+        }
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
-			app.UseAuthentication();
-			app.UseMvc();
-		}
-	}
+            app.UseAuthentication();
+            app.UseMvc();
+        }
+    }
 }

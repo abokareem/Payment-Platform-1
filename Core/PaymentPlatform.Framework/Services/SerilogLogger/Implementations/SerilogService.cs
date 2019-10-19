@@ -47,8 +47,8 @@ namespace PaymentPlatform.Framework.Services.SerilogLogger.Implementations
                 .WriteTo.MSSqlServer(connectionString,
                                      tableName,
                                      //columnOptions: columnOption,
-                                     autoCreateSqlTable: true,
-                                     schemaName: "log")
+                                     //schemaName: "log",
+                                     autoCreateSqlTable: true)
                 .CreateLogger();
 
             return serilogConfig;

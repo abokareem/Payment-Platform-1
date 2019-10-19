@@ -11,9 +11,6 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
 {
-    /// <summary>
-    /// Основной контроллер для Identity.
-    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AccountsController : Controller
@@ -26,7 +23,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         /// <param name="accountService">account сервис.</param>
         public AccountsController(IAccountService accountService)
         {
-            _accountService = accountService;
+            _accountService = accountService ?? throw new ArgumentException(nameof(accountService));
         }
 
         // GET: api/accounts

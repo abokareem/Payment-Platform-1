@@ -16,9 +16,13 @@ namespace PaymentPlatform.Transaction.API.Controllers
     {
         private readonly ITransactionService _transactionService;
 
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="transactionService">Transaction сервис.</param>
         public TransactionsController(ITransactionService transactionService)
         {
-            _transactionService = transactionService;
+            _transactionService = transactionService ?? throw new ArgumentException(nameof(transactionService));
         }
 
         // GET: api/Transactions
@@ -116,7 +120,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
             return Ok(transaction);
         }
 
-        // DELETE: api/Transactions/5
+        // DELETE: api/Transactions/{id}
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTransaction([FromRoute] Guid id)

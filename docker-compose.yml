@@ -49,7 +49,7 @@ services:
     depends_on:
       - db
     environment:
-      COUNT: "123"
+      COUNT: "5"
   db:
     image: microsoft/mssql-server-linux
     environment:

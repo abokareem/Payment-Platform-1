@@ -8,7 +8,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
     /// <summary>
     /// Модель личного кабинета пользователя для Context.
     /// </summary>
-    [Table("Accounts")]
+    [Table("Account")]
     public class AccountContextModel : AccountModel
     {
         /// <summary>
