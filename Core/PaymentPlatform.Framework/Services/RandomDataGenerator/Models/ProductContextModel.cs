@@ -1,14 +1,15 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Framework.Models
+namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {
     /// <summary>
 	/// Модель товара для Context.
 	/// </summary>
-    [Table("Products")]
+    [Table("Product")]
     public class ProductContextModel : ProductModel
     {
         /// <summary>

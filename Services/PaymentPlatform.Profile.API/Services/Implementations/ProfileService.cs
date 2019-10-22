@@ -8,6 +8,7 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Profile.API.Models;
 using PaymentPlatform.Profile.API.Services.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,167 +16,172 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Profile.API.Services.Implementations
 {
-	/// <summary>
-	/// Реализация сервиса Profile.
-	/// </summary>
-	public class ProfileService : IProfileService
-	{
-		private readonly ProfileContext _profileContext;
-		private readonly IMapper _mapper;
-		private readonly IRabbitMQService _rabbitService;
+    /// <summary>
+    /// Реализация сервиса Profile.
+    /// </summary>
+    public class ProfileService : IProfileService
+    {
+        private readonly ProfileContext _profileContext;
+        private readonly IMapper _mapper;
+        private readonly IRabbitMQService _rabbitService;
 
-		/// <summary>
-		/// Конструктор.
-		/// </summary>
-		/// <param name="profileContext">контекст.</param>
-		/// <param name="mapper">профиль AutoMapper.</param>
-		public ProfileService(ProfileContext profileContext, IMapper mapper, IRabbitMQService rabbitService)
-		{
-			_profileContext = profileContext;
-			_mapper = mapper;
-			_rabbitService = rabbitService;
-			_rabbitService.SetListener("ProfileAPI", OnIncomingMessage);
-		}
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="profileContext">контекст.</param>
+        /// <param name="mapper">профиль AutoMapper.</param>
+        /// <param name="rabbitService">Сервис брокера сообщений.</param>
+        public ProfileService(ProfileContext profileContext, 
+                              IMapper mapper, 
+                              IRabbitMQService rabbitService)
+        {
+            _profileContext = profileContext ?? throw new ArgumentException(nameof(profileContext));
+            _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
+            _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
 
-		/// <summary>
-		/// Метод, вызываемый при получении сообщения от брокера.
-		/// </summary>
-		/// <param name="incomingMessage">Текст сообщения.</param>
-		private void OnIncomingMessage(string incomingMessage)
-		{
-			try
-			{
-				var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
+            _rabbitService.SetListener("ProfileAPI", OnIncomingMessage);
+        }
 
-				switch (incomingObject.Sender)
-				{
-					case "TransactionAPI":
-						{
-							var balanceReserve = incomingObject.Model as BalanceReservedModel;
-							var profile = _profileContext.Profiles.FirstOrDefault(p => p.Id == balanceReserve.ProfileId);
-							if (incomingObject.Action == (int)RabbitMessageActions.Apply)
-							{
-								if (profile != null && profile.Balance >= balanceReserve.Total)
-								{
-									profile.Balance -= balanceReserve.Total;
-									balanceReserve.Status = (int)ProductReserveStatus.Peserved;
+        /// <summary>
+        /// Метод, вызываемый при получении сообщения от брокера.
+        /// </summary>
+        /// <param name="incomingMessage">Текст сообщения.</param>
+        private void OnIncomingMessage(string incomingMessage)
+        {
+            try
+            {
+                var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
 
-									_profileContext.Entry(profile).State = EntityState.Modified;
-									_profileContext.Entry(balanceReserve).State = EntityState.Added;
+                switch (incomingObject.Sender)
+                {
+                    case "TransactionAPI":
+                        {
+                            var balanceReserve = incomingObject.Model as BalanceReservedModel;
+                            var profile = _profileContext.Profiles.FirstOrDefault(p => p.Id == balanceReserve.ProfileId);
+                            if (incomingObject.Action == (int)RabbitMessageActions.Apply)
+                            {
+                                if (profile != null && profile.Balance >= balanceReserve.Total)
+                                {
+                                    profile.Balance -= balanceReserve.Total;
+                                    balanceReserve.Status = (int)ProductReserveStatus.Peserved;
 
-									_profileContext.SaveChanges();
+                                    _profileContext.Entry(profile).State = EntityState.Modified;
+                                    _profileContext.Entry(balanceReserve).State = EntityState.Added;
 
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
-								}
-							}
-							else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
-							{
-								if (profile != null)
-								{
-									profile.Balance += balanceReserve.Total;
-									balanceReserve.Status = (int)ProductReserveStatus.NotReserved;
+                                    _profileContext.SaveChanges();
 
-									_profileContext.Entry(profile).State = EntityState.Modified;
-									_profileContext.Entry(balanceReserve).State = EntityState.Modified;
+                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+                                }
+                            }
+                            else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
+                            {
+                                if (profile != null)
+                                {
+                                    profile.Balance += balanceReserve.Total;
+                                    balanceReserve.Status = (int)ProductReserveStatus.NotReserved;
 
-									_profileContext.SaveChanges();
+                                    _profileContext.Entry(profile).State = EntityState.Modified;
+                                    _profileContext.Entry(balanceReserve).State = EntityState.Modified;
 
-									_rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
-								}
-							}
-							else
-							{
-								throw new JsonException("Unexpected action.");
-							}
-							break;
-						}
-					default:
-						throw new JsonException("Unexpected sender.");
-				}
-			}
-			catch (JsonException)
-			{
-				//TODO: Вывести в лог
-			}
-			catch (Exception exc)
-			{
-				throw exc;
-			}
-		}
+                                    _profileContext.SaveChanges();
 
-		/// <inheritdoc/>
-		public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
-		{
-			var profile = _mapper.Map<ProfileModel>(profileViewModel);
+                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+                                }
+                            }
+                            else
+                            {
+                                throw new JsonException("Unexpected action.");
+                            }
+                            break;
+                        }
+                    default:
+                        throw new JsonException("Unexpected sender.");
+                }
+            }
+            catch (JsonException jsonEx)
+            {
+                Log.Error(jsonEx, jsonEx.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+                throw ex;
+            }
+        }
 
-			if (await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id) != null)
-			{
-				return (GlobalConstants.PROFILE_SERVICE_FAIL, false);
-			}
+        /// <inheritdoc/>
+        public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
+        {
+            var profile = _mapper.Map<ProfileModel>(profileViewModel);
 
-			await _profileContext.Profiles.AddAsync(profile);
-			await _profileContext.SaveChangesAsync();
+            if (await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id) != null)
+            {
+                return (GlobalConstants.PROFILE_SERVICE_FAIL, false);
+            }
 
-			var id = profile.Id.ToString();
+            await _profileContext.Profiles.AddAsync(profile);
+            await _profileContext.SaveChangesAsync();
 
-			return (id, true);
-		}
+            var id = profile.Id.ToString();
 
-		/// <inheritdoc/>
-		public async Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
-		{
-			var queriableListOfProfiles = _profileContext.Profiles.Select(x => x);
+            return (id, true);
+        }
 
-			if (take != null && take > 0 && skip != null && skip > 0)
-			{
-				queriableListOfProfiles = queriableListOfProfiles.Skip((int)skip).Take((int)take);
-			}
+        /// <inheritdoc/>
+        public async Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
+        {
+            var queriableListOfProfiles = _profileContext.Profiles.Select(x => x);
 
-			var listOfProfiles = await queriableListOfProfiles.ToListAsync();
+            if (take != null && take > 0 && skip != null && skip > 0)
+            {
+                queriableListOfProfiles = queriableListOfProfiles.Skip((int)skip).Take((int)take);
+            }
 
-			var listOfProfilesViewModels = new List<ProfileViewModel>();
+            var listOfProfiles = await queriableListOfProfiles.ToListAsync();
 
-			foreach (var profileModel in listOfProfiles)
-			{
-				var profileViewModel = _mapper.Map<ProfileViewModel>(profileModel);
-				listOfProfilesViewModels.Add(profileViewModel);
-			}
+            var listOfProfilesViewModels = new List<ProfileViewModel>();
 
-			return listOfProfilesViewModels;
-		}
+            foreach (var profileModel in listOfProfiles)
+            {
+                var profileViewModel = _mapper.Map<ProfileViewModel>(profileModel);
+                listOfProfilesViewModels.Add(profileViewModel);
+            }
 
-		/// <inheritdoc/>
-		public async Task<ProfileViewModel> GetProfileByIdAsync(Guid profileId)
-		{
-			var profile = await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileId);
-			var profileViewModel = _mapper.Map<ProfileViewModel>(profile);
+            return listOfProfilesViewModels;
+        }
 
-			return profileViewModel;
-		}
+        /// <inheritdoc/>
+        public async Task<ProfileViewModel> GetProfileByIdAsync(Guid profileId)
+        {
+            var profile = await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileId);
+            var profileViewModel = _mapper.Map<ProfileViewModel>(profile);
 
-		/// <inheritdoc/>
-		public async Task<bool> UpdateProfileAsync(ProfileViewModel profileViewModel)
-		{
-			var profile = await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id);
+            return profileViewModel;
+        }
 
-			if (profile == null)
-			{
-				return false;
-			}
+        /// <inheritdoc/>
+        public async Task<bool> UpdateProfileAsync(ProfileViewModel profileViewModel)
+        {
+            var profile = await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id);
 
-			profile.FirstName = profileViewModel.FirstName;
-			profile.LastName = profileViewModel.LastName;
-			profile.SecondName = profileViewModel.SecondName;
-			profile.IsSeller = profileViewModel.IsSeller;
-			profile.OrgName = profileViewModel.OrgName;
-			profile.OrgNumber = profileViewModel.OrgNumber;
-			profile.BankBook = profileViewModel.BankBook;
-			profile.Balance = profileViewModel.Balance;
+            if (profile == null)
+            {
+                return false;
+            }
 
-			_profileContext.Update(profile);
-			await _profileContext.SaveChangesAsync();
+            profile.FirstName = profileViewModel.FirstName;
+            profile.LastName = profileViewModel.LastName;
+            profile.SecondName = profileViewModel.SecondName;
+            profile.IsSeller = profileViewModel.IsSeller;
+            profile.OrgName = profileViewModel.OrgName;
+            profile.OrgNumber = profileViewModel.OrgNumber;
+            profile.BankBook = profileViewModel.BankBook;
+            profile.Balance = profileViewModel.Balance;
 
-			return true;
-		}
-	}
+            _profileContext.Update(profile);
+            await _profileContext.SaveChangesAsync();
+
+            return true;
+        }
+    }
 }

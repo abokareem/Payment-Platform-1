@@ -1,4 +1,6 @@
-﻿namespace PaymentPlatform.Framework.Models
+﻿using PaymentPlatform.Framework.Models;
+
+namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {
     /// <summary>
     /// Модель зарезервированного баланса  для Context.

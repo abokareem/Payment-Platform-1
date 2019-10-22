@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentPlatform.Framework.Models
+﻿namespace PaymentPlatform.Framework.Models
 {
-	/// <summary>
-	/// Модель сообщения RabbitMq
-	/// </summary>
+    /// <summary>
+    /// Модель сообщения RabbitMq
+    /// </summary>
     public class RabbitMessageModel
     {
-		/// <summary>
-		/// Действие.
-		/// </summary>
+        /// <summary>
+        /// Действие.
+        /// </summary>
         public int Action { get; set; }
 
-		/// <summary>
-		/// Отправитель.
-		/// </summary>
+        /// <summary>
+        /// Отправитель.
+        /// </summary>
         public string Sender { get; set; }
 
-		/// <summary>
-		/// Объект модели.
-		/// </summary>
+        /// <summary>
+        /// Объект модели.
+        /// </summary>
         public object Model { get; set; }
     }
 }

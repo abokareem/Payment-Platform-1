@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace PaymentPlatform.Framework.ViewModels
@@ -6,17 +7,17 @@ namespace PaymentPlatform.Framework.ViewModels
     /// <summary>
     /// Личный кабинет пользователя в виде ViewModel.
     /// </summary>
-    public class AccountViewModel
+    public class AccountViewModel : IHasGuidIdentity
     {
         /// <summary>
-		/// Идентификатор (GUID).
-		/// </summary>
-		public Guid Id { get; set; }
+        /// Идентификатор (GUID).
+        /// </summary>
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Электронная почта.
         /// </summary>
-		[Required(ErrorMessage = "E-mail filed is required")]
+        [Required(ErrorMessage = "E-mail filed is required")]
         public string Email { get; set; }
 
         /// <summary>

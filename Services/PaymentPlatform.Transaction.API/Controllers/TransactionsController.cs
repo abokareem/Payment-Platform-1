@@ -1,132 +1,161 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using PaymentPlatform.Framework.Constants.Logger;
 using PaymentPlatform.Framework.ViewModels;
-using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Controllers
 {
-	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
-	public class TransactionsController : ControllerBase
-	{
-		private readonly ITransactionService _transactionService;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TransactionsController : ControllerBase
+    {
+        private readonly ITransactionService _transactionService;
 
-		public TransactionsController(ITransactionService transactionService)
-		{
-			_transactionService = transactionService;
-		}
+        /// <summary>
+        /// Конструктор.
+        /// </summary>
+        /// <param name="transactionService">Transaction сервис.</param>
+        public TransactionsController(ITransactionService transactionService)
+        {
+            _transactionService = transactionService ?? throw new ArgumentException(nameof(transactionService));
+        }
 
-		// GET: api/Transactions
-		[Authorize(Roles = "Admin")]
-		[HttpGet]
-		public async Task<IEnumerable<TransactionViewModel>> GetTransactions(int? take = null, int? skip = null)
-		{
-			return await _transactionService.GetTransactionsAsync(take,skip);
-		}
+        // GET: api/Transactions
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IEnumerable<TransactionViewModel>> GetTransactions(int? take = null, int? skip = null)
+        {
+            var transactions = await _transactionService.GetTransactionsAsync(take, skip);
+            var count = transactions.Count;
 
-		// GET: api/Transactions/5
-		[Authorize(Roles = "Admin, User")]
-		[HttpGet("{id}")]
-		public async Task<IActionResult> GetTransaction([FromRoute] Guid id)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+            Log.Information($"{count} {TransactionLoggerConstants.GET_TRANSACTIONS}");
 
-			var transaction = await _transactionService.GetTransactionByIdAsync(id);
+            return transactions;
+        }
 
-			if (transaction == null)
-			{
-				return NotFound();
-			}
+        // GET: api/Transactions/{id}
+        [Authorize(Roles = "Admin, User")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTransaction([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-			return Ok(transaction);
-		}
+            var transaction = await _transactionService.GetTransactionByIdAsync(id);
 
-		// PUT: api/Transactions/5
-		[Authorize(Roles = "Admin, User")]
-		[HttpPut("{id}")]
-		public async Task<IActionResult> PutTransaction([FromBody] TransactionViewModel transaction)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+            if (transaction == null)
+            {
+                Log.Warning($"{id} {TransactionLoggerConstants.GET_TRANSACTION_NOT_FOUND}");
 
-			await _transactionService.UpdateTransactionAsync(transaction);
-			
-			return NoContent();
-		}
+                return NotFound();
+            }
 
-		// POST: api/Transactions
-		[HttpPost]
-		public async Task<IActionResult> PostTransaction([FromBody] TransactionViewModel transaction)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
+            Log.Information($"{id} {TransactionLoggerConstants.GET_TRANSACTION_FOUND}");
 
-			var result = await _transactionService.AddNewTransactionAsync(transaction);
-			if (result.success)
-			{
-				return Ok(transaction);
-			}
-			else
-			{
-				return BadRequest(result.message);
-			}
-		}
+            return Ok(transaction);
+        }
 
-		// DELETE: api/Transactions/5
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteTransaction([FromRoute] Guid id)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-			if (!TransactionExists(id))
-			{
-				return BadRequest();
-			}
-			var result = await _transactionService.RevertTransactionByIdAsync(id);
-			if (result.success)
-			{
-				return Ok(result.message);
-			}
-			else
-			{
-				return Conflict(result.message);
-			}
-		}
+        // PUT: api/Transactions/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTransaction([FromBody] TransactionViewModel transaction)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-		private bool TransactionExists(Guid id)
-		{
-			return _transactionService.GetTransactionByIdAsync(id) != null;
-		}
+            var transactionViewModel = await _transactionService.GetTransactionByIdAsync(transaction.Id);
+            var transactionExist = transactionViewModel != null;
 
-        // TODO: Это необходимо удалить? (To: s207883)
+            if (!transactionExist)
+            {
+                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.GET_TRANSACTION_NOT_FOUND}");
 
-        private (Guid, string) GetClaimsIdentity()
-		{
-			var id = User.Identity.Name;
+                return NotFound();
+            }
 
-			var userIdentity = (ClaimsIdentity)User.Identity;
-			var claims = userIdentity.Claims;
-			var roleClaimType = userIdentity.RoleClaimType;
-			var role = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+            var updatedResult = await _transactionService.UpdateTransactionAsync(transaction);
 
-			return (new Guid(id), role);
-		}
-	}
+            if (!updatedResult)
+            {
+                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.UPDATE_TRANSACTION_CONFLICT}");
+
+                return Conflict();
+            }
+
+            Log.Information($"{transaction.Id} {TransactionLoggerConstants.UPDATE_TRANSACTION_OK}");
+
+            return Ok(transaction);
+        }
+
+        // POST: api/Transactions
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> AddNewTransaction([FromBody] TransactionViewModel transaction)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var (success, message) = await _transactionService.AddNewTransactionAsync(transaction);
+
+            if (!success)
+            {
+                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_CONFLICT}");
+
+                return Conflict(message);
+            }
+
+            Log.Information($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
+
+            return Ok(transaction);
+        }
+
+        // DELETE: api/Transactions/{id}
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTransaction([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = TransactionExists(id);
+
+            if (!result)
+            {
+                Log.Warning($"{id} {TransactionLoggerConstants.GET_TRANSACTION_NOT_FOUND}");
+
+                return NotFound();
+            }
+
+            var (success, message) = await _transactionService.RevertTransactionByIdAsync(id);
+
+            if (!success)
+            {
+                Log.Warning($"{id} {TransactionLoggerConstants.REVERT_TRANSACTION_CONFLICT}");
+
+                return Conflict(message);
+            }
+
+            Log.Information($"{id} {TransactionLoggerConstants.REVERT_TRANSACTION_OK}");
+
+            return Ok(message);
+        }
+
+        private bool TransactionExists(Guid id)
+        {
+            return _transactionService.GetTransactionByIdAsync(id) != null;
+        }
+    }
 }

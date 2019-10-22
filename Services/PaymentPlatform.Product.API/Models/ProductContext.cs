@@ -3,11 +3,25 @@ using PaymentPlatform.Framework.Models;
 
 namespace PaymentPlatform.Product.API.Models
 {
-	public class ProductContext : DbContext
-	{
-		public DbSet<ProductModel> Products { get; set; }
-		public DbSet<ProductReservedModel> ProductReserves { get; set; }
+    /// <summary>
+    /// Контекст продукта.
+    /// </summary>
+    public class ProductContext : DbContext
+    {
+        /// <summary>
+        /// Продукты.
+        /// </summary>
+        public DbSet<ProductModel> Products { get; set; }
 
-		public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
-	}
+        /// <summary>
+        /// Резервирование продукта.
+        /// </summary>
+        public DbSet<ProductReservedModel> ProductReserves { get; set; }
+
+        /// <summary>
+        /// Базовый конструктор.
+        /// </summary>
+        /// <param name="options">параметры.</param>
+        public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
+    }
 }

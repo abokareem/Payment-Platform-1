@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
@@ -6,8 +7,8 @@ namespace PaymentPlatform.Framework.Models
     /// <summary>
 	/// Модель транзакции.
 	/// </summary>
-    [Table("Transactions")]
-    public class TransactionModel
+    [Table("Transaction")]
+    public class TransactionModel : IHasGuidIdentity
     {
         /// <summary>
         /// Идентификатор (GUID).

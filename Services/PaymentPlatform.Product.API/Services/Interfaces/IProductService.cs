@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.Product.API.Services.Interfaces
 {
-	/// <summary>
-	/// Интерфейс сервиса товаров.
-	/// </summary>
-	public interface IProductService
-	{
-		/// <summary>
-		/// Добавить новый товар.
-		/// </summary>
-		/// <param name="productViewModel">модель продукта.</param>
-		/// <param name="userViewModel">пользователь.</param>
-		/// <returns>Id продукта.</returns>
-		Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel);
+    /// <summary>
+    /// Интерфейс сервиса товаров.
+    /// </summary>
+    public interface IProductService
+    {
+        /// <summary>
+        /// Добавить новый товар.
+        /// </summary>
+        /// <param name="productViewModel">модель продукта.</param>
+        /// <param name="userViewModel">пользователь.</param>
+        /// <returns>Id продукта.</returns>
+        Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel);
 
         /// <summary>
         /// Получить товар по его Id.
@@ -48,5 +48,5 @@ namespace PaymentPlatform.Product.API.Services.Interfaces
         /// <param name="productViewModel">товар.</param>
         /// <returns>Результат операции.</returns>
         Task<bool> UpdateProductAsync(ProductViewModel productViewModel);
-	}
+    }
 }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
     /// Модель зарезервированного баланса.
     /// </summary>
-    public class BalanceReservedModel
+    public class BalanceReservedModel : IHasGuidIdentity
     {
         /// <summary>
         /// Идентификатор.

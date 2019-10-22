@@ -11,11 +11,11 @@ namespace PaymentPlatform.Profile.API.Services.Interfaces
     public interface IProfileService
     {
         /// <summary>
-		/// Добавить новый профиль.
-		/// </summary>
-		/// <param name="profileViewModel">профиля.</param>
-		/// <returns>Id профиля.</returns>
-		Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel);
+        /// Добавить новый профиль.
+        /// </summary>
+        /// <param name="profileViewModel">профиля.</param>
+        /// <returns>Id профиля.</returns>
+        Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel);
 
         /// <summary>
         /// Получить профиль по его Id.

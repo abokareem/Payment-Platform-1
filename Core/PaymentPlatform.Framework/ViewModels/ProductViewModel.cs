@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 
 namespace PaymentPlatform.Framework.ViewModels
 {
     /// <summary>
 	/// ViewModel продукта.
 	/// </summary>
-    public class ProductViewModel
+    public class ProductViewModel : IHasGuidIdentity
     {
         /// <summary>
         /// Идентификатор (GUID).

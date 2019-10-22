@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using PaymentPlatform.Framework.Models;
+using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
 using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
@@ -10,35 +10,40 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 	/// </summary>
     public class MainContext : DbContext
     {
-		/// <summary>
-		/// Аккаунты.
-		/// </summary>
+        /// <summary>
+        /// Аккаунты.
+        /// </summary>
         public DbSet<AccountContextModel> Accounts { get; set; }
 
-		/// <summary>
-		/// Резервирования баланса.
-		/// </summary>
+        /// <summary>
+        /// Резервирования баланса.
+        /// </summary>
         public DbSet<BalanceReservedContextModel> BalanceReserveds { get; set; }
 
-		/// <summary>
-		/// Товары.
-		/// </summary>
+        /// <summary>
+        /// Товары.
+        /// </summary>
         public DbSet<ProductContextModel> Products { get; set; }
 
-		/// <summary>
-		/// Резервирования товаров.
-		/// </summary>
+        /// <summary>
+        /// Резервирования товаров.
+        /// </summary>
         public DbSet<ProductReservedContextModel> ProductReserveds { get; set; }
 
-		/// <summary>
-		/// Профили.
-		/// </summary>
+        /// <summary>
+        /// Профили.
+        /// </summary>
         public DbSet<ProfileContextModel> Profiles { get; set; }
 
-		/// <summary>
-		/// Транзакции.
-		/// </summary>
+        /// <summary>
+        /// Транзакции.
+        /// </summary>
         public DbSet<TransactionContextModel> Transactions { get; set; }
+
+        /// <summary>
+		/// Таблица Serilog.
+		/// </summary>
+        public DbSet<SerilogContextModel> Serilogs { get; set; }
 
         /// <summary>
         /// Пустой конструктор.
@@ -250,6 +255,35 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .WithOne(t => t.Transaction)
                 .HasForeignKey<ProductReservedContextModel>(pr => pr.Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            #endregion
+
+            #region Serilog table
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Id)
+                .IsRequired();
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Message);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.MessageTemplate);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Level)
+                .HasMaxLength(128);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.TimeStamp)
+                .HasColumnType("datetime")
+                .IsRequired();
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Exception);
+
+            modelBuilder.Entity<SerilogContextModel>()
+                .Property(p => p.Properties);
 
             #endregion
         }

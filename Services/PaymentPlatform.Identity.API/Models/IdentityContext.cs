@@ -9,15 +9,7 @@ namespace PaymentPlatform.Identity.API.Models
     public class IdentityContext : DbContext
     {
         /// <summary>
-        /// Пустой конструктор.
-        /// </summary>
-        public IdentityContext()
-        {
-            Database.EnsureCreated();
-        }
-
-        /// <summary>
-        /// DbSet.
+        /// Аккаунты.
         /// </summary>
         public DbSet<AccountModel> Accounts { get; set; }
 
@@ -25,6 +17,6 @@ namespace PaymentPlatform.Identity.API.Models
         /// Базовый конструктор.
         /// </summary>
         /// <param name="options">параметры.</param>
-        public IdentityContext(DbContextOptions<IdentityContext> options) : base(options) {}
+        public IdentityContext(DbContextOptions<IdentityContext> options) : base(options) { }
     }
 }

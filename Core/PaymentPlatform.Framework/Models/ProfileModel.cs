@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Interfaces;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PaymentPlatform.Framework.Models
@@ -6,8 +7,8 @@ namespace PaymentPlatform.Framework.Models
     /// <summary>
 	/// Модель профиля пользователя.
 	/// </summary>
-    [Table("Profiles")]
-    public class ProfileModel
+    [Table("Profile")]
+    public class ProfileModel : IHasGuidIdentity
     {
         /// <summary>
         /// Идентификатор (GUID).
@@ -15,9 +16,9 @@ namespace PaymentPlatform.Framework.Models
         public Guid Id { get; set; }
 
         /// <summary>
-		/// Имя.
-		/// </summary>
-		public string FirstName { get; set; }
+        /// Имя.
+        /// </summary>
+        public string FirstName { get; set; }
 
         /// <summary>
         /// Фамилия.

@@ -1,13 +1,14 @@
-﻿using System;
+﻿using PaymentPlatform.Framework.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PaymentPlatform.Framework.Models
+namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {
     /// <summary>
     /// Модель личного кабинета пользователя для Context.
     /// </summary>
-    [Table("Accounts")]
+    [Table("Account")]
     public class AccountContextModel : AccountModel
     {
         /// <summary>
