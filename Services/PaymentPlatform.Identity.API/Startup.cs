@@ -13,6 +13,7 @@ using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using System.Text;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PaymentPlatform.Identity.API
 {
@@ -65,6 +66,8 @@ namespace PaymentPlatform.Identity.API
             services.AddSingleton(mapper);
 
             services.AddScoped<IAccountService, AccountService>();
+
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Identity API", Version = "v1" }));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -73,6 +76,9 @@ namespace PaymentPlatform.Identity.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PaymentPlatform Identity API version 1"));
 
             app.UseAuthentication();
             app.UseMvc();
