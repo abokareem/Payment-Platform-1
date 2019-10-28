@@ -14,6 +14,7 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Implementations;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
 
 namespace PaymentPlatform.Transaction.API
@@ -66,8 +67,9 @@ namespace PaymentPlatform.Transaction.API
             services.AddSingleton(mapper);
 
             services.AddScoped<ITransactionService, TransactionService>();
-
             services.AddSingleton<IRabbitMQService, RabbitMQService>();
+
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Transaction API", Version = "v1" }));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -76,6 +78,9 @@ namespace PaymentPlatform.Transaction.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PaymentPlatform Transaction API version 1"));
 
             app.UseAuthentication();
             app.UseMvc();
