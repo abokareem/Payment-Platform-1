@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
+using System.Text;
 
 namespace Payment.Platform.UnitTests
 {
@@ -34,7 +37,7 @@ namespace Payment.Platform.UnitTests
             var mapper = autoMapperConfig.CreateMapper();
 
             // Конфигурация IOptions<AppSettings>
-            var appSettings = new AppSettings() { Secret = "SecretKey" };
+            var appSettings = new AppSettings() { Secret = "3ce1637ed40041cd94d4853d3e766c4d" };
             var options = Options.Create(appSettings);
 
             serviceCollection.AddSingleton(options);

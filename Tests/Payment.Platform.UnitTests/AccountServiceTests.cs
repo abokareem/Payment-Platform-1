@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.Extensions;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.ViewModels;
@@ -112,6 +113,72 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.False(result);
             Assert.Equal(IdentityConstants.USER_EXIST, message);
+        }
+
+        /// <summary>
+        /// Тест на аутентификацию пользователя.
+        /// </summary>
+        [Fact]
+        public void CanUserBeAuthenticated_Return_UserTokenModel()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var account = new AccountModel
+            {
+                Login = "Login",
+                Email = "Email@Email.Email",
+                Password = "P@ssword",
+                Role = 1,
+                IsActive = true
+            };
+            var loginViewModel = new LoginViewModel
+            {
+                Email = "Email@Email.Email",
+                Password = "P@ssword"
+            };
+
+            UserTokenModel result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                context.Accounts.Add(account);
+                context.SaveChanges();
+
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.AuthenticateAsync(loginViewModel).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(account.Login, result.UserName);
+            Assert.Equal(account.Role.ConvertRole(), result.Role);
+        }
+
+        /// <summary>
+        /// Тест на аутентификацию пользователя, если Email и(или) пароль не совпадают.
+        /// </summary>
+        [Fact]
+        public void CanUserBeAuthenticated_Return_Null()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var loginViewModel = new LoginViewModel
+            {
+                Email = "AnotherEmail@Email.Email",
+                Password = "AnotherP@ssword"
+            };
+
+            UserTokenModel result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.AuthenticateAsync(loginViewModel).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Null(result);
         }
 
         /// <summary>
