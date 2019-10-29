@@ -237,5 +237,78 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.Null(result);
         }
+
+        /// <summary>
+        /// Тест на обновление данных пользователя.
+        /// </summary>
+        [Fact]
+        public void UpdateAccount_Return_True()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var account = new AccountModel
+            {
+                Login = "Login",
+                Email = "Email@Email.Email",
+                Password = "P@ssword",
+                Role = 1,
+                IsActive = true
+            };
+
+            var result = false;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                context.Accounts.Add(account);
+                context.SaveChanges();
+
+                var accountFromContext = context.Accounts.FirstOrDefault();
+                accountFromContext.Login = "NewLogin";
+                accountFromContext.Email = "NewEmail@Email.Email";
+                accountFromContext.Password = "NewP@ssword";
+                accountFromContext.Role = 2;
+                accountFromContext.IsActive = false;
+
+                var updatedAccount = _mapper.Map<AccountViewModel>(accountFromContext);
+
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.UpdateAccountAsync(updatedAccount).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.True(result);
+        }
+
+        /// <summary>
+        /// Тест на обновление данных пользователя, если указанный Id не найден.
+        /// </summary>
+        [Fact]
+        public void UpdateAccount_Return_False()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var account = new AccountViewModel
+            {
+                Id = Guid.NewGuid(),
+                Login = "Login",
+                Email = "Email@Email.Email",
+                Password = "P@ssword",
+                Role = 1,
+                IsActive = true
+            };
+
+            var result = false;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.UpdateAccountAsync(account).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.False(result);
+        }
     }
 }
