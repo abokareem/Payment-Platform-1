@@ -11,6 +11,7 @@ using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -303,6 +304,70 @@ namespace Payment.Platform.UnitTests
 
             // Assert
             Assert.Null(result);
+        }
+
+        /// <summary>
+        /// Тест на получение всех учетных записей пользователей.
+        /// </summary>
+        [Fact]
+        public void GetAllAccounts_Return_Accounts()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var accountOne = new AccountModel
+            {
+                Login = "LoginOne",
+                Email = "EmailOne@Email.Email",
+                Password = "P@sswordOne",
+                Role = 1,
+                IsActive = true
+            };
+            var accountTwo = new AccountModel
+            {
+                Login = "LoginTwo",
+                Email = "EmailTwo@Email.Email",
+                Password = "P@sswordTwo",
+                Role = 1,
+                IsActive = true
+            };
+
+            List<AccountViewModel> result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                context.Accounts.Add(accountOne);
+                context.Accounts.Add(accountTwo);
+                context.SaveChanges();
+
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.GetAllAccountsAsync().GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(2, result.Count);
+        }
+
+        /// <summary>
+        /// Тест на получение всех учетных записей пользователей, если данные отсутствуют.
+        /// </summary>
+        [Fact]
+        public void GetAllAccounts_Return_Empty()
+        {
+            // Arrange
+            var options = GetContextOptions();
+
+            List<AccountViewModel> result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.GetAllAccountsAsync().GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Empty(result);
         }
 
         /// <summary>
