@@ -54,6 +54,14 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         }
 
         /// <summary>
+        /// Конструктор с параметрами.
+        /// </summary>
+        /// <param name="options">Настройки MainContext.</param>
+        public MainContext(DbContextOptions<MainContext> options)
+        : base(options)
+        { }
+
+        /// <summary>
         /// Конфигурация контекста.
         /// </summary>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
