@@ -10,6 +10,7 @@ using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Payment.Platform.UnitTests
@@ -151,7 +152,6 @@ namespace Payment.Platform.UnitTests
             Assert.Equal(account.IsActive, result.IsActive);
         }
 
-
         /// <summary>
         /// Тест на получение данных пользователя по Email, если указанный Email не существует.
         /// </summary>
@@ -169,6 +169,69 @@ namespace Payment.Platform.UnitTests
             {
                 IAccountService accountService = new AccountService(_options, context, _mapper);
                 result = accountService.GetAccountByEmailAsync(email).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        /// <summary>
+        /// Тест на получение данных пользователя по Id.
+        /// </summary>
+        [Fact]
+        public void GetAccountById_Return_Account()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var email = "Email@Email.Email";
+            var account = new AccountModel
+            {
+                Login = "Login",
+                Email = email,
+                Password = "P@ssword",
+                Role = 1,
+                IsActive = true
+            };
+
+            AccountViewModel result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                context.Accounts.Add(account);
+                context.SaveChanges();
+
+                var accoundGuid = context.Accounts.LastOrDefault().Id;
+
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.GetAccountByIdAsync(accoundGuid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(account.Login, result.Login);
+            Assert.Equal(account.Email, result.Email);
+            Assert.Equal(account.Password, result.Password);
+            Assert.Equal(account.Role, result.Role);
+            Assert.Equal(account.IsActive, result.IsActive);
+        }
+
+        /// <summary>
+        /// Тест на получение данных пользователя по Id, если указанный Id не существует.
+        /// </summary>
+        [Fact]
+        public void GetAccountById_Return_Null()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var accoundGuid = Guid.NewGuid();
+
+            AccountViewModel result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.GetAccountByIdAsync(accoundGuid).GetAwaiter().GetResult();
             }
 
             // Assert
