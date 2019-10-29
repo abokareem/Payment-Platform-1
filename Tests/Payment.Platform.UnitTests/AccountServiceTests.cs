@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
@@ -110,6 +111,68 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.False(result);
             Assert.Equal(IdentityConstants.USER_EXIST, message);
+        }
+
+        /// <summary>
+        /// Тест на получение данных пользователя по Email.
+        /// </summary>
+        [Fact]
+        public void GetAccountByEmail_Return_Account()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var email = "Email@Email.Email";
+            var account = new AccountModel
+            {
+                Login = "Login",
+                Email = email,
+                Password = "P@ssword",
+                Role = 1,
+                IsActive = true
+            };
+
+            AccountViewModel result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                context.Accounts.Add(account);
+                context.SaveChanges();
+
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.GetAccountByEmailAsync(email).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(account.Login, result.Login);
+            Assert.Equal(account.Email, result.Email);
+            Assert.Equal(account.Password, result.Password);
+            Assert.Equal(account.Role, result.Role);
+            Assert.Equal(account.IsActive, result.IsActive);
+        }
+
+
+        /// <summary>
+        /// Тест на получение данных пользователя по Email, если указанный Email не существует.
+        /// </summary>
+        [Fact]
+        public void GetAccountByEmail_Return_Null()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var email = "Email@Email.Email";
+
+            AccountViewModel result;
+
+            // Act
+            using (var context = new IdentityContext(options))
+            {
+                IAccountService accountService = new AccountService(_options, context, _mapper);
+                result = accountService.GetAccountByEmailAsync(email).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }
