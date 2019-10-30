@@ -374,5 +374,87 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.Empty(result);
         }
+
+        /// <summary>
+        /// Тест на обновление данных товара.
+        /// </summary>
+        [Fact]
+        public void UpdateProduct_Return_True()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var product = new ProductModel
+            {
+                Name = "Product",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = Guid.NewGuid(),
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+
+            var result = false;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                context.Products.Add(product);
+                context.SaveChanges();
+
+                var productFromContext = context.Products.FirstOrDefault();
+                productFromContext.Name = "NewProduct";
+                productFromContext.Category = "NewCategory";
+                productFromContext.Description = "NewDesc";
+                productFromContext.ProfileId = Guid.NewGuid();
+                productFromContext.MeasureUnit = "NewUnit";
+                productFromContext.Price = 2;
+                productFromContext.Amount = 2;
+                productFromContext.IsActive = false;
+
+                var updatedProduct = _mapper.Map<ProductViewModel>(productFromContext);
+
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.UpdateProductAsync(updatedProduct).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.True(result);
+        }
+
+        /// <summary>
+        /// Тест на обновление данных товара, если указанный Id не найден.
+        /// </summary>
+        [Fact]
+        public void UpdateProduct_Return_False()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var product = new ProductViewModel
+            {
+                Id = Guid.NewGuid(),
+                Name = "Product",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = Guid.NewGuid(),
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+
+            var result = false;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.UpdateProductAsync(product).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.False(result);
+        }
     }
 }
