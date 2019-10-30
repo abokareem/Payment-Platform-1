@@ -13,10 +13,9 @@ namespace PaymentPlatform.Product.API.Services.Interfaces
         /// <summary>
         /// Добавить новый товар.
         /// </summary>
-        /// <param name="productViewModel">модель продукта.</param>
-        /// <param name="userViewModel">пользователь.</param>
+        /// <param name="productViewModel">Модель продукта.</param>
         /// <returns>Id продукта.</returns>
-        Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel);
+        Task<string> AddNewProductAsync(ProductViewModel productViewModel);
 
         /// <summary>
         /// Получить товар по его Id.

@@ -112,7 +112,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
+        public async Task<string> AddNewProductAsync(ProductViewModel productViewModel)
         {
             var product = _mapper.Map<ProductModel>(productViewModel);
 

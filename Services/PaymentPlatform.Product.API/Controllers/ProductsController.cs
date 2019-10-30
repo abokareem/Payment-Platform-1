@@ -142,7 +142,7 @@ namespace PaymentPlatform.Product.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var id = await _productService.AddNewProductAsync(product, new UserViewModel { Id = userId, Role = userRole });
+            var id = await _productService.AddNewProductAsync(product);
 
             if (id == null)
             {
