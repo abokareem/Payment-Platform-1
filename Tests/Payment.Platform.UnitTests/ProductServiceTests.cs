@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Product.API.Models;
@@ -87,5 +88,75 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.Equal(guid, result);
         }
+
+        /// <summary>
+        /// Тест на получение данных товара по его Guid.
+        /// </summary>
+        [Fact]
+        public void GetProductById_Return_Product()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var product = new ProductModel
+            {
+                Name = "Product",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = Guid.NewGuid(),
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+
+            ProductViewModel result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                context.Products.Add(product);
+                context.SaveChanges();
+
+                var guid = context.Products.LastOrDefault().Id;
+
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetProductByIdAsync(guid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(product.Name, result.Name);
+            Assert.Equal(product.Category, result.Category);
+            Assert.Equal(product.Description, result.Description);
+            Assert.Equal(product.ProfileId, result.ProfileId);
+            Assert.Equal(product.MeasureUnit, result.MeasureUnit);
+            Assert.Equal(product.Price, result.Price);
+            Assert.Equal(product.Amount, result.Amount);
+            Assert.Equal(product.IsActive, result.IsActive);
+        }
+
+        /// <summary>
+        /// Тест на получение товара по его Guid, если указанный Guid не существует.
+        /// </summary>
+        [Fact]
+        public void GetProductById_Return_Null()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var guid = Guid.NewGuid();
+
+            ProductViewModel result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetProductByIdAsync(guid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Null(result);
+        }
+
+
     }
 }
