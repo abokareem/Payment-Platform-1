@@ -11,6 +11,7 @@ using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
 using PaymentPlatform.Product.API.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -157,6 +158,149 @@ namespace Payment.Platform.UnitTests
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Тест на получение всех товаров пользователя.
+        /// </summary>
+        [Fact]
+        public void GetAllProducts_WhenUserIsNotAdmin_Return_Products()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var profileGuid = Guid.NewGuid();
+            var productOne = new ProductModel
+            {
+                Name = "ProductOne",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = profileGuid,
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+            var productTwo = new ProductModel
+            {
+                Name = "ProductTwo",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = profileGuid,
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+            var productThree = new ProductModel
+            {
+                Name = "ProductThree",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = profileGuid,
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
 
+            List<ProductViewModel> result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                context.Products.Add(productOne);
+                context.Products.Add(productTwo);
+                context.Products.Add(productThree);
+                context.SaveChanges();
+
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(3, result.Count);
+        }
+
+        /// <summary>
+        /// Тест на получение всех товаров пользователя.
+        /// </summary>
+        [Fact]
+        public void GetAllProducts_WhenUserIsNotAdmin_Return_Empty()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var profileGuid = Guid.NewGuid();
+
+            List<ProductViewModel> result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        /// <summary>
+        /// Тест на получение всех товаров пользователя.
+        /// </summary>
+        [Fact]
+        public void GetAllProducts_WhenUserIsAdmin_Return_Products()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var profileGuid = Guid.NewGuid();
+            var productOne = new ProductModel
+            {
+                Name = "ProductOne",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = Guid.NewGuid(),
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+            var productTwo = new ProductModel
+            {
+                Name = "ProductTwo",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = Guid.NewGuid(),
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+            var productThree = new ProductModel
+            {
+                Name = "ProductThree",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = Guid.NewGuid(),
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+
+            List<ProductViewModel> result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                context.Products.Add(productOne);
+                context.Products.Add(productTwo);
+                context.Products.Add(productThree);
+                context.SaveChanges();
+
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetAllProductsAsync(true, profileGuid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(3, result.Count);
+        }
     }
 }
