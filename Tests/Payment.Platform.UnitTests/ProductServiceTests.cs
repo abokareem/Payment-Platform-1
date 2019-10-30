@@ -2,16 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Moq;
 using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
-using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
 using PaymentPlatform.Product.API.Services.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Payment.Platform.UnitTests
@@ -24,6 +23,7 @@ namespace Payment.Platform.UnitTests
         private readonly ServiceProvider _serviceProvider;
         private readonly IMapper _mapper;
         private readonly IOptions<AppSettings> _options;
+        private readonly Mock<IRabbitMQService> _rabbitMQService;
 
         /// <summary>
         /// Конструктор.
@@ -34,6 +34,9 @@ namespace Payment.Platform.UnitTests
             _serviceProvider = fixture.ServiceProvider;
             _options = _serviceProvider.GetRequiredService<IOptions<AppSettings>>();
             _mapper = _serviceProvider.GetRequiredService<IMapper>();
+
+            _rabbitMQService = new Mock<IRabbitMQService>();
+            _rabbitMQService.Setup(rmq => rmq.SetListener(It.IsAny<string>(), It.IsAny<Action<string>>())).Returns((true, string.Empty));
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace Payment.Platform.UnitTests
                 MeasureUnit = "Unit",
                 Price = 1,
                 Amount = 1,
-                IsActive= true
+                IsActive = true
             };
 
             var guid = string.Empty;
@@ -75,7 +78,7 @@ namespace Payment.Platform.UnitTests
             // Act
             using (var context = new ProductContext(options))
             {
-                IProductService productService = new ProductService(context, _mapper, null);
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
                 result = productService.AddNewProductAsync(productViewModel).GetAwaiter().GetResult();
 
                 guid = context.Products.FirstOrDefault().Id.ToString();
