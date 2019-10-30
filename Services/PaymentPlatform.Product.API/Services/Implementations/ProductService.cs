@@ -165,10 +165,10 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetProductsByUserIdAsync(UserViewModel userViewModel, int? take = null, int? skip = null)
+        public async Task<List<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null)
         {
             var listOfProductViewModel = new List<ProductViewModel>();
-            var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == userViewModel.Id).ToListAsync();
+            var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == profileId).ToListAsync();
 
             foreach (var product in listOfProducts)
             {

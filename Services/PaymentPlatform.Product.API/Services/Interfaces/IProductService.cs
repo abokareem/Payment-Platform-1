@@ -27,11 +27,11 @@ namespace PaymentPlatform.Product.API.Services.Interfaces
         /// <summary>
         /// Возвращает все товары пользователя.
         /// </summary>
-        /// <param name="userViewModel">Пользователь.</param>
+        /// <param name="profileId">Id пользователя.</param>
         /// <param name="take">параметр пагинации (кол-во взять).</param>
         /// <param name="skip">параметр пагинации (кол-во пропустить).</param>
         /// <returns>Список товаров пользователя.</returns>
-        Task<List<ProductViewModel>> GetProductsByUserIdAsync(UserViewModel userViewModel, int? take = null, int? skip = null);
+        Task<List<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null);
 
         /// <summary>
         /// Получить все товары.

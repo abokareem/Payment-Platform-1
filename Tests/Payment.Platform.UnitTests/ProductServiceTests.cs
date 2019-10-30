@@ -220,7 +220,7 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
-        /// Тест на получение всех товаров пользователя.
+        /// Тест на получение всех товаров пользователя, если у пользователя нет продуктов.
         /// </summary>
         [Fact]
         public void GetAllProducts_WhenUserIsNotAdmin_Return_Empty()
@@ -243,7 +243,7 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
-        /// Тест на получение всех товаров пользователя.
+        /// Тест на получение всех товаров пользователя, если пользователь администратор.
         /// </summary>
         [Fact]
         public void GetAllProducts_WhenUserIsAdmin_Return_Products()
@@ -301,6 +301,78 @@ namespace Payment.Platform.UnitTests
 
             // Assert
             Assert.Equal(3, result.Count);
+        }
+
+        /// <summary>
+        /// Тест на получение всех товаров пользователя.
+        /// </summary>
+        [Fact]
+        public void GetProductsByUserId_Return_Products()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var profileId = Guid.NewGuid();
+            var productOne = new ProductModel
+            {
+                Name = "ProductOne",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = profileId,
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+            var productTwo = new ProductModel
+            {
+                Name = "ProductTwo",
+                Category = "Category",
+                Description = "Desc",
+                ProfileId = profileId,
+                MeasureUnit = "Unit",
+                Price = 1,
+                Amount = 1,
+                IsActive = true
+            };
+
+            List<ProductViewModel> result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                context.Products.Add(productOne);
+                context.Products.Add(productTwo);
+                context.SaveChanges();
+
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(2, result.Count);
+        }
+
+        /// <summary>
+        /// Тест на получение всех товаров пользователя, если у пользователя нет товаров.
+        /// </summary>
+        [Fact]
+        public void GetProductsByUserId_Return_Empty()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var profileId = Guid.NewGuid();
+
+            List<ProductViewModel> result;
+
+            // Act
+            using (var context = new ProductContext(options))
+            {
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Empty(result);
         }
     }
 }
