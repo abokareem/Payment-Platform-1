@@ -388,6 +388,8 @@ namespace Payment.Platform.UnitTests
             };
 
             var result = false;
+            AccountModel baseAccount;
+            AccountModel updatedAccount;
 
             // Act
             using (var context = new IdentityContext(options))
@@ -395,21 +397,30 @@ namespace Payment.Platform.UnitTests
                 context.Accounts.Add(account);
                 context.SaveChanges();
 
-                var accountFromContext = context.Accounts.FirstOrDefault();
+                baseAccount = context.Accounts.AsNoTracking().LastOrDefault();
+
+                var accountFromContext = context.Accounts.LastOrDefault();
                 accountFromContext.Login = "NewLogin";
                 accountFromContext.Email = "NewEmail@Email.Email";
                 accountFromContext.Password = "NewP@ssword";
                 accountFromContext.Role = 2;
                 accountFromContext.IsActive = false;
 
-                var updatedAccount = _mapper.Map<AccountViewModel>(accountFromContext);
+                var updatedAccountVoewModel = _mapper.Map<AccountViewModel>(accountFromContext);
 
                 IAccountService accountService = new AccountService(_options, context, _mapper);
-                result = accountService.UpdateAccountAsync(updatedAccount).GetAwaiter().GetResult();
+                result = accountService.UpdateAccountAsync(updatedAccountVoewModel).GetAwaiter().GetResult();
+
+                updatedAccount = context.Accounts.LastOrDefault();
             }
 
             // Assert
             Assert.True(result);
+            Assert.NotEqual(baseAccount.Login, updatedAccount.Login);
+            Assert.NotEqual(baseAccount.Email, updatedAccount.Email);
+            Assert.NotEqual(baseAccount.Password, updatedAccount.Password);
+            Assert.NotEqual(baseAccount.Role, updatedAccount.Role);
+            Assert.NotEqual(baseAccount.IsActive, updatedAccount.IsActive);
         }
 
         /// <summary>

@@ -83,7 +83,7 @@ namespace Payment.Platform.UnitTests
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
                 result = productService.AddNewProductAsync(productViewModel).GetAwaiter().GetResult();
 
-                guid = context.Products.FirstOrDefault().Id.ToString();
+                guid = context.Products.LastOrDefault().Id.ToString();
             }
 
             // Assert
@@ -396,6 +396,8 @@ namespace Payment.Platform.UnitTests
             };
 
             var result = false;
+            ProductModel baseProduct;
+            ProductModel updatedProduct;
 
             // Act
             using (var context = new ProductContext(options))
@@ -403,7 +405,9 @@ namespace Payment.Platform.UnitTests
                 context.Products.Add(product);
                 context.SaveChanges();
 
-                var productFromContext = context.Products.FirstOrDefault();
+                baseProduct = context.Products.AsNoTracking().LastOrDefault();
+
+                var productFromContext = context.Products.LastOrDefault();
                 productFromContext.Name = "NewProduct";
                 productFromContext.Category = "NewCategory";
                 productFromContext.Description = "NewDesc";
@@ -413,14 +417,24 @@ namespace Payment.Platform.UnitTests
                 productFromContext.Amount = 2;
                 productFromContext.IsActive = false;
 
-                var updatedProduct = _mapper.Map<ProductViewModel>(productFromContext);
+                var updatedProductViewModel = _mapper.Map<ProductViewModel>(productFromContext);
 
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.UpdateProductAsync(updatedProduct).GetAwaiter().GetResult();
+                result = productService.UpdateProductAsync(updatedProductViewModel).GetAwaiter().GetResult();
+
+                updatedProduct = context.Products.LastOrDefault();
             }
 
             // Assert
             Assert.True(result);
+            Assert.NotEqual(baseProduct.Name, updatedProduct.Name);
+            Assert.NotEqual(baseProduct.Category, updatedProduct.Category);
+            Assert.NotEqual(baseProduct.Description, updatedProduct.Description);
+            Assert.NotEqual(baseProduct.ProfileId, updatedProduct.ProfileId);
+            Assert.NotEqual(baseProduct.MeasureUnit, updatedProduct.MeasureUnit);
+            Assert.NotEqual(baseProduct.Price, updatedProduct.Price);
+            Assert.NotEqual(baseProduct.Amount, updatedProduct.Amount);
+            Assert.NotEqual(baseProduct.IsActive, updatedProduct.IsActive);
         }
 
         /// <summary>

@@ -263,5 +263,92 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.True(result);
         }
+
+        /// <summary>
+        /// Тест на обновление транзакции.
+        /// </summary>
+        [Fact]
+        public void UpdateTransaction_Return_True()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var transaction = new TransactionModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                TotalCost = 1,
+                Status = 1,
+                TransactionSuccess = true
+            };
+
+            var result = false;
+            TransactionModel baseTransaction;
+            TransactionModel updatedTransaction;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                context.Transactions.Add(transaction);
+                context.SaveChanges();
+
+                baseTransaction = context.Transactions.AsNoTracking().LastOrDefault();
+
+                var transactionFromContext = context.Transactions.LastOrDefault();
+                transactionFromContext.ProductId = Guid.NewGuid();
+                transactionFromContext.ProfileId = Guid.NewGuid();
+                transactionFromContext.TransactionTime = DateTime.Now.AddDays(1);
+                transactionFromContext.TotalCost = 2;
+                transactionFromContext.Status = 2;
+                transactionFromContext.TransactionSuccess = false;
+
+                var updatedTransactionViewModel = _mapper.Map<TransactionViewModel>(transactionFromContext);
+
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                result = transactionService.UpdateTransactionAsync(updatedTransactionViewModel).GetAwaiter().GetResult();
+
+                updatedTransaction = context.Transactions.LastOrDefault();
+            }
+
+            // Assert
+            Assert.True(result);
+            Assert.NotEqual(baseTransaction.ProductId, updatedTransaction.ProductId);
+            Assert.NotEqual(baseTransaction.ProfileId, updatedTransaction.ProfileId);
+            Assert.NotEqual(baseTransaction.TransactionTime, updatedTransaction.TransactionTime);
+            Assert.NotEqual(baseTransaction.TotalCost, updatedTransaction.TotalCost);
+            Assert.NotEqual(baseTransaction.Status, updatedTransaction.Status);
+            Assert.NotEqual(baseTransaction.TransactionSuccess, updatedTransaction.TransactionSuccess);
+        }
+
+        /// <summary>
+        /// Тест на обновление транзакции, если указанный Id не найден.
+        /// </summary>
+        [Fact]
+        public void UpdateTransaction_Return_False()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var transactionViewModel = new TransactionViewModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                Amount = 1,
+                TotalCost = 1,
+                Status = 1
+            };
+
+            var result = false;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                result = transactionService.UpdateTransactionAsync(transactionViewModel).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.False(result);
+        }
     }
 }
