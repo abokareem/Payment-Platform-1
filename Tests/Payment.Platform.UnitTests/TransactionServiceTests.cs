@@ -226,5 +226,42 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.Empty(result);
         }
+
+        /// <summary>
+        /// Тест на отмену транзакции по Id.
+        /// </summary>
+        [Fact]
+        public void RevertTransactionByIdAsync_Return_TrueAndMessage()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var transaction = new TransactionModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                TotalCost = 1,
+                Status = 1,
+                TransactionSuccess = true
+            };
+
+            var result = false;
+            var message = string.Empty;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                context.Transactions.Add(transaction);
+                context.SaveChanges();
+
+                var guid = context.Transactions.LastOrDefault().Id;
+
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                (result, message) = transactionService.RevertTransactionByIdAsync(guid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.True(result);
+        }
     }
 }
