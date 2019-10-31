@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
+using PaymentPlatform.Framework.Models;
 using System.Text;
 
 namespace Payment.Platform.UnitTests
@@ -33,6 +34,8 @@ namespace Payment.Platform.UnitTests
                 mc.AddProfile(new ProductProfile());
                 mc.AddProfile(new UserProfile());
                 mc.AddProfile(new TransactionProfile());
+                mc.AddProfile(new BalanceReservedProfile());
+                mc.AddProfile(new ProductReservedProfile());
             });
             var mapper = autoMapperConfig.CreateMapper();
 
