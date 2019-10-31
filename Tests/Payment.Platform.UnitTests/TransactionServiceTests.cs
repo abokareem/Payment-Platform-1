@@ -11,6 +11,7 @@ using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Implementations;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -88,7 +89,7 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
-        /// Тест на получение данных транзакции по Guid.
+        /// Тест на получение транзакции по Guid.
         /// </summary>
         [Fact]
         public void GetTransactionById_Return_Transaction()
@@ -128,7 +129,7 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
-        /// Тест на получение данных транзакции по Guid, если указанный Guid не существует.
+        /// Тест на получение транзакции по Guid, если указанный Guid не существует.
         /// </summary>
         [Fact]
         public void GetTransactionById_Return_Null()
@@ -148,6 +149,82 @@ namespace Payment.Platform.UnitTests
 
             // Assert
             Assert.Null(result);
+        }
+
+        /// <summary>
+        /// Тест на получение списка транзакций.
+        /// </summary>
+        [Fact]
+        public void GetTransactionsAsync_Return_Transactions()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var transactionOne = new TransactionModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                TotalCost = 1,
+                Status = 1,
+                TransactionSuccess = true
+            };
+            var transactionTwo = new TransactionModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                TotalCost = 2,
+                Status = 2,
+                TransactionSuccess = false
+            };
+            var transactionThree = new TransactionModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                TotalCost = 3,
+                Status = 3,
+                TransactionSuccess = true
+            };
+
+            List<TransactionViewModel> result;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                context.Transactions.Add(transactionOne);
+                context.Transactions.Add(transactionTwo);
+                context.Transactions.Add(transactionThree);
+                context.SaveChanges();
+
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                result = (transactionService.GetTransactionsAsync().GetAwaiter().GetResult()).ToList();
+            }
+
+            // Assert
+            Assert.Equal(3, result.Count);
+        }
+
+        /// <summary>
+        /// Тест на получение списка транзакций, если данные отсутствуют.
+        /// </summary>
+        [Fact]
+        public void GetTransactionsAsync_Return_Empty()
+        {
+            // Arrange
+            var options = GetContextOptions();
+
+            List<TransactionViewModel> result;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                result = (transactionService.GetTransactionsAsync().GetAwaiter().GetResult()).ToList();
+            }
+
+            // Assert
+            Assert.Empty(result);
         }
     }
 }
