@@ -4,12 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Moq;
 using PaymentPlatform.Framework.Helpers;
+using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
 using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Implementations;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Payment.Platform.UnitTests
@@ -83,6 +85,69 @@ namespace Payment.Platform.UnitTests
 
             // Assert
             Assert.True(result);
+        }
+
+        /// <summary>
+        /// Тест на получение данных транзакции по Guid.
+        /// </summary>
+        [Fact]
+        public void GetTransactionById_Return_Transaction()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var transaction = new TransactionModel
+            {
+                ProductId = Guid.NewGuid(),
+                ProfileId = Guid.NewGuid(),
+                TransactionTime = DateTime.Now,
+                TotalCost = 1,
+                Status = 1,
+                TransactionSuccess = true
+            };
+
+            TransactionViewModel result;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                context.Transactions.Add(transaction);
+                context.SaveChanges();
+
+                var guid = context.Transactions.LastOrDefault().Id;
+
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                result = transactionService.GetTransactionByIdAsync(guid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Equal(transaction.ProductId, result.ProductId);
+            Assert.Equal(transaction.ProfileId, result.ProfileId);
+            Assert.Equal(transaction.TransactionTime, result.TransactionTime);
+            Assert.Equal(transaction.TotalCost, result.TotalCost);
+            Assert.Equal(transaction.Status, result.Status);
+        }
+
+        /// <summary>
+        /// Тест на получение данных транзакции по Guid, если указанный Guid не существует.
+        /// </summary>
+        [Fact]
+        public void GetTransactionById_Return_Null()
+        {
+            // Arrange
+            var options = GetContextOptions();
+            var guid = Guid.NewGuid();
+
+            TransactionViewModel result;
+
+            // Act
+            using (var context = new TransactionContext(options))
+            {
+                ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
+                result = transactionService.GetTransactionByIdAsync(guid).GetAwaiter().GetResult();
+            }
+
+            // Assert
+            Assert.Null(result);
         }
     }
 }
