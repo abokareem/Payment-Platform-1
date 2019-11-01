@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Context;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces;
+using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
 using System;
 using System.Linq;
 using Xunit;
@@ -31,7 +31,7 @@ namespace Payment.Platform.UnitTests
         /// Тест на корректное заполнение базы данных случайными данными.
         /// </summary>
         [Fact]
-        public void AddNewAccountsAndProfilesAsync_Return_10_Entities()
+        public void AddNewAccountsAndProfiles_Return_10_Entities()
         {
             // Arrange
             var options = GetContextOptions();
@@ -53,6 +53,71 @@ namespace Payment.Platform.UnitTests
             // Assert
             Assert.Equal(countOfEntities, countOfAccounts);
             Assert.Equal(countOfEntities, countOfProfiles);
+        }
+
+        /// <summary>
+        /// Тест на корректное заполнение базы данных случайными данными.
+        /// </summary>
+        [Fact]
+        public void AddNewProducts_Return_10_Entities()
+        {
+            // Arrange
+            var options = GetContextOptions();
+
+            var profile = new ProfileContextModel
+            {
+                FirstName = Guid.NewGuid().ToString().Substring(0, 8),
+                LastName = Guid.NewGuid().ToString().Substring(0, 8),
+                SecondName = Guid.NewGuid().ToString().Substring(0, 8),
+                IsSeller = true,
+                OrgName = Guid.NewGuid().ToString().Substring(0, 8),
+                OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
+                BankBook = Guid.NewGuid().ToString().ToUpper(),
+                Balance = new Random(10).Next(10000)
+            };
+
+            var countOfEntities = 10;
+            var countOfProducts = 0;
+
+            // Act
+            using (var context = new MainContext(options))
+            {
+                context.Profiles.Add(profile);
+                context.SaveChanges();
+
+                IRandomDataGeneratorService randomDataGeneratorService = new RandomDataGeneratorService(context);
+                randomDataGeneratorService.AddNewProductsAsync(countOfEntities).GetAwaiter().GetResult();
+
+                countOfProducts = context.Products.ToList().Count;
+            }
+
+            // Assert
+            Assert.Equal(countOfEntities, countOfProducts);
+        }
+
+        /// <summary>
+        /// Тест на корректное заполнение базы данных случайными данными.
+        /// </summary>
+        [Fact]
+        public void AddNewProducts_WhenNoOneIsSeller_Return_10_Entities()
+        {
+            // Arrange
+            var options = GetContextOptions();
+
+            var countOfEntities = 10;
+            var countOfProducts = 0;
+
+            // Act
+            using (var context = new MainContext(options))
+            {
+                IRandomDataGeneratorService randomDataGeneratorService = new RandomDataGeneratorService(context);
+                randomDataGeneratorService.AddNewProductsAsync(countOfEntities).GetAwaiter().GetResult();
+
+                countOfProducts = context.Products.ToList().Count;
+            }
+
+            // Assert
+            Assert.Equal(countOfEntities, countOfProducts);
         }
     }
 }

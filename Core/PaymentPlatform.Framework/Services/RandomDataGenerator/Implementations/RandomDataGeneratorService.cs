@@ -73,6 +73,27 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
             var products = new List<ProductContextModel>();
             var profilesId = _mainContext.Profiles.Where(p => p.IsSeller).Select(p => p.Id).ToList();
 
+            if (!profilesId.Any())
+            {
+                var profile = new ProfileContextModel
+                {
+                    FirstName = Guid.NewGuid().ToString().Substring(0, 8),
+                    LastName = Guid.NewGuid().ToString().Substring(0, 8),
+                    SecondName = Guid.NewGuid().ToString().Substring(0, 8),
+                    IsSeller = Convert.ToBoolean(new Random().Next(2)),
+                    OrgName = Guid.NewGuid().ToString().Substring(0, 8),
+                    OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
+                    BankBook = Guid.NewGuid().ToString().ToUpper(),
+                    Balance = new Random(10).Next(10000)
+                };
+
+                await _mainContext.Profiles.AddAsync(profile);
+                await _mainContext.SaveChangesAsync();
+
+                var profileId = _mainContext.Profiles.FirstOrDefault().Id;
+                profilesId.Add(profileId);
+            }
+
             for (int i = 0; i < count; i++)
             {
                 var index = rnd.Next(profilesId.Count);
