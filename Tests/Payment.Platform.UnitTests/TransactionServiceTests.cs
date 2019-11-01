@@ -18,7 +18,7 @@ using Xunit;
 namespace Payment.Platform.UnitTests
 {
     /// <summary>
-    /// Класс для тестов класса AccountService.
+    /// Класс для тестов класса TransactionService.
     /// </summary>
     public class TransactionServiceTests : IClassFixture<ServiceFixture>
     {
@@ -43,9 +43,9 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
-        /// Формирование настроек для MainContext в InMemoryDatabase.
+        /// Формирование настроек для TransactionContext в InMemoryDatabase.
         /// </summary>
-        /// <returns>Настройки MainContext.</returns>
+        /// <returns>Настройки TransactionContext.</returns>
         private DbContextOptions<TransactionContext> GetContextOptions()
         {
             var options = new DbContextOptionsBuilder<TransactionContext>()

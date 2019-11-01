@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
-using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 {
@@ -57,28 +55,12 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="options">Настройки MainContext.</param>
-        public MainContext(DbContextOptions<MainContext> options)
-        : base(options)
-        { }
+        public MainContext(DbContextOptions<MainContext> options) : base(options) { }
 
         /// <summary>
-        /// Конфигурация контекста.
+        /// Реализация FluentAPI.
         /// </summary>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var configuration =
-                new ConfigurationBuilder()
-                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    .AddJsonFile("appsettings.json")
-                    .Build();
-
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        }
-
-        /// <summary>
-		/// Реализация FluentAPI.
-		/// </summary>
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Account table
 

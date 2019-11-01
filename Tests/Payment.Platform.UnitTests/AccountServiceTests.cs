@@ -38,9 +38,9 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
-        /// Формирование настроек для MainContext в InMemoryDatabase.
+        /// Формирование настроек для IdentityContext в InMemoryDatabase.
         /// </summary>
-        /// <returns>Настройки MainContext.</returns>
+        /// <returns>Настройки IdentityContext.</returns>
         private DbContextOptions<IdentityContext> GetContextOptions()
         {
             var options = new DbContextOptionsBuilder<IdentityContext>()
