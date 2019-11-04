@@ -38,6 +38,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
             _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
 
+            _rabbitService.ConfigureServiceDefault();
             _rabbitService.SetListener("ProductAPI", OnIncomingMessage);
         }
 
