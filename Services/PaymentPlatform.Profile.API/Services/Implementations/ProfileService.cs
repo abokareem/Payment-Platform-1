@@ -114,8 +114,9 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
         {
             var profile = _mapper.Map<ProfileModel>(profileViewModel);
+            var foundedProfile = await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Passport == profileViewModel.Passport);
 
-            if (await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id) != null)
+            if (foundedProfile != null)
             {
                 return (GlobalConstants.PROFILE_SERVICE_FAIL, false);
             }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
@@ -38,10 +39,23 @@ namespace Payment.Platform.UnitTests
         }
 
         /// <summary>
+        /// Формирование настроек для ProductContext в InMemoryDatabase.
+        /// </summary>
+        /// <returns>Настройки ProductContext.</returns>
+        private DbContextOptions<ProfileContext> GetContextOptions()
+        {
+            var options = new DbContextOptionsBuilder<ProfileContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            return options;
+        }
+
+        /// <summary>
         /// Тест на добавление нового профиля.
         /// </summary>
         [Fact]
-        public void AddNewProfile_Return_Id()
+        public void AddNewProfile_Return_IdAndTrue()
         {
             //Arrange
             var options = GetContextOptions();
@@ -52,6 +66,7 @@ namespace Payment.Platform.UnitTests
                 FirstName = Guid.NewGuid().ToString(),
                 LastName = Guid.NewGuid().ToString(),
                 SecondName = Guid.NewGuid().ToString(),
+                Passport = Guid.NewGuid().ToString(),
                 OrgName = Guid.NewGuid().ToString(),
                 IsSeller = false,
                 OrgNumber = Guid.NewGuid().ToString()
@@ -59,18 +74,74 @@ namespace Payment.Platform.UnitTests
 
             var guid = string.Empty;
             var result = string.Empty;
+            var success = false;
 
             //Act
             using (var context = new ProfileContext(options))
             {
                 IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
-                result = profileService.AddNewProfileAsync(newProfile).GetAwaiter().GetResult().result;
+                (result, success) = profileService.AddNewProfileAsync(newProfile).GetAwaiter().GetResult();
 
                 guid = context.Profiles.FirstOrDefault().Id.ToString();
             }
 
             //Assert
+            Assert.True(success);
             Assert.Equal(guid, result);
+        }
+
+        /// <summary>
+        /// Тест на добавление нового профиля.
+        /// </summary>
+        [Fact]
+        public void AddNewProfile_Return_IdAndFalse()
+        {
+            //Arrange
+            var options = GetContextOptions();
+
+            var profileModel = new ProfileModel()
+            {
+                Balance = 1,
+                BankBook = Guid.NewGuid().ToString(),
+                FirstName = Guid.NewGuid().ToString(),
+                LastName = Guid.NewGuid().ToString(),
+                SecondName = Guid.NewGuid().ToString(),
+                Passport = "Passport",
+                OrgName = Guid.NewGuid().ToString(),
+                IsSeller = false,
+                OrgNumber = Guid.NewGuid().ToString()
+            };
+
+            var profileViewModel = new ProfileViewModel()
+            {
+                Balance = 1,
+                BankBook = Guid.NewGuid().ToString(),
+                FirstName = Guid.NewGuid().ToString(),
+                LastName = Guid.NewGuid().ToString(),
+                SecondName = Guid.NewGuid().ToString(),
+                Passport = "Passport",
+                OrgName = Guid.NewGuid().ToString(),
+                IsSeller = false,
+                OrgNumber = Guid.NewGuid().ToString()
+            };
+
+            var guid = string.Empty;
+            var result = string.Empty;
+            var success = false;
+
+            //Act
+            using (var context = new ProfileContext(options))
+            {
+                context.Profiles.Add(profileModel);
+                context.SaveChanges();
+
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                (result, success) = profileService.AddNewProfileAsync(profileViewModel).GetAwaiter().GetResult();
+            }
+
+            //Assert
+            Assert.False(success);
+            Assert.Equal(GlobalConstants.PROFILE_SERVICE_FAIL, result);
         }
 
         /// <summary>
@@ -88,6 +159,7 @@ namespace Payment.Platform.UnitTests
                 FirstName = Guid.NewGuid().ToString(),
                 LastName = Guid.NewGuid().ToString(),
                 SecondName = Guid.NewGuid().ToString(),
+                Passport = Guid.NewGuid().ToString(),
                 OrgName = Guid.NewGuid().ToString(),
                 IsSeller = false,
                 OrgNumber = Guid.NewGuid().ToString()
@@ -158,6 +230,7 @@ namespace Payment.Platform.UnitTests
                 FirstName = Guid.NewGuid().ToString(),
                 LastName = Guid.NewGuid().ToString(),
                 SecondName = Guid.NewGuid().ToString(),
+                Passport = Guid.NewGuid().ToString(),
                 OrgName = Guid.NewGuid().ToString(),
                 IsSeller = false,
                 OrgNumber = Guid.NewGuid().ToString()
@@ -170,6 +243,7 @@ namespace Payment.Platform.UnitTests
                 FirstName = Guid.NewGuid().ToString(),
                 LastName = Guid.NewGuid().ToString(),
                 SecondName = Guid.NewGuid().ToString(),
+                Passport = Guid.NewGuid().ToString(),
                 OrgName = Guid.NewGuid().ToString(),
                 IsSeller = false,
                 OrgNumber = Guid.NewGuid().ToString()
@@ -182,6 +256,7 @@ namespace Payment.Platform.UnitTests
                 FirstName = Guid.NewGuid().ToString(),
                 LastName = Guid.NewGuid().ToString(),
                 SecondName = Guid.NewGuid().ToString(),
+                Passport = Guid.NewGuid().ToString(),
                 OrgName = Guid.NewGuid().ToString(),
                 IsSeller = false,
                 OrgNumber = Guid.NewGuid().ToString()
@@ -242,19 +317,20 @@ namespace Payment.Platform.UnitTests
             var newProfile = new ProfileModel()
             {
                 Balance = 1,
-                BankBook = Guid.NewGuid().ToString(),
-                FirstName = Guid.NewGuid().ToString(),
-                LastName = Guid.NewGuid().ToString(),
-                SecondName = Guid.NewGuid().ToString(),
-                OrgName = Guid.NewGuid().ToString(),
+                BankBook = "BankBook",
+                FirstName = "FirstName",
+                LastName = "LastName",
+                SecondName = "SecondName",
+                Passport = "Passport",
+                OrgName = "OrgName",
                 IsSeller = false,
-                OrgNumber = Guid.NewGuid().ToString()
+                OrgNumber = "OrgNumber"
             };
 
             ProfileModel oldProfile;
             ProfileModel updatedProfile;
 
-            bool result = false;
+            var result = false;
 
             //Act
             using (var context = new ProfileContext(options))
@@ -270,6 +346,7 @@ namespace Payment.Platform.UnitTests
                 updatedProfile.IsSeller = true;
                 updatedProfile.LastName = Guid.NewGuid().ToString();
                 updatedProfile.SecondName = Guid.NewGuid().ToString();
+                updatedProfile.Passport = Guid.NewGuid().ToString();
                 updatedProfile.OrgName = Guid.NewGuid().ToString();
                 updatedProfile.OrgNumber = Guid.NewGuid().ToString();
 
@@ -306,7 +383,7 @@ namespace Payment.Platform.UnitTests
                 Id = Guid.NewGuid()
             };
 
-            bool result = false;
+            var result = false;
 
             //Act
             using (var context = new ProfileContext(options))
@@ -317,19 +394,6 @@ namespace Payment.Platform.UnitTests
 
             //Assert
             Assert.False(result);
-        }
-
-        /// <summary>
-        /// Формирование настроек для ProductContext в InMemoryDatabase.
-        /// </summary>
-        /// <returns>Настройки ProductContext.</returns>
-        private DbContextOptions<ProfileContext> GetContextOptions()
-        {
-            var options = new DbContextOptionsBuilder<ProfileContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            return options;
         }
     }
 }

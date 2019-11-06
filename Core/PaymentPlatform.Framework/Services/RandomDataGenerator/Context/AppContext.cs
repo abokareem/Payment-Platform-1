@@ -129,6 +129,9 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.SecondName);
 
             modelBuilder.Entity<ProfileContextModel>()
+                .Property(p => p.Passport);
+
+            modelBuilder.Entity<ProfileContextModel>()
                 .Property(p => p.IsSeller)
                 .IsRequired();
 
