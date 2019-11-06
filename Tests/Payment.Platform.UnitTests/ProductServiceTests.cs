@@ -24,7 +24,6 @@ namespace Payment.Platform.UnitTests
     {
         private readonly ServiceProvider _serviceProvider;
         private readonly IMapper _mapper;
-        private readonly IOptions<AppSettings> _options;
         private readonly Mock<IRabbitMQService> _rabbitMQService;
 
         /// <summary>
@@ -34,7 +33,6 @@ namespace Payment.Platform.UnitTests
         public ProductServiceTests(ServiceFixture fixture)
         {
             _serviceProvider = fixture.ServiceProvider;
-            _options = _serviceProvider.GetRequiredService<IOptions<AppSettings>>();
             _mapper = _serviceProvider.GetRequiredService<IMapper>();
 
             _rabbitMQService = new Mock<IRabbitMQService>();
