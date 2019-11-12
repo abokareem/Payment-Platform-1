@@ -39,6 +39,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
             _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
 
+            _rabbitService.ConfigureServiceDefault();
             _rabbitService.SetListener("ProfileAPI", OnIncomingMessage);
         }
 
@@ -113,8 +114,9 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         public async Task<(string result, bool success)> AddNewProfileAsync(ProfileViewModel profileViewModel)
         {
             var profile = _mapper.Map<ProfileModel>(profileViewModel);
+            var foundedProfile = await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Passport == profileViewModel.Passport);
 
-            if (await _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == profileViewModel.Id) != null)
+            if (foundedProfile != null)
             {
                 return (GlobalConstants.PROFILE_SERVICE_FAIL, false);
             }

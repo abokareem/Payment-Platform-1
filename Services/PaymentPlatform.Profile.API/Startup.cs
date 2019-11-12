@@ -68,7 +68,7 @@ namespace PaymentPlatform.Profile.API
             services.AddSingleton(mapper);
 
             services.AddScoped<IProfileService, ProfileService>();
-            services.AddScoped<IRabbitMQService, RabbitMQService>();
+            services.AddSingleton<IRabbitMQService, RabbitMQService>();
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Profile API", Version = "v1" }));
         }

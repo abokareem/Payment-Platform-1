@@ -26,34 +26,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         /// <param name="virtualHost">Виртуальный хост.</param>
         /// <param name="userName">Имя пользователя.</param>
         /// <param name="password">Пароль.</param>
-        public RabbitMQService(string hostName, int port, string virtualHost, string userName, string password)
-        {
-            _ = ConfigureService(hostName, port, virtualHost, userName, password);
-        }
-
-        /// <summary>
-        /// Пустой конструктор.
-        /// </summary>
-        public RabbitMQService()
-        {
-            _ = ConfigureServiceDefault();
-        }
-
-        /// <inheritdoc/>
-        public (bool success, string message) CheckConnection()
-        {
-            if (connection.IsOpen)
-            {
-                return (true, "Соединение установлено.");
-            }
-            else
-            {
-                return (false, "Соединение не установлено.");
-            }
-        }
-
-        /// <inheritdoc/>
-        public (bool success, string message) ConfigureService(string host, int port, string virtualHost, string userName, string userPassword)
+        public RabbitMQService(string host, int port, string virtualHost, string userName, string userPassword)
         {
             #region Parameters check
 
@@ -91,10 +64,27 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 VirtualHost = virtualHost,
                 UserName = userName,
                 Password = userPassword
-
             };
+        }
 
-            return (true, "Конфигурация установлена успешно.");
+        /// <summary>
+        /// Пустой конструктор.
+        /// </summary>
+        public RabbitMQService() 
+        {
+        }
+
+        /// <inheritdoc/>
+        public (bool success, string message) CheckConnection()
+        {
+            if (connection.IsOpen)
+            {
+                return (true, "Соединение установлено.");
+            }
+            else
+            {
+                return (false, "Соединение не установлено.");
+            }
         }
 
         /// <inheritdoc/>
@@ -141,7 +131,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         {
             try
             {
-                connection = connectionFactory.CreateConnection();
+                connection = CustomCreateConnection();
                 channel = connection.CreateModel();
 
                 channel.QueueDeclare(channelToListen, false, false, false, null);
@@ -155,6 +145,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 };
 
                 channel.BasicConsume(channelToListen, true, consumer);
+
                 return (true, "Успешно.");
             }
             catch (BrokerUnreachableException brokerException)
@@ -166,6 +157,11 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 Console.WriteLine(exc.Message);
                 throw exc;
             }
+        }
+
+        private IConnection CustomCreateConnection()
+        {
+            return connectionFactory.CreateConnection();
         }
 
         /// <inheritdoc/>

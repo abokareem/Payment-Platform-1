@@ -29,6 +29,11 @@ namespace PaymentPlatform.Framework.ViewModels
         public string SecondName { get; set; }
 
         /// <summary>
+        /// Паспорт.
+        /// </summary>
+        public string Passport { get; set; }
+
+        /// <summary>
         /// Идентификатор продавца.
         /// </summary>
         public bool IsSeller { get; set; }

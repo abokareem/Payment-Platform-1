@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
-using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 {
@@ -54,23 +52,15 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         }
 
         /// <summary>
-        /// Конфигурация контекста.
+        /// Конструктор с параметрами.
         /// </summary>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var configuration =
-                new ConfigurationBuilder()
-                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                    .AddJsonFile("appsettings.json")
-                    .Build();
-
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        }
+        /// <param name="options">Настройки MainContext.</param>
+        public MainContext(DbContextOptions<MainContext> options) : base(options) { }
 
         /// <summary>
-		/// Реализация FluentAPI.
-		/// </summary>
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        /// Реализация FluentAPI.
+        /// </summary>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Account table
 
@@ -137,6 +127,9 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 
             modelBuilder.Entity<ProfileContextModel>()
                 .Property(p => p.SecondName);
+
+            modelBuilder.Entity<ProfileContextModel>()
+                .Property(p => p.Passport);
 
             modelBuilder.Entity<ProfileContextModel>()
                 .Property(p => p.IsSeller)

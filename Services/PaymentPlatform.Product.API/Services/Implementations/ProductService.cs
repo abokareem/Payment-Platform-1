@@ -38,6 +38,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
             _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
 
+            _rabbitService.ConfigureServiceDefault();
             _rabbitService.SetListener("ProductAPI", OnIncomingMessage);
         }
 
@@ -112,7 +113,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<string> AddNewProductAsync(ProductViewModel productViewModel, UserViewModel userViewModel)
+        public async Task<string> AddNewProductAsync(ProductViewModel productViewModel)
         {
             var product = _mapper.Map<ProductModel>(productViewModel);
 
@@ -125,7 +126,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetAllProductsAsyc(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
+        public async Task<List<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
         {
             IQueryable<ProductModel> queriableListOfProducts = null;
 
@@ -165,10 +166,10 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetProductsByUserIdAsyc(UserViewModel userViewModel, int? take = null, int? skip = null)
+        public async Task<List<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null)
         {
             var listOfProductViewModel = new List<ProductViewModel>();
-            var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == userViewModel.Id).ToListAsync();
+            var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == profileId).ToListAsync();
 
             foreach (var product in listOfProducts)
             {
