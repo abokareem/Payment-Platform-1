@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
-using PaymentPlatform.Framework.Services.RabbitMQ.Settings;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -32,27 +31,27 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
             if (string.IsNullOrEmpty(host))
             {
-                throw new ArgumentException("Host не может быть null или пустым.", nameof(host));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_HOST, nameof(host));
             }
 
             if (port <= 0)
             {
-                throw new ArgumentException("Port не может быть меньше либо равен нулю.", nameof(port));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_PORT, nameof(port));
             }
 
             if (string.IsNullOrEmpty(virtualHost))
             {
-                throw new ArgumentException("Virtual host не может быть null или пустым.", nameof(virtualHost));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_VIRTUAL_HOST, nameof(virtualHost));
             }
 
             if (string.IsNullOrEmpty(userName))
             {
-                throw new ArgumentException("Имя пользователя не может быть null или пустым.", nameof(userName));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_USER_NAME, nameof(userName));
             }
 
             if (string.IsNullOrEmpty(userPassword))
             {
-                throw new ArgumentException("Пароль не может быть null или пустым.", nameof(userPassword));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_USER_NAME, nameof(userPassword));
             }
 
             #endregion
@@ -70,7 +69,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         /// <summary>
         /// Пустой конструктор.
         /// </summary>
-        public RabbitMQService() 
+        public RabbitMQService()
         {
         }
 
@@ -79,11 +78,11 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         {
             if (connection.IsOpen)
             {
-                return (true, "Соединение установлено.");
+                return (true, RabbitMQConstants.CONNECTION_ESTABLISHED);
             }
             else
             {
-                return (false, "Соединение не установлено.");
+                return (false, RabbitMQConstants.CONNECTION_FAILED);
             }
         }
 
@@ -94,12 +93,12 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
             if (string.IsNullOrEmpty(message))
             {
-                throw new ArgumentException("Сообщение не может быть null или пустым.", nameof(message));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_MESSAGE, nameof(message));
             }
 
             if (string.IsNullOrEmpty(recipient))
             {
-                throw new ArgumentException("Получатель не может быть null или пустым.", nameof(recipient));
+                throw new ArgumentException(RabbitMQConstants.INCORRECT_RECIPIENT, nameof(recipient));
             }
 
             #endregion
@@ -114,7 +113,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
                     channel.BasicPublish("", recipient, null, messageBytes);
                 }
-                return (true, "Сообщение отправлено успешно.");
+                return (true, RabbitMQConstants.MESSAGE_SENT);
             }
             catch (BrokerUnreachableException brokerException)
             {
@@ -146,7 +145,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
                 channel.BasicConsume(channelToListen, true, consumer);
 
-                return (true, "Успешно.");
+                return (true, RabbitMQConstants.OPERATION_COMPLETED);
             }
             catch (BrokerUnreachableException brokerException)
             {
@@ -184,7 +183,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 Password = "admin"
             };
 
-            return (true, "Конфигурация установлена успешно.");
+            return (true, RabbitMQConstants.CONFIGURATION_INSTALLED);
         }
     }
 }
