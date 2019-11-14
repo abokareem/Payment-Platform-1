@@ -1,4 +1,6 @@
-﻿using PaymentPlatform.Framework.Constants;
+﻿using Microsoft.Extensions.Options;
+using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -16,6 +18,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         private ConnectionFactory connectionFactory;
         private IConnection connection;
         private IModel channel;
+        private readonly AppSettings _appSettings;
 
         /// <summary>
         /// Конструктор.
@@ -67,10 +70,11 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         }
 
         /// <summary>
-        /// Пустой конструктор.
+        /// Стандартный конструктор.
         /// </summary>
-        public RabbitMQService()
+        public RabbitMQService(IOptions<AppSettings> appSettings)
         {
+            _appSettings = appSettings.Value ?? throw new ArgumentException(nameof(appSettings));
         }
 
         /// <inheritdoc/>
@@ -175,13 +179,21 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
 
             connectionFactory = new ConnectionFactory
             {
-                //HostName = "localhost", // For Windows
-                HostName = "rabbit_mq", // For Docker
+                HostName = string.Empty,
                 Port = 5672,
                 VirtualHost = "/",
                 UserName = "admin",
                 Password = "admin"
             };
+
+            if (_appSettings.IsProduction)
+            {
+                connectionFactory.HostName = "rabbit_mq";
+            }
+            else
+            {
+                connectionFactory.HostName = "localhost";
+            }
 
             return (true, RabbitMQConstants.CONFIGURATION_INSTALLED);
         }
