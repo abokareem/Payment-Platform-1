@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
+using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 {
@@ -55,7 +57,11 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="options">Настройки MainContext.</param>
-        public MainContext(DbContextOptions<MainContext> options) : base(options) { }
+        public MainContext(DbContextOptions<MainContext> options) 
+            : base(options) 
+        {
+            Database.EnsureCreated();
+        }
 
         /// <summary>
         /// Реализация FluentAPI.

@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Framework.Extensions;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
@@ -16,7 +14,6 @@ using PaymentPlatform.Transaction.API.Models;
 using PaymentPlatform.Transaction.API.Services.Implementations;
 using PaymentPlatform.Transaction.API.Services.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Text;
 
 namespace PaymentPlatform.Transaction.API
 {
@@ -36,7 +33,6 @@ namespace PaymentPlatform.Transaction.API
             services.Configure<AppSettings>(appSettingSection);
 
             var appSettings = appSettingSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             var isProduction = appSettings.IsProduction;
 
             services.AddJwtService(appSettings.Secret);

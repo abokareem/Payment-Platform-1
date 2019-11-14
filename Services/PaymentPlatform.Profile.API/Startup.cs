@@ -14,7 +14,6 @@ using PaymentPlatform.Profile.API.Models;
 using PaymentPlatform.Profile.API.Services.Implementations;
 using PaymentPlatform.Profile.API.Services.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Text;
 
 namespace PaymentPlatform.Profile.API
 {
@@ -35,7 +34,6 @@ namespace PaymentPlatform.Profile.API
             services.Configure<AppSettings>(appSettingSection);
 
             var appSettings = appSettingSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             var isProduction = appSettings.IsProduction;
 
             services.AddJwtService(appSettings.Secret);
