@@ -38,7 +38,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                     Email = $"{Guid.NewGuid().ToString()}@payment-platform.com",
                     Password = Guid.NewGuid().ToString().ToUpper().Substring(0, 8),
                     Login = Guid.NewGuid().ToString().ToUpper(),
-                    Role = rnd.Next(5),
+                    Role = rnd.Next(3),
                     IsActive = Convert.ToBoolean(rnd.Next(2))
                 });
             }

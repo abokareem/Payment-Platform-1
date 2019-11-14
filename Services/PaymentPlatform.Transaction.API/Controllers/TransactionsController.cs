@@ -97,7 +97,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         }
 
         // POST: api/Transactions
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, User")]
         [HttpPost]
         public async Task<IActionResult> AddNewTransaction([FromBody] TransactionViewModel transaction)
         {

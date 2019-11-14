@@ -19,7 +19,7 @@ namespace PaymentPlatform.DatabaseInitialization
     {
         public static async Task Main()
         {
-            var programTitle = "RandomDataGenerator Application v1.0";
+            var programTitle = "RandomDataGenerator Application v2.0";
             Console.Title = programTitle;
 
             try
