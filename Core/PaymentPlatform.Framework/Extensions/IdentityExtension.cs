@@ -4,9 +4,9 @@ using PaymentPlatform.Framework.Enums;
 namespace PaymentPlatform.Framework.Extensions
 {
     /// <summary>
-    /// Методы расширения в проекте Identity.
+    /// Метод расширения для конвертации роли в проекте Identity.
     /// </summary>
-    public static class IdentityExtensions
+    public static class ConvertRoleExtension
     {
         /// <summary>
         /// Конвертация роли.

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Framework.Extensions;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
 using PaymentPlatform.Framework.Services.RabbitMQ.Implementations;
@@ -31,14 +32,12 @@ namespace PaymentPlatform.Transaction.API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<TransactionContext>(options => options.UseSqlServer(connectionString));
-
             var appSettingSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
 
             var appSettings = appSettingSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var isProduction = appSettings.IsProduction;
 
             services.AddAuthentication(x =>
             {
@@ -57,6 +56,9 @@ namespace PaymentPlatform.Transaction.API
                     ValidateAudience = false
                 };
             });
+
+            string connectionString = Configuration.GetConnectionString(isProduction.ToDbConnectionString());
+            services.AddDbContext<TransactionContext>(options => options.UseSqlServer(connectionString));
 
             var mappingConfig = new MapperConfiguration(mc =>
             {

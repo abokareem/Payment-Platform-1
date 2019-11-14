@@ -7,13 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Framework.Extensions;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
-using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Text;
 
 namespace PaymentPlatform.Identity.API
 {
@@ -30,14 +31,12 @@ namespace PaymentPlatform.Identity.API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
-
             var appSettingSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
 
             var appSettings = appSettingSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var isProduction = appSettings.IsProduction;
 
             services.AddAuthentication(x =>
             {
@@ -56,6 +55,9 @@ namespace PaymentPlatform.Identity.API
                     ValidateAudience = false
                 };
             });
+
+            string connectionString = Configuration.GetConnectionString(isProduction.ToDbConnectionString());
+            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connectionString));
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
