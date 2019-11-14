@@ -39,23 +39,7 @@ namespace PaymentPlatform.Transaction.API
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
             var isProduction = appSettings.IsProduction;
 
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
+            services.AddJwtService(appSettings.Secret);
 
             string connectionString = Configuration.GetConnectionString(isProduction.ToDbConnectionString());
             services.AddDbContext<TransactionContext>(options => options.UseSqlServer(connectionString));
