@@ -41,8 +41,8 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         public DbSet<TransactionContextModel> Transactions { get; set; }
 
         /// <summary>
-		/// Таблица Serilog.
-		/// </summary>
+        /// Таблица Serilog.
+        /// </summary>
         public DbSet<SerilogContextModel> Serilogs { get; set; }
 
         /// <summary>
