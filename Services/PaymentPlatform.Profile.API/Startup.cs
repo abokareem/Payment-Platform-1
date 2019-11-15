@@ -13,7 +13,6 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Profile.API.Models;
 using PaymentPlatform.Profile.API.Services.Implementations;
 using PaymentPlatform.Profile.API.Services.Interfaces;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace PaymentPlatform.Profile.API
 {
@@ -49,7 +48,7 @@ namespace PaymentPlatform.Profile.API
             services.AddScoped<IProfileService, ProfileService>();
             services.AddSingleton<IRabbitMQService, RabbitMQService>();
 
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Profile API", Version = "v1" }));
+            services.AddSwaggerService("PaymentPlatform Profile API");
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

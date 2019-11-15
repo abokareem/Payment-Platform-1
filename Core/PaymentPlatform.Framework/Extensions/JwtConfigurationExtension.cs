@@ -8,7 +8,7 @@ namespace PaymentPlatform.Framework.Extensions
     /// <summary>
     /// Метод расширения для добавления сервиса авторизации на основе JWT токена.
     /// </summary>
-    public static class JwtConfigurationExtension
+    public static class JwtServiceConfigurationExtension
     {
         /// <summary>
         /// Добавление сервиса авторизации на основе JWT токена.

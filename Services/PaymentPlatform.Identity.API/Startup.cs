@@ -11,7 +11,6 @@ using PaymentPlatform.Framework.Mapping;
 using PaymentPlatform.Identity.API.Models;
 using PaymentPlatform.Identity.API.Services.Implementations;
 using PaymentPlatform.Identity.API.Services.Interfaces;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace PaymentPlatform.Identity.API
 {
@@ -46,7 +45,7 @@ namespace PaymentPlatform.Identity.API
 
             services.AddScoped<IAccountService, AccountService>();
 
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Identity API", Version = "v1" }));
+            services.AddSwaggerService("PaymentPlatform Identity API");
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

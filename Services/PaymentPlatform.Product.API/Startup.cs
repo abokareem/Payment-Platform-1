@@ -13,7 +13,6 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
 using PaymentPlatform.Product.API.Services.Interfaces;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace PaymentPlatform.Product.API
 {
@@ -49,7 +48,7 @@ namespace PaymentPlatform.Product.API
             services.AddScoped<IProductService, ProductService>();
             services.AddSingleton<IRabbitMQService, RabbitMQService>();
 
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Product API", Version = "v1" }));
+            services.AddSwaggerService("PaymentPlatform Product API");
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
