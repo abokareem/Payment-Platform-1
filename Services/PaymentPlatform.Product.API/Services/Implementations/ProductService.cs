@@ -126,7 +126,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
+        public async Task<IEnumerable<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
         {
             IQueryable<ProductModel> queriableListOfProducts = null;
 
@@ -166,7 +166,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null)
+        public async Task<IEnumerable<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null)
         {
             var listOfProductViewModel = new List<ProductViewModel>();
             var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == profileId).ToListAsync();

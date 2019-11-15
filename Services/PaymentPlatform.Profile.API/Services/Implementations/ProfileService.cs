@@ -130,7 +130,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
+        public async Task<IEnumerable<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
         {
             var queriableListOfProfiles = _profileContext.Profiles.Select(x => x);
 

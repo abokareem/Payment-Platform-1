@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Moq;
-using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
@@ -210,7 +208,7 @@ namespace Payment.Platform.UnitTests
                 context.SaveChanges();
 
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult();
+                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -233,7 +231,7 @@ namespace Payment.Platform.UnitTests
             using (var context = new ProductContext(options))
             {
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult();
+                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -294,7 +292,7 @@ namespace Payment.Platform.UnitTests
                 context.SaveChanges();
 
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetAllProductsAsync(true, profileGuid).GetAwaiter().GetResult();
+                result = productService.GetAllProductsAsync(true, profileGuid).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -343,7 +341,7 @@ namespace Payment.Platform.UnitTests
                 context.SaveChanges();
 
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult();
+                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -366,7 +364,7 @@ namespace Payment.Platform.UnitTests
             using (var context = new ProductContext(options))
             {
                 IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult();
+                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult().ToList();
             }
 
             // Assert

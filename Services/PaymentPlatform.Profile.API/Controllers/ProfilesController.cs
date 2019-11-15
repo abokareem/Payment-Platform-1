@@ -6,6 +6,7 @@ using PaymentPlatform.Profile.API.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Profile.API.Controllers
@@ -32,7 +33,7 @@ namespace PaymentPlatform.Profile.API.Controllers
         public async Task<IEnumerable<ProfileViewModel>> GetProfiles(int? take, int? skip)
         {
             var profiles = await _profileService.GetAllProfilesAsync(take, skip);
-            var count = profiles.Count;
+            var count = profiles.ToList().Count;
 
             Log.Information($"{count} {ProfileLoggerConstants.GET_PROFILES}");
 

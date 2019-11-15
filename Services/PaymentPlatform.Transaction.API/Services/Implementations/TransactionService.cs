@@ -212,7 +212,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
+        public async Task<IEnumerable<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null)
         {
             var transactions = _transactionContext.Transactions.Select(t => t);
 
@@ -260,7 +260,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             transaction.TotalCost = transactionViewModel.TotalCost;
 
             _transactionContext.Transactions.Update(transaction);
-            var count = await _transactionContext.SaveChangesAsync();
+            await _transactionContext.SaveChangesAsync();
 
             return true;
         }

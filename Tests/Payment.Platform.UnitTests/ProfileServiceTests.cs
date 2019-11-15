@@ -276,7 +276,7 @@ namespace Payment.Platform.UnitTests
 
                 IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
 
-                actualProfiles = profileService.GetAllProfilesAsync().GetAwaiter().GetResult();
+                actualProfiles = profileService.GetAllProfilesAsync().GetAwaiter().GetResult().ToList();
             }
 
             //Assert
@@ -298,7 +298,7 @@ namespace Payment.Platform.UnitTests
             {
                 IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
 
-                actualProfiles = profileService.GetAllProfilesAsync().GetAwaiter().GetResult();
+                actualProfiles = profileService.GetAllProfilesAsync().GetAwaiter().GetResult().ToList();
             }
 
             //Assert

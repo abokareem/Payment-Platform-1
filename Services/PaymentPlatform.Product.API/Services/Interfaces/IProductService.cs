@@ -31,7 +31,7 @@ namespace PaymentPlatform.Product.API.Services.Interfaces
         /// <param name="take">Параметр пагинации (кол-во взять).</param>
         /// <param name="skip">Параметр пагинации (кол-во пропустить).</param>
         /// <returns>Список товаров пользователя.</returns>
-        Task<List<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null);
+        Task<IEnumerable<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null);
 
         /// <summary>
         /// Получить все товары.
@@ -39,7 +39,7 @@ namespace PaymentPlatform.Product.API.Services.Interfaces
         /// <param name="take">Параметр пагинации (кол-во взять).</param>
         /// <param name="skip">Параметр пагинации (кол-во пропустить).</param>
         /// <returns>Список товаров.</returns>
-        Task<List<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null);
+        Task<IEnumerable<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null);
 
         /// <summary>
         /// Обновить свойства товара.

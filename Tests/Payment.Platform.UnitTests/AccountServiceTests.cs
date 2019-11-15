@@ -341,7 +341,7 @@ namespace Payment.Platform.UnitTests
                 context.SaveChanges();
 
                 IAccountService accountService = new AccountService(_options, context, _mapper);
-                result = accountService.GetAllAccountsAsync().GetAwaiter().GetResult();
+                result = accountService.GetAllAccountsAsync().GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -363,7 +363,7 @@ namespace Payment.Platform.UnitTests
             using (var context = new IdentityContext(options))
             {
                 IAccountService accountService = new AccountService(_options, context, _mapper);
-                result = accountService.GetAllAccountsAsync().GetAwaiter().GetResult();
+                result = accountService.GetAllAccountsAsync().GetAwaiter().GetResult().ToList();
             }
 
             // Assert

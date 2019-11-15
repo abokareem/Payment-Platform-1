@@ -7,6 +7,7 @@ using PaymentPlatform.Identity.API.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
@@ -32,7 +33,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         public async Task<IEnumerable<AccountViewModel>> GetAccounts(int? take, int? skip)
         {
             var accounts = await _accountService.GetAllAccountsAsync(take, skip);
-            var count = accounts.Count;
+            var count = accounts.ToList().Count;
 
             Log.Information($"{count} {IdentityLoggerConstants.GET_ACCOUNTS}");
 

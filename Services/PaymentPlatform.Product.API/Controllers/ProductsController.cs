@@ -34,7 +34,7 @@ namespace PaymentPlatform.Product.API.Controllers
         {
             var (userId, _) = GetClaimsIdentity();
             var products = await _productService.GetAllProductsAsync(true, userId, take, skip);
-            var count = products.Count;
+            var count = products.ToList().Count;
 
             Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_ALL}");
 
@@ -54,7 +54,7 @@ namespace PaymentPlatform.Product.API.Controllers
             }
 
             var products = await _productService.GetAllProductsAsync(isAdmin, userId, take, skip);
-            var count = products.Count;
+            var count = products.ToList().Count;
 
             Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_USERS}");
 
@@ -67,7 +67,7 @@ namespace PaymentPlatform.Product.API.Controllers
         public async Task<IEnumerable<ProductViewModel>> GetProductsByUserId([FromRoute] Guid id, int? take, int? skip)
         {
             var products = await _productService.GetAllProductsAsync(false, id, take, skip);
-            var count = products.Count;
+            var count = products.ToList().Count;
 
             Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_BY_USER_ID}.");
 

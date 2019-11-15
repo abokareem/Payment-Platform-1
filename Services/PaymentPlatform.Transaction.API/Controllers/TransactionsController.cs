@@ -6,6 +6,7 @@ using PaymentPlatform.Transaction.API.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Controllers
@@ -31,7 +32,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         public async Task<IEnumerable<TransactionViewModel>> GetTransactions(int? take = null, int? skip = null)
         {
             var transactions = await _transactionService.GetTransactionsAsync(take, skip);
-            var count = transactions.Count;
+            var count = transactions.ToList().Count;
 
             Log.Information($"{count} {TransactionLoggerConstants.GET_TRANSACTIONS}");
 
