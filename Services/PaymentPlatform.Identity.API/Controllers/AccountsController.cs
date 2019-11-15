@@ -22,10 +22,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="accountService">account сервис.</param>
-        public AccountsController(IAccountService accountService)
-        {
-            _accountService = accountService ?? throw new ArgumentException(nameof(accountService));
-        }
+        public AccountsController(IAccountService accountService) => _accountService = accountService ?? throw new ArgumentException(nameof(accountService));
 
         // GET: api/accounts
         [Authorize(Roles = "Admin")]

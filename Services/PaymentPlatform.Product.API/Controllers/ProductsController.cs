@@ -23,10 +23,7 @@ namespace PaymentPlatform.Product.API.Controllers
         /// Конструктор.
         /// </summary>
         /// <param name="productService">product сервис.</param>
-        public ProductsController(IProductService productService)
-        {
-            _productService = productService ?? throw new ArgumentException(nameof(productService));
-        }
+        public ProductsController(IProductService productService) => _productService = productService ?? throw new ArgumentException(nameof(productService));
 
         // GET: api/products
         [HttpGet]

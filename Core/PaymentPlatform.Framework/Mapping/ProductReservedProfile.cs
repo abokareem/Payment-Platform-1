@@ -11,9 +11,6 @@ namespace PaymentPlatform.Framework.Mapping
         /// <summary>
         /// Пустой конструктор.
         /// </summary>
-        public ProductReservedProfile()
-        {
-            CreateMap<ProductReservedModel, TransactionModel>().ReverseMap();
-        }
+        public ProductReservedProfile() => CreateMap<ProductReservedModel, TransactionModel>().ReverseMap();
     }
 }

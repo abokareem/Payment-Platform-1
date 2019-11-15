@@ -12,9 +12,6 @@ namespace PaymentPlatform.Framework.Mapping
         /// <summary>
         /// Пустой конструктор.
         /// </summary>
-        public UserProfile()
-        {
-            CreateMap<ProfileViewModel, ProfileModel>().ReverseMap();
-        }
+        public UserProfile() => CreateMap<ProfileViewModel, ProfileModel>().ReverseMap();
     }
 }

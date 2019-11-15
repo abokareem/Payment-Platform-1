@@ -51,7 +51,6 @@ namespace Payment.Platform.UnitTests
             return options;
         }
 
-        // UNDONE: Возможно стоит реализовать функционал иначе (?)
         /// <summary>
         /// Тест на добавление новой транзакции.
         /// </summary>

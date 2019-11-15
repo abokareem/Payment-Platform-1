@@ -125,7 +125,6 @@ namespace Payment.Platform.UnitTests
                 OrgNumber = Guid.NewGuid().ToString()
             };
 
-            var guid = string.Empty;
             var result = string.Empty;
             var success = false;
 
@@ -292,7 +291,7 @@ namespace Payment.Platform.UnitTests
             //Arrange
             var options = GetContextOptions();
             //Act
-            var actualProfiles = new List<ProfileViewModel>();
+            List<ProfileViewModel> actualProfiles;
 
             using (var context = new ProfileContext(options))
             {

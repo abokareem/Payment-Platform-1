@@ -12,9 +12,6 @@ namespace PaymentPlatform.Framework.Mapping
         /// <summary>
         /// Пустой конструктор.
         /// </summary>
-        public ProductProfile()
-        {
-            CreateMap<ProductViewModel, ProductModel>().ReverseMap();
-        }
+        public ProductProfile() => CreateMap<ProductViewModel, ProductModel>().ReverseMap();
     }
 }

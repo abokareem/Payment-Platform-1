@@ -59,7 +59,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                             if (incomingObject.Action == (int)RabbitMessageActions.Apply)
                             {
                                 var productReserve = incomingObject.Model as ProductReservedModel;
-                                var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
+                                var product = _productContext.Products.FirstOrDefaultAsync(p => p.Id == productReserve.ProductId).GetAwaiter().GetResult();
                                 if (product != null && product.Amount >= productReserve.Amount)
                                 {
                                     product.Amount -= productReserve.Amount;
@@ -68,7 +68,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                                     _productContext.Entry(product).State = EntityState.Modified;
                                     _productContext.Entry(productReserve).State = EntityState.Added;
 
-                                    _productContext.SaveChanges();
+                                    _productContext.SaveChangesAsync().GetAwaiter().GetResult();
 
                                     _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
                                 }
@@ -76,7 +76,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                             else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
                             {
                                 var productReserve = incomingObject.Model as ProductReservedModel;
-                                var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
+                                var product = _productContext.Products.FirstOrDefaultAsync(p => p.Id == productReserve.ProductId).GetAwaiter().GetResult();
                                 if (product != null && product.Amount >= productReserve.Amount)
                                 {
                                     product.Amount += productReserve.Amount;
@@ -85,7 +85,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
                                     _productContext.Entry(product).State = EntityState.Modified;
                                     _productContext.Entry(productReserve).State = EntityState.Modified;
 
-                                    _productContext.SaveChanges();
+                                    _productContext.SaveChangesAsync().GetAwaiter().GetResult();
 
                                     _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
                                 }

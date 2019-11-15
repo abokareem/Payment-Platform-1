@@ -72,10 +72,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
         /// <summary>
         /// Стандартный конструктор.
         /// </summary>
-        public RabbitMQService(IOptions<AppSettings> appSettings)
-        {
-            _appSettings = appSettings.Value ?? throw new ArgumentException(nameof(appSettings));
-        }
+        public RabbitMQService(IOptions<AppSettings> appSettings) => _appSettings = appSettings.Value ?? throw new ArgumentException(nameof(appSettings));
 
         /// <inheritdoc/>
         public (bool success, string message) CheckConnection()

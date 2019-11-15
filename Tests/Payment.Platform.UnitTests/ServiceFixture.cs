@@ -42,15 +42,6 @@ namespace Payment.Platform.UnitTests
             serviceCollection.AddSingleton(options);
             serviceCollection.AddSingleton(mapper);
 
-            // UNDONE: Удалить по итогу (?)
-            //serviceCollection.AddDbContext<IdentityContext>(context => context.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Transient);
-            //serviceCollection.AddScoped<IAccountService, AccountService>();
-            //serviceCollection.AddScoped<IProductService, ProductService>();
-            //serviceCollection.AddScoped<IProfileService, ProfileService>();
-            //serviceCollection.AddScoped<ITransactionService, TransactionService>();
-            //serviceCollection.AddScoped<IRandomDataGeneratorService, RandomDataGeneratorService>();
-            //serviceCollection.AddSingleton<IRabbitMQService, RabbitMQService>();
-
             ServiceProvider = serviceCollection.BuildServiceProvider();
         }
     }

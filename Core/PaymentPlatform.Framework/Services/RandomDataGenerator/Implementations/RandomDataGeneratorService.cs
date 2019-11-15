@@ -20,10 +20,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="mainContext">Контекст бд.</param>
-        public RandomDataGeneratorService(MainContext mainContext)
-        {
-            _mainContext = mainContext ?? throw new ArgumentException(nameof(mainContext));
-        }
+        public RandomDataGeneratorService(MainContext mainContext) => _mainContext = mainContext ?? throw new ArgumentException(nameof(mainContext));
 
         /// <inheritdoc/>
         public async Task AddNewAccountsAndProfilesAsync(int count)

@@ -22,10 +22,7 @@ namespace PaymentPlatform.Profile.API.Controllers
         /// Конструктор.
         /// </summary>
         /// <param name="profileService">Profile сервис.</param>
-        public ProfilesController(IProfileService profileService)
-        {
-            _profileService = profileService ?? throw new ArgumentException(nameof(profileService));
-        }
+        public ProfilesController(IProfileService profileService) => _profileService = profileService ?? throw new ArgumentException(nameof(profileService));
 
         // GET: api/profiles
         [Authorize(Roles = "Admin")]

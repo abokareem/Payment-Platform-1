@@ -21,10 +21,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         /// Конструктор.
         /// </summary>
         /// <param name="transactionService">Transaction сервис.</param>
-        public TransactionsController(ITransactionService transactionService)
-        {
-            _transactionService = transactionService ?? throw new ArgumentException(nameof(transactionService));
-        }
+        public TransactionsController(ITransactionService transactionService) => _transactionService = transactionService ?? throw new ArgumentException(nameof(transactionService));
 
         // GET: api/Transactions
         [Authorize(Roles = "Admin")]

@@ -69,7 +69,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
                     case "ProductAPI":
                         {
                             var productReserve = incomingObject.Model as ProductReservedModel;
-                            var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == productReserve.TransactionId);
+                            var transaction = _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == productReserve.TransactionId).GetAwaiter().GetResult();
 
                             var incomingRabbitMessage = incomingObject.Action;
 
@@ -99,14 +99,14 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
                             }
 
                             _transactionContext.Entry(transaction).State = EntityState.Modified;
-                            _transactionContext.SaveChanges();
+                            _transactionContext.SaveChangesAsync().GetAwaiter().GetResult();
 
                             break;
                         }
                     case "ProfileAPI":
                         {
                             var balanceReserve = incomingObject.Model as BalanceReservedModel;
-                            var transaction = _transactionContext.Transactions.FirstOrDefault(t => t.Id == balanceReserve.TransactionId);
+                            var transaction = _transactionContext.Transactions.FirstOrDefaultAsync(t => t.Id == balanceReserve.TransactionId).GetAwaiter().GetResult();
 
                             var incomingRabbitMessage = incomingObject.Action;
 
@@ -136,7 +136,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
                             }
 
                             _transactionContext.Entry(transaction).State = EntityState.Modified;
-                            _transactionContext.SaveChanges();
+                            _transactionContext.SaveChangesAsync().GetAwaiter().GetResult();
 
                             break;
                         }

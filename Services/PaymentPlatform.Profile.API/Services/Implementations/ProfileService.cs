@@ -58,7 +58,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
                     case "TransactionAPI":
                         {
                             var balanceReserve = incomingObject.Model as BalanceReservedModel;
-                            var profile = _profileContext.Profiles.FirstOrDefault(p => p.Id == balanceReserve.ProfileId);
+                            var profile = _profileContext.Profiles.FirstOrDefaultAsync(p => p.Id == balanceReserve.ProfileId).GetAwaiter().GetResult();
                             if (incomingObject.Action == (int)RabbitMessageActions.Apply)
                             {
                                 if (profile != null && profile.Balance >= balanceReserve.Total)
@@ -69,7 +69,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
                                     _profileContext.Entry(profile).State = EntityState.Modified;
                                     _profileContext.Entry(balanceReserve).State = EntityState.Added;
 
-                                    _profileContext.SaveChanges();
+                                    _profileContext.SaveChangesAsync().GetAwaiter().GetResult();
 
                                     _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
                                 }
@@ -84,7 +84,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
                                     _profileContext.Entry(profile).State = EntityState.Modified;
                                     _profileContext.Entry(balanceReserve).State = EntityState.Modified;
 
-                                    _profileContext.SaveChanges();
+                                    _profileContext.SaveChangesAsync().GetAwaiter().GetResult();
 
                                     _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
                                 }

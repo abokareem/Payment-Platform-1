@@ -46,20 +46,14 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         /// <summary>
         /// Пустой конструктор.
         /// </summary>
-        public MainContext()
-        {
-            Database.EnsureCreated();
-        }
+        public MainContext() => Database.EnsureCreated();
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="options">Настройки MainContext.</param>
         public MainContext(DbContextOptions<MainContext> options)
-            : base(options)
-        {
-            Database.EnsureCreated();
-        }
+            : base(options) => Database.EnsureCreated();
 
         /// <summary>
         /// Реализация FluentAPI.
