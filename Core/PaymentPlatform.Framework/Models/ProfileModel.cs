@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-	/// Модель профиля пользователя.
-	/// </summary>
+    /// Модель профиля пользователя.
+    /// </summary>
     [Table("Profile")]
     public class ProfileModel : IHasGuidIdentity
     {

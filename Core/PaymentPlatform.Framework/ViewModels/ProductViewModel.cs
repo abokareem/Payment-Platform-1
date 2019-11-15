@@ -4,8 +4,8 @@ using System;
 namespace PaymentPlatform.Framework.ViewModels
 {
     /// <summary>
-	/// ViewModel продукта.
-	/// </summary>
+    /// ViewModel продукта.
+    /// </summary>
     public class ProductViewModel : IHasGuidIdentity
     {
         /// <summary>
@@ -47,6 +47,7 @@ namespace PaymentPlatform.Framework.ViewModels
         /// Цена.
         /// </summary>
         public decimal Price { get; set; }
+
         /// <summary>
         /// Активность.
         /// </summary>

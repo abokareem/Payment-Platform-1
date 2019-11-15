@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
 {
     /// <summary>
-	/// Генератор заполнения базы данных случайными данными.
-	/// </summary>
+    /// Генератор заполнения базы данных случайными данными.
+    /// </summary>
     public class RandomDataGeneratorService : IRandomDataGeneratorService
     {
         private readonly MainContext _mainContext;

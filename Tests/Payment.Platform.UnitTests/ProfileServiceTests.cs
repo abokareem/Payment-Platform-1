@@ -262,7 +262,7 @@ namespace Payment.Platform.UnitTests
                 OrgNumber = Guid.NewGuid().ToString()
             };
 
-            #endregion
+            #endregion New profiles
 
             List<ProfileViewModel> actualProfiles;
 

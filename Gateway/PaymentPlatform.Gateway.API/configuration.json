@@ -22,7 +22,7 @@
         }
       ],
       "UpstreamPathTemplate": "/accounts/registration",
-      "UpstreamHttpMethod": [ "Post" ] 
+      "UpstreamHttpMethod": [ "Post" ]
     },
     {
       "DownstreamPathTemplate": "/api/accounts/{id}",

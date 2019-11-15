@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.DatabaseInitialization
 {
-    static class Program
+    internal static class Program
     {
         public static async Task Main()
         {
@@ -31,7 +31,7 @@ namespace PaymentPlatform.DatabaseInitialization
 
                 Console.WriteLine($"ConnectionString: {connectionString}.");
 
-                if(string.IsNullOrEmpty(connectionString))
+                if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new ArgumentException(nameof(connectionString));
                 }
@@ -44,7 +44,7 @@ namespace PaymentPlatform.DatabaseInitialization
                 IRandomDataGeneratorService rndDataGenerator = new RandomDataGeneratorService(mainContext);
 
                 Console.Write(DbInitializationConstants.ENTER_COUNT);
-                
+
                 var value = Environment.GetEnvironmentVariable("COUNT") ?? Console.ReadLine();
                 int.TryParse(value, out int count);
 

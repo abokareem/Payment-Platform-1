@@ -3,7 +3,7 @@
     /// <summary>
     /// Конфигурация RabbitMq
     /// </summary>
-    class RabbitMQConfig
+    internal class RabbitMQConfig
     {
         /// <summary>
         /// Хост.

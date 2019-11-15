@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
-using PaymentPlatform.Framework.Models;
-using System.Text;
 
 namespace Payment.Platform.UnitTests
 {

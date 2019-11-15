@@ -9,6 +9,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
     {
         // Навигационные свойства
         public ProductContextModel Product { get; set; }
+
         public TransactionContextModel Transaction { get; set; }
     }
 }

@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-	/// Модель транзакции.
-	/// </summary>
+    /// Модель транзакции.
+    /// </summary>
     [Table("Transaction")]
     public class TransactionModel : IHasGuidIdentity
     {
@@ -44,6 +44,7 @@ namespace PaymentPlatform.Framework.Models
         /// Идентификатор резерва денег.
         /// </summary>
         public Guid? BalanceReserveId { get; set; }
+
         /// <summary>
         /// Идентификатор резерва товара.
         /// </summary>

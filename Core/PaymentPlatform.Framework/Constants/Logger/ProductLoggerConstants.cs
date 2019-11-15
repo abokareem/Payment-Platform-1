@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentPlatform.Framework.Constants.Logger
+﻿namespace PaymentPlatform.Framework.Constants.Logger
 {
     /// <summary>
     /// Константы для Identity Logger.
@@ -64,4 +60,4 @@ namespace PaymentPlatform.Framework.Constants.Logger
         /// </summary>
         public const string DELETE_PRODUCT_CONFLICT = "product not deleted.";
     }
-} 
+}

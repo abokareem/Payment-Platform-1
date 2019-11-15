@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
-using System;
 
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 {
     /// <summary>
-	/// Основной контекст приложения.
-	/// </summary>
+    /// Основной контекст приложения.
+    /// </summary>
     public class MainContext : DbContext
     {
         /// <summary>
@@ -57,8 +55,8 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="options">Настройки MainContext.</param>
-        public MainContext(DbContextOptions<MainContext> options) 
-            : base(options) 
+        public MainContext(DbContextOptions<MainContext> options)
+            : base(options)
         {
             Database.EnsureCreated();
         }
@@ -95,27 +93,30 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.IsActive)
                 .IsRequired();
 
-
             modelBuilder.Entity<AccountContextModel>()
                 .HasOne(p => p.Profile)
                 .WithOne(a => a.Account)
                 .HasForeignKey<ProfileContextModel>(p => p.Id);
 
-            #endregion
+            #endregion Account table
 
             #region BalanceReserve table
+
             modelBuilder.Entity<BalanceReservedContextModel>()
                 .Property(p => p.Id)
                 .HasDefaultValueSql("newsequentialid()")
                 .IsRequired();
-            #endregion
+
+            #endregion BalanceReserve table
 
             #region ProductReserve table
+
             modelBuilder.Entity<ProductReservedContextModel>()
                 .Property(p => p.Id)
                 .HasDefaultValueSql("newsequentialid()")
                 .IsRequired();
-            #endregion
+
+            #endregion ProductReserve table
 
             #region Profile table
 
@@ -155,7 +156,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.Balance)
                 .IsRequired();
 
-            #endregion
+            #endregion Profile table
 
             #region Product table
 
@@ -200,7 +201,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.IsActive)
                 .IsRequired();
 
-            #endregion
+            #endregion Product table
 
             #region Transaction table
 
@@ -230,7 +231,6 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.TotalCost)
                 .IsRequired();
 
-
             modelBuilder.Entity<TransactionContextModel>()
                 .HasOne(t => t.Profile)
                 .WithMany(s => s.Transactions)
@@ -255,7 +255,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .HasForeignKey<ProductReservedContextModel>(pr => pr.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            #endregion
+            #endregion Transaction table
 
             #region Serilog table
 
@@ -284,7 +284,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
             modelBuilder.Entity<SerilogContextModel>()
                 .Property(p => p.Properties);
 
-            #endregion
+            #endregion Serilog table
         }
     }
 }

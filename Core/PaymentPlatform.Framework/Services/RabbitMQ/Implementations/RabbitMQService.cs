@@ -57,7 +57,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 throw new ArgumentException(RabbitMQConstants.INCORRECT_USER_NAME, nameof(userPassword));
             }
 
-            #endregion
+            #endregion Parameters check
 
             connectionFactory = new ConnectionFactory
             {
@@ -105,7 +105,7 @@ namespace PaymentPlatform.Framework.Services.RabbitMQ.Implementations
                 throw new ArgumentException(RabbitMQConstants.INCORRECT_RECIPIENT, nameof(recipient));
             }
 
-            #endregion
+            #endregion Parameters check
 
             try
             {

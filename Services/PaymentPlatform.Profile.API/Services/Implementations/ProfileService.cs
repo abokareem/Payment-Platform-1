@@ -31,8 +31,8 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         /// <param name="profileContext">контекст.</param>
         /// <param name="mapper">профиль AutoMapper.</param>
         /// <param name="rabbitService">Сервис брокера сообщений.</param>
-        public ProfileService(ProfileContext profileContext, 
-                              IMapper mapper, 
+        public ProfileService(ProfileContext profileContext,
+                              IMapper mapper,
                               IRabbitMQService rabbitService)
         {
             _profileContext = profileContext ?? throw new ArgumentException(nameof(profileContext));

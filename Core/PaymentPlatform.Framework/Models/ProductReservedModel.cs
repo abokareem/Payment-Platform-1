@@ -17,6 +17,7 @@ namespace PaymentPlatform.Framework.Models
         /// Идентификатор транзакции.
         /// </summary>
         public Guid TransactionId { get; set; }
+
         /// <summary>
         /// Идентификатор товара.
         /// </summary>

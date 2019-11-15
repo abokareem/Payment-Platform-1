@@ -33,8 +33,8 @@ namespace PaymentPlatform.Identity.API.Services.Implementations
         /// </summary>
         /// <param name="appSettings">настройки проекта.</param>
         /// <param name="identityContext">контекст бд.</param>
-        public AccountService(IOptions<AppSettings> appSettings, 
-                              IdentityContext identityContext, 
+        public AccountService(IOptions<AppSettings> appSettings,
+                              IdentityContext identityContext,
                               IMapper mapper)
         {
             _identityContext = identityContext ?? throw new ArgumentException(nameof(identityContext));
