@@ -196,6 +196,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
             product.Category = productViewModel.Category;
             product.Amount = productViewModel.Amount;
             product.Price = productViewModel.Price;
+            product.IsActive = productViewModel.IsActive;
 
             _productContext.Update(product);
             await _productContext.SaveChangesAsync();
