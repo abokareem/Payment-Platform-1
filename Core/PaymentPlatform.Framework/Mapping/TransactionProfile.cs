@@ -15,8 +15,6 @@ namespace PaymentPlatform.Framework.Mapping
         public TransactionProfile()
         {
             CreateMap<TransactionViewModel, TransactionModel>().ReverseMap();
-            CreateMap<TransactionViewModel, ProductReservedModel>().ReverseMap();
-            CreateMap<TransactionViewModel, BalanceReservedModel>().ReverseMap();
         }
     }
 }

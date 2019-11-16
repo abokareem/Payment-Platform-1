@@ -128,7 +128,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = TransactionExists(id);
+            var result = await TransactionExistsAndIsActive(id);
 
             if (!result)
             {
@@ -151,9 +151,16 @@ namespace PaymentPlatform.Transaction.API.Controllers
             return Ok(message);
         }
 
-        private bool TransactionExists(Guid id)
+        private async Task<bool> TransactionExistsAndIsActive(Guid id)
         {
-            return _transactionService.GetTransactionByIdAsync(id) != null;
+            var transaction = await _transactionService.GetTransactionByIdAsync(id);
+
+            if (transaction.Status != 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

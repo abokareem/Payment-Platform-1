@@ -14,19 +14,9 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         public DbSet<AccountContextModel> Accounts { get; set; }
 
         /// <summary>
-        /// Резервирования баланса.
-        /// </summary>
-        public DbSet<BalanceReservedContextModel> BalanceReserveds { get; set; }
-
-        /// <summary>
         /// Товары.
         /// </summary>
         public DbSet<ProductContextModel> Products { get; set; }
-
-        /// <summary>
-        /// Резервирования товаров.
-        /// </summary>
-        public DbSet<ProductReservedContextModel> ProductReserveds { get; set; }
 
         /// <summary>
         /// Профили.
@@ -93,24 +83,6 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .HasForeignKey<ProfileContextModel>(p => p.Id);
 
             #endregion Account table
-
-            #region BalanceReserve table
-
-            modelBuilder.Entity<BalanceReservedContextModel>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("newsequentialid()")
-                .IsRequired();
-
-            #endregion BalanceReserve table
-
-            #region ProductReserve table
-
-            modelBuilder.Entity<ProductReservedContextModel>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("newsequentialid()")
-                .IsRequired();
-
-            #endregion ProductReserve table
 
             #region Profile table
 
@@ -235,18 +207,6 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .HasOne(t => t.Product)
                 .WithMany(s => s.Transactions)
                 .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TransactionContextModel>()
-                .HasOne(t => t.BalanceReserved)
-                .WithOne(s => s.Transaction)
-                .HasForeignKey<BalanceReservedContextModel>(p => p.Id)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TransactionContextModel>()
-                .HasOne(pr => pr.ProductReserved)
-                .WithOne(t => t.Transaction)
-                .HasForeignKey<ProductReservedContextModel>(pr => pr.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
             #endregion Transaction table

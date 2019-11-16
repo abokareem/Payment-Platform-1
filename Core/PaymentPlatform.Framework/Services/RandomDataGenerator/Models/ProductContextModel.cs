@@ -21,7 +21,6 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
         // Навигационные свойства.
         public ProfileContextModel Profile { get; set; }
 
-        public ICollection<TransactionContextModel> Transactions { get; set; }
-        public ICollection<ProductReservedContextModel> ProductReserveds { get; set; }
+        public IEnumerable<TransactionContextModel> Transactions { get; set; }
     }
 }

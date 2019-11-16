@@ -19,7 +19,5 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
         public ProductContextModel Product { get; set; }
 
         public ProfileContextModel Profile { get; set; }
-        public BalanceReservedContextModel BalanceReserved { get; set; }
-        public ProductReservedContextModel ProductReserved { get; set; }
     }
 }

@@ -30,8 +30,6 @@ namespace Payment.Platform.UnitTests
                 mc.AddProfile(new ProductProfile());
                 mc.AddProfile(new UserProfile());
                 mc.AddProfile(new TransactionProfile());
-                mc.AddProfile(new BalanceReservedProfile());
-                mc.AddProfile(new ProductReservedProfile());
             });
             var mapper = autoMapperConfig.CreateMapper();
 

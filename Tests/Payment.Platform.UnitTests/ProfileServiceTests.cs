@@ -24,6 +24,7 @@ namespace Payment.Platform.UnitTests
         private readonly ServiceProvider _serviceProvider;
         private readonly IMapper _mapper;
         private readonly Mock<IRabbitMQService> _rabbitMQService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         /// <summary>
         /// Конструктор.
@@ -33,6 +34,7 @@ namespace Payment.Platform.UnitTests
         {
             _serviceProvider = fixture.ServiceProvider;
             _mapper = _serviceProvider.GetRequiredService<IMapper>();
+            _scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
 
             _rabbitMQService = new Mock<IRabbitMQService>();
             _rabbitMQService.Setup(rmq => rmq.SetListener(It.IsAny<string>(), It.IsAny<Action<string>>())).Returns((true, string.Empty));
@@ -79,7 +81,7 @@ namespace Payment.Platform.UnitTests
             //Act
             using (var context = new ProfileContext(options))
             {
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 (result, success) = profileService.AddNewProfileAsync(newProfile).GetAwaiter().GetResult();
 
                 guid = context.Profiles.FirstOrDefault().Id.ToString();
@@ -134,7 +136,7 @@ namespace Payment.Platform.UnitTests
                 context.Profiles.Add(profileModel);
                 context.SaveChanges();
 
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 (result, success) = profileService.AddNewProfileAsync(profileViewModel).GetAwaiter().GetResult();
             }
 
@@ -172,7 +174,7 @@ namespace Payment.Platform.UnitTests
                 context.Profiles.Add(expectedProfile);
                 context.SaveChanges();
 
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 actualProfile = profileService.GetProfileByIdAsync(expectedProfile.Id).GetAwaiter().GetResult();
             }
 
@@ -203,7 +205,7 @@ namespace Payment.Platform.UnitTests
 
             using (var context = new ProfileContext(options))
             {
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 actualProfile = profileService.GetProfileByIdAsync(guid).GetAwaiter().GetResult();
             }
 
@@ -273,7 +275,7 @@ namespace Payment.Platform.UnitTests
                 context.Profiles.Add(profileThree);
                 context.SaveChanges();
 
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
 
                 actualProfiles = profileService.GetAllProfilesAsync().GetAwaiter().GetResult().ToList();
             }
@@ -295,7 +297,7 @@ namespace Payment.Platform.UnitTests
 
             using (var context = new ProfileContext(options))
             {
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
 
                 actualProfiles = profileService.GetAllProfilesAsync().GetAwaiter().GetResult().ToList();
             }
@@ -351,7 +353,7 @@ namespace Payment.Platform.UnitTests
 
                 var updatedProfileViewModel = _mapper.Map<ProfileViewModel>(updatedProfile);
 
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = profileService.UpdateProfileAsync(updatedProfileViewModel).GetAwaiter().GetResult();
 
                 updatedProfile = context.Profiles.LastOrDefault();
@@ -387,7 +389,7 @@ namespace Payment.Platform.UnitTests
             //Act
             using (var context = new ProfileContext(options))
             {
-                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object);
+                IProfileService profileService = new ProfileService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = profileService.UpdateProfileAsync(fakeProfile).GetAwaiter().GetResult();
             }
 
