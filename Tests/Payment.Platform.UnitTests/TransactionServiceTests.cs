@@ -70,12 +70,13 @@ namespace Payment.Platform.UnitTests
 
             var result = false;
             var message = string.Empty;
+            Guid guid;
 
             // Act
             using (var context = new TransactionContext(options))
             {
                 ITransactionService transactionService = new TransactionService(context, _mapper, _rabbitMQService.Object);
-                (result, message) = transactionService.AddNewTransactionAsync(transactionViewModel).GetAwaiter().GetResult();
+                (result, guid, message) = transactionService.AddNewTransactionAsync(transactionViewModel).GetAwaiter().GetResult();
             }
 
             // Assert
