@@ -190,7 +190,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<TransactionContextModel>()
-                .Property(p => p.Status)
+                .Property(p => p.IsActive)
                 .IsRequired();
 
             modelBuilder.Entity<TransactionContextModel>()

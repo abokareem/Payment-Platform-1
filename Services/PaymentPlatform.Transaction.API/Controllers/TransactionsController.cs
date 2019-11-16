@@ -104,18 +104,18 @@ namespace PaymentPlatform.Transaction.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var (success, message) = await _transactionService.AddNewTransactionAsync(transaction);
+            var (success, guid, message) = await _transactionService.AddNewTransactionAsync(transaction);
 
             if (!success)
             {
-                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_CONFLICT}");
+                Log.Warning($"{guid} {TransactionLoggerConstants.ADD_TRANSACTION_CONFLICT}");
 
                 return Conflict(message);
             }
 
-            Log.Information($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
+            Log.Information($"{guid} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
 
-            return Ok(transaction);
+            return Ok(message);
         }
 
         // DELETE: api/Transactions/{id}
@@ -155,7 +155,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         {
             var transaction = await _transactionService.GetTransactionByIdAsync(id);
 
-            if (transaction.Status != 0)
+            if (transaction.IsActive)
             {
                 return true;
             }

@@ -188,7 +188,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                 {
                     ProfileId = profilesId[profileIndex],
                     ProductId = product.Id,
-                    Status = rnd.Next(5),
+                    IsActive = true,
                     TotalCost = product.Price
                 });
             }

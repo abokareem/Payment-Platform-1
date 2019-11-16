@@ -31,16 +31,11 @@ namespace PaymentPlatform.Framework.ViewModels
         /// <summary>
         /// Статус.
         /// </summary>
-        public int Status { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// Итоговая стоймость.
         /// </summary>
         public decimal TotalCost { get; set; }
-
-        /// <summary>
-        /// Общее количество.
-        /// </summary>
-        public decimal Amount { get; set; }
     }
 }

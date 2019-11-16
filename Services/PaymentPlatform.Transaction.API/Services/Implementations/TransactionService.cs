@@ -54,7 +54,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
+        public async Task<(bool success, Guid transactionGuid, string message)> AddNewTransactionAsync(TransactionViewModel transaction)
         {
             var transactionModel = _mapper.Map<TransactionModel>(transaction);
 
@@ -63,7 +63,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             await _transactionContext.Transactions.AddAsync(transactionModel);
             await _transactionContext.SaveChangesAsync();
 
-            return (true, $"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
+            return (true, transactionModel.Id, $"{transactionModel.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
 
             RevertReserve(transaction);
 
-            transaction.Status = 0;
+            transaction.IsActive = false;
             var transactionViewModel = _mapper.Map<TransactionViewModel>(transaction);
             await UpdateTransactionAsync(transactionViewModel);
 
@@ -162,7 +162,7 @@ namespace PaymentPlatform.Transaction.API.Services.Implementations
             transaction.ProductId = updatedTransaction.ProductId;
             transaction.ProfileId = updatedTransaction.ProfileId;
             transaction.TransactionTime = updatedTransaction.TransactionTime;
-            transaction.Status = updatedTransaction.Status;
+            transaction.IsActive = updatedTransaction.IsActive;
             transaction.TotalCost = updatedTransaction.TotalCost;
 
             _transactionContext.Transactions.Update(transaction);

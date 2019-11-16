@@ -74,6 +74,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
 
                     if (profile != null)
                     {
+                        // UNDONE: При развитии решения продумать более детальную и улучшеную реализацию
                         switch (incomingObject.Action)
                         {
                             case (int)RabbitMessageActions.Apply:

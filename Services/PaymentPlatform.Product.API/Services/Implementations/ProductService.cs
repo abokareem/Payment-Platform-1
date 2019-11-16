@@ -73,6 +73,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
 
                     if (product != null && product.IsActive)
                     {
+                        // UNDONE: При развитии решения продумать более детальную и улучшеную реализацию
                         switch (incomingObject.Action)
                         {
                             case (int)RabbitMessageActions.Apply:

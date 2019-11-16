@@ -30,7 +30,7 @@ namespace PaymentPlatform.Transaction.API.Services.Interfaces
         /// </summary>
         /// <param name="transaction">Модель представления транзакции.</param>
         /// <returns>(успешность выполнения, сообщение)</returns>
-        Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction);
+        Task<(bool success, Guid transactionGuid, string message)> AddNewTransactionAsync(TransactionViewModel transaction);
 
         /// <summary>
         /// Отменить транзакцию по Id.

@@ -64,9 +64,8 @@ namespace Payment.Platform.UnitTests
                 ProductId = Guid.NewGuid(),
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
-                Amount = 1,
                 TotalCost = 1,
-                Status = 1
+                IsActive = true
             };
 
             var result = false;
@@ -97,8 +96,7 @@ namespace Payment.Platform.UnitTests
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
                 TotalCost = 1,
-                Status = 1,
-                TransactionSuccess = true
+                IsActive = true
             };
 
             TransactionViewModel result;
@@ -120,7 +118,7 @@ namespace Payment.Platform.UnitTests
             Assert.Equal(transaction.ProfileId, result.ProfileId);
             Assert.Equal(transaction.TransactionTime, result.TransactionTime);
             Assert.Equal(transaction.TotalCost, result.TotalCost);
-            Assert.Equal(transaction.Status, result.Status);
+            Assert.Equal(transaction.IsActive, result.IsActive);
         }
 
         /// <summary>
@@ -160,8 +158,7 @@ namespace Payment.Platform.UnitTests
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
                 TotalCost = 1,
-                Status = 1,
-                TransactionSuccess = true
+                IsActive = true
             };
             var transactionTwo = new TransactionModel
             {
@@ -169,8 +166,7 @@ namespace Payment.Platform.UnitTests
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
                 TotalCost = 2,
-                Status = 2,
-                TransactionSuccess = false
+                IsActive = true
             };
             var transactionThree = new TransactionModel
             {
@@ -178,8 +174,7 @@ namespace Payment.Platform.UnitTests
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
                 TotalCost = 3,
-                Status = 3,
-                TransactionSuccess = true
+                IsActive = true
             };
 
             List<TransactionViewModel> result;
@@ -236,8 +231,7 @@ namespace Payment.Platform.UnitTests
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
                 TotalCost = 1,
-                Status = 1,
-                TransactionSuccess = true
+                IsActive = true
             };
 
             var result = false;
@@ -273,8 +267,7 @@ namespace Payment.Platform.UnitTests
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
                 TotalCost = 1,
-                Status = 1,
-                TransactionSuccess = true
+                IsActive = true
             };
 
             var result = false;
@@ -294,8 +287,7 @@ namespace Payment.Platform.UnitTests
                 transactionFromContext.ProfileId = Guid.NewGuid();
                 transactionFromContext.TransactionTime = DateTime.Now.AddDays(1);
                 transactionFromContext.TotalCost = 2;
-                transactionFromContext.Status = 2;
-                transactionFromContext.TransactionSuccess = false;
+                transactionFromContext.IsActive = false;
 
                 var updatedTransactionViewModel = _mapper.Map<TransactionViewModel>(transactionFromContext);
 
@@ -311,8 +303,7 @@ namespace Payment.Platform.UnitTests
             Assert.NotEqual(baseTransaction.ProfileId, updatedTransaction.ProfileId);
             Assert.NotEqual(baseTransaction.TransactionTime, updatedTransaction.TransactionTime);
             Assert.NotEqual(baseTransaction.TotalCost, updatedTransaction.TotalCost);
-            Assert.NotEqual(baseTransaction.Status, updatedTransaction.Status);
-            Assert.NotEqual(baseTransaction.TransactionSuccess, updatedTransaction.TransactionSuccess);
+            Assert.NotEqual(baseTransaction.IsActive, updatedTransaction.IsActive);
         }
 
         /// <summary>
@@ -328,9 +319,8 @@ namespace Payment.Platform.UnitTests
                 ProductId = Guid.NewGuid(),
                 ProfileId = Guid.NewGuid(),
                 TransactionTime = DateTime.Now,
-                Amount = 1,
                 TotalCost = 1,
-                Status = 1
+                IsActive = true
             };
 
             var result = false;
