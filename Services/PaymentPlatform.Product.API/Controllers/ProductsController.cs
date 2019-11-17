@@ -23,10 +23,7 @@ namespace PaymentPlatform.Product.API.Controllers
         /// Конструктор.
         /// </summary>
         /// <param name="productService">product сервис.</param>
-        public ProductsController(IProductService productService)
-        {
-            _productService = productService ?? throw new ArgumentException(nameof(productService));
-        }
+        public ProductsController(IProductService productService) => _productService = productService ?? throw new ArgumentException(nameof(productService));
 
         // GET: api/products
         [HttpGet]
@@ -34,7 +31,7 @@ namespace PaymentPlatform.Product.API.Controllers
         {
             var (userId, _) = GetClaimsIdentity();
             var products = await _productService.GetAllProductsAsync(true, userId, take, skip);
-            var count = products.Count;
+            var count = products.ToList().Count;
 
             Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_ALL}");
 
@@ -54,7 +51,7 @@ namespace PaymentPlatform.Product.API.Controllers
             }
 
             var products = await _productService.GetAllProductsAsync(isAdmin, userId, take, skip);
-            var count = products.Count;
+            var count = products.ToList().Count;
 
             Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_USERS}");
 
@@ -67,7 +64,7 @@ namespace PaymentPlatform.Product.API.Controllers
         public async Task<IEnumerable<ProductViewModel>> GetProductsByUserId([FromRoute] Guid id, int? take, int? skip)
         {
             var products = await _productService.GetAllProductsAsync(false, id, take, skip);
-            var count = products.Count;
+            var count = products.ToList().Count;
 
             Log.Information($"{count} {ProductLoggerConstants.GET_PRODUCTS_BY_USER_ID}.");
 

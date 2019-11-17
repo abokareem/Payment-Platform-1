@@ -4,8 +4,8 @@ using System;
 namespace PaymentPlatform.Framework.ViewModels
 {
     /// <summary>
-	/// ViewModel профиля пользователя.
-	/// </summary>
+    /// ViewModel профиля пользователя.
+    /// </summary>
     public class ProfileViewModel : IHasGuidIdentity
     {
         /// <summary>

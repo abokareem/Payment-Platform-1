@@ -4,8 +4,8 @@ using PaymentPlatform.Framework.Services.RandomDataGenerator.Models;
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
 {
     /// <summary>
-	/// Основной контекст приложения.
-	/// </summary>
+    /// Основной контекст приложения.
+    /// </summary>
     public class MainContext : DbContext
     {
         /// <summary>
@@ -14,19 +14,9 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         public DbSet<AccountContextModel> Accounts { get; set; }
 
         /// <summary>
-        /// Резервирования баланса.
-        /// </summary>
-        public DbSet<BalanceReservedContextModel> BalanceReserveds { get; set; }
-
-        /// <summary>
         /// Товары.
         /// </summary>
         public DbSet<ProductContextModel> Products { get; set; }
-
-        /// <summary>
-        /// Резервирования товаров.
-        /// </summary>
-        public DbSet<ProductReservedContextModel> ProductReserveds { get; set; }
 
         /// <summary>
         /// Профили.
@@ -39,23 +29,21 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
         public DbSet<TransactionContextModel> Transactions { get; set; }
 
         /// <summary>
-		/// Таблица Serilog.
-		/// </summary>
+        /// Таблица Serilog.
+        /// </summary>
         public DbSet<SerilogContextModel> Serilogs { get; set; }
 
         /// <summary>
         /// Пустой конструктор.
         /// </summary>
-        public MainContext()
-        {
-            Database.EnsureCreated();
-        }
+        public MainContext() => Database.EnsureCreated();
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="options">Настройки MainContext.</param>
-        public MainContext(DbContextOptions<MainContext> options) : base(options) { }
+        public MainContext(DbContextOptions<MainContext> options)
+            : base(options) => Database.EnsureCreated();
 
         /// <summary>
         /// Реализация FluentAPI.
@@ -89,27 +77,12 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.IsActive)
                 .IsRequired();
 
-
             modelBuilder.Entity<AccountContextModel>()
                 .HasOne(p => p.Profile)
                 .WithOne(a => a.Account)
                 .HasForeignKey<ProfileContextModel>(p => p.Id);
 
-            #endregion
-
-            #region BalanceReserve table
-            modelBuilder.Entity<BalanceReservedContextModel>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("newsequentialid()")
-                .IsRequired();
-            #endregion
-
-            #region ProductReserve table
-            modelBuilder.Entity<ProductReservedContextModel>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("newsequentialid()")
-                .IsRequired();
-            #endregion
+            #endregion Account table
 
             #region Profile table
 
@@ -149,7 +122,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.Balance)
                 .IsRequired();
 
-            #endregion
+            #endregion Profile table
 
             #region Product table
 
@@ -194,7 +167,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .Property(p => p.IsActive)
                 .IsRequired();
 
-            #endregion
+            #endregion Product table
 
             #region Transaction table
 
@@ -217,13 +190,12 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<TransactionContextModel>()
-                .Property(p => p.Status)
+                .Property(p => p.IsActive)
                 .IsRequired();
 
             modelBuilder.Entity<TransactionContextModel>()
                 .Property(p => p.TotalCost)
                 .IsRequired();
-
 
             modelBuilder.Entity<TransactionContextModel>()
                 .HasOne(t => t.Profile)
@@ -237,19 +209,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
                 .HasForeignKey(p => p.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<TransactionContextModel>()
-                .HasOne(t => t.BalanceReserved)
-                .WithOne(s => s.Transaction)
-                .HasForeignKey<BalanceReservedContextModel>(p => p.Id)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TransactionContextModel>()
-                .HasOne(pr => pr.ProductReserved)
-                .WithOne(t => t.Transaction)
-                .HasForeignKey<ProductReservedContextModel>(pr => pr.Id)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            #endregion
+            #endregion Transaction table
 
             #region Serilog table
 
@@ -278,7 +238,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Context
             modelBuilder.Entity<SerilogContextModel>()
                 .Property(p => p.Properties);
 
-            #endregion
+            #endregion Serilog table
         }
     }
 }

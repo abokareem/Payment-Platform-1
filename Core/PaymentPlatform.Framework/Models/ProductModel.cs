@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-	/// Модель товара.
-	/// </summary>
+    /// Модель товара.
+    /// </summary>
     [Table("Product")]
     public class ProductModel : IHasGuidIdentity
     {

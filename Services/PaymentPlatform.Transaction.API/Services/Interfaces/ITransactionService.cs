@@ -16,7 +16,7 @@ namespace PaymentPlatform.Transaction.API.Services.Interfaces
         /// <param name="take">Параметр пагинации - взять.</param>
         /// <param name="skip">Параметр пагинации - пропустить.</param>
         /// <returns>Коллекцию TransactionViewModel.</returns>
-        Task<ICollection<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null);
+        Task<IEnumerable<TransactionViewModel>> GetTransactionsAsync(int? take = null, int? skip = null);
 
         /// <summary>
         /// Получить транзакцию по Id.
@@ -30,7 +30,7 @@ namespace PaymentPlatform.Transaction.API.Services.Interfaces
         /// </summary>
         /// <param name="transaction">Модель представления транзакции.</param>
         /// <returns>(успешность выполнения, сообщение)</returns>
-        Task<(bool success, string message)> AddNewTransactionAsync(TransactionViewModel transaction);
+        Task<(bool success, Guid transactionGuid, string message)> AddNewTransactionAsync(TransactionViewModel transaction);
 
         /// <summary>
         /// Отменить транзакцию по Id.

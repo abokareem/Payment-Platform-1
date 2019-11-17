@@ -6,6 +6,7 @@ using PaymentPlatform.Transaction.API.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Transaction.API.Controllers
@@ -20,10 +21,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         /// Конструктор.
         /// </summary>
         /// <param name="transactionService">Transaction сервис.</param>
-        public TransactionsController(ITransactionService transactionService)
-        {
-            _transactionService = transactionService ?? throw new ArgumentException(nameof(transactionService));
-        }
+        public TransactionsController(ITransactionService transactionService) => _transactionService = transactionService ?? throw new ArgumentException(nameof(transactionService));
 
         // GET: api/Transactions
         [Authorize(Roles = "Admin")]
@@ -31,7 +29,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         public async Task<IEnumerable<TransactionViewModel>> GetTransactions(int? take = null, int? skip = null)
         {
             var transactions = await _transactionService.GetTransactionsAsync(take, skip);
-            var count = transactions.Count;
+            var count = transactions.ToList().Count;
 
             Log.Information($"{count} {TransactionLoggerConstants.GET_TRANSACTIONS}");
 
@@ -97,7 +95,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
         }
 
         // POST: api/Transactions
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, User")]
         [HttpPost]
         public async Task<IActionResult> AddNewTransaction([FromBody] TransactionViewModel transaction)
         {
@@ -106,18 +104,18 @@ namespace PaymentPlatform.Transaction.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var (success, message) = await _transactionService.AddNewTransactionAsync(transaction);
+            var (success, guid, message) = await _transactionService.AddNewTransactionAsync(transaction);
 
             if (!success)
             {
-                Log.Warning($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_CONFLICT}");
+                Log.Warning($"{guid} {TransactionLoggerConstants.ADD_TRANSACTION_CONFLICT}");
 
                 return Conflict(message);
             }
 
-            Log.Information($"{transaction.Id} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
+            Log.Information($"{guid} {TransactionLoggerConstants.ADD_TRANSACTION_OK}");
 
-            return Ok(transaction);
+            return Ok(message);
         }
 
         // DELETE: api/Transactions/{id}
@@ -130,7 +128,7 @@ namespace PaymentPlatform.Transaction.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = TransactionExists(id);
+            var result = await TransactionExistsAndIsActive(id);
 
             if (!result)
             {
@@ -153,9 +151,16 @@ namespace PaymentPlatform.Transaction.API.Controllers
             return Ok(message);
         }
 
-        private bool TransactionExists(Guid id)
+        private async Task<bool> TransactionExistsAndIsActive(Guid id)
         {
-            return _transactionService.GetTransactionByIdAsync(id) != null;
+            var transaction = await _transactionService.GetTransactionByIdAsync(id);
+
+            if (transaction.IsActive)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

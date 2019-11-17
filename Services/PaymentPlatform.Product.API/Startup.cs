@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using PaymentPlatform.Framework.Extensions;
 using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Mapping;
 using PaymentPlatform.Framework.Services.RabbitMQ.Implementations;
@@ -14,8 +13,6 @@ using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Product.API.Models;
 using PaymentPlatform.Product.API.Services.Implementations;
 using PaymentPlatform.Product.API.Services.Interfaces;
-using Swashbuckle.AspNetCore.Swagger;
-using System.Text;
 
 namespace PaymentPlatform.Product.API
 {
@@ -23,41 +20,22 @@ namespace PaymentPlatform.Product.API
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            string connectionString = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
-
             var appSettingSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
 
             var appSettings = appSettingSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var isProduction = appSettings.IsProduction;
 
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
+            services.AddJwtService(appSettings.Secret);
+
+            string connectionString = Configuration.GetConnectionString(isProduction.ToDbConnectionString());
+            services.AddDbContext<ProductContext>(options => options.UseSqlServer(connectionString));
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
@@ -70,7 +48,7 @@ namespace PaymentPlatform.Product.API
             services.AddScoped<IProductService, ProductService>();
             services.AddSingleton<IRabbitMQService, RabbitMQService>();
 
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new Info { Title = "PaymentPlatform Product API", Version = "v1" }));
+            services.AddSwaggerService("PaymentPlatform Product API");
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

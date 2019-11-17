@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using PaymentPlatform.Framework.DTO;
 using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
@@ -23,6 +25,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         private readonly ProductContext _productContext;
         private readonly IMapper _mapper;
         private readonly IRabbitMQService _rabbitService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         /// <summary>
         /// Конструктор.
@@ -30,13 +33,16 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         /// <param name="productContext">контекст.</param>
         /// <param name="mapper">профиль AutoMapper.</param>
         /// <param name="rabbitService">Сервис брокера сообщений.</param>
-        public ProductService(ProductContext productContext,
+        /// <param name="scopeFactory">Фабрика для создания объектов IServiceScope.</param>
+        public ProductService(ProductContext productContext, 
                               IMapper mapper,
-                              IRabbitMQService rabbitService)
+                              IRabbitMQService rabbitService,
+                              IServiceScopeFactory scopeFactory)
         {
             _productContext = productContext ?? throw new ArgumentException(nameof(productContext));
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
             _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
+            _scopeFactory = scopeFactory ?? throw new ArgumentException(nameof(scopeFactory));
 
             _rabbitService.ConfigureServiceDefault();
             _rabbitService.SetListener("ProductAPI", OnIncomingMessage);
@@ -50,54 +56,45 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         {
             try
             {
-                var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
+                var incomingObject = JsonConvert.DeserializeObject<RabbitMessageModel>(incomingMessage);
 
-                switch (incomingObject.Sender)
+                if (incomingObject.Sender != "TransactionAPI")
                 {
-                    case "TransactionAPI":
+                    throw new JsonException("Unexpected action.");
+                }
+
+                var transactionDTO = JsonConvert.DeserializeObject<TransactionDataTransferObject>(incomingObject.Model.ToString());
+
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ProductContext>();
+
+                    var product = dbContext.Products.FirstOrDefaultAsync(p => p.Id == transactionDTO.ProductId).GetAwaiter().GetResult();
+
+                    if (product != null && product.IsActive)
+                    {
+                        // UNDONE: При развитии решения продумать более детальную и улучшеную реализацию
+                        switch (incomingObject.Action)
                         {
-                            if (incomingObject.Action == (int)RabbitMessageActions.Apply)
-                            {
-                                var productReserve = incomingObject.Model as ProductReservedModel;
-                                var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
-                                if (product != null && product.Amount >= productReserve.Amount)
+                            case (int)RabbitMessageActions.Apply:
                                 {
-                                    product.Amount -= productReserve.Amount;
-                                    productReserve.Status = (int)ProductReserveStatus.Peserved;
-
-                                    _productContext.Entry(product).State = EntityState.Modified;
-                                    _productContext.Entry(productReserve).State = EntityState.Added;
-
-                                    _productContext.SaveChanges();
-
-                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
+                                    //При более продуманной реализации использовать: product.Amount >= 1
+                                    product.Amount--;
                                 }
-                            }
-                            else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
-                            {
-                                var productReserve = incomingObject.Model as ProductReservedModel;
-                                var product = _productContext.Products.FirstOrDefault(p => p.Id == productReserve.ProductId);
-                                if (product != null && product.Amount >= productReserve.Amount)
+                                break;
+
+                            case (int)RabbitMessageActions.Revert:
                                 {
-                                    product.Amount += productReserve.Amount;
-                                    productReserve.Status = (int)ProductReserveStatus.NotReserved;
-
-                                    _productContext.Entry(product).State = EntityState.Modified;
-                                    _productContext.Entry(productReserve).State = EntityState.Modified;
-
-                                    _productContext.SaveChanges();
-
-                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = productReserve }), "TransactionAPI");
+                                    product.Amount++;
                                 }
-                            }
-                            else
-                            {
-                                throw new JsonException("Unexpected action.");
-                            }
-                            break;
+                                break;
+
+                            default: throw new JsonException("Unexpected action.");
                         }
-                    default:
-                        throw new JsonException("Unexpected sender.");
+
+                        dbContext.Update(product);
+                        dbContext.SaveChangesAsync().GetAwaiter().GetResult();
+                    }
                 }
             }
             catch (JsonException jsonEx)
@@ -126,7 +123,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
+        public async Task<IEnumerable<ProductViewModel>> GetAllProductsAsync(bool isAdmin, Guid profileId, int? take = null, int? skip = null)
         {
             IQueryable<ProductModel> queriableListOfProducts = null;
 
@@ -166,7 +163,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null)
+        public async Task<IEnumerable<ProductViewModel>> GetProductsByUserIdAsync(Guid profileId, int? take = null, int? skip = null)
         {
             var listOfProductViewModel = new List<ProductViewModel>();
             var listOfProducts = await _productContext.Products.Where(p => p.ProfileId == profileId).ToListAsync();
@@ -196,6 +193,7 @@ namespace PaymentPlatform.Product.API.Services.Implementations
             product.Category = productViewModel.Category;
             product.Amount = productViewModel.Amount;
             product.Price = productViewModel.Price;
+            product.IsActive = productViewModel.IsActive;
 
             _productContext.Update(product);
             await _productContext.SaveChangesAsync();

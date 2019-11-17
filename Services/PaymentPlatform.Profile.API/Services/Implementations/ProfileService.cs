@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PaymentPlatform.Framework.Constants;
+using PaymentPlatform.Framework.DTO;
 using PaymentPlatform.Framework.Enums;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
@@ -24,6 +26,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         private readonly ProfileContext _profileContext;
         private readonly IMapper _mapper;
         private readonly IRabbitMQService _rabbitService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         /// <summary>
         /// Конструктор.
@@ -31,13 +34,16 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         /// <param name="profileContext">контекст.</param>
         /// <param name="mapper">профиль AutoMapper.</param>
         /// <param name="rabbitService">Сервис брокера сообщений.</param>
-        public ProfileService(ProfileContext profileContext, 
-                              IMapper mapper, 
-                              IRabbitMQService rabbitService)
+        /// /// <param name="scopeFactory">Фабрика для создания объектов IServiceScope.</param>
+        public ProfileService(ProfileContext profileContext,
+                              IMapper mapper,
+                              IRabbitMQService rabbitService,
+                              IServiceScopeFactory scopeFactory)
         {
             _profileContext = profileContext ?? throw new ArgumentException(nameof(profileContext));
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
             _rabbitService = rabbitService ?? throw new ArgumentException(nameof(rabbitService));
+            _scopeFactory = scopeFactory ?? throw new ArgumentException(nameof(scopeFactory));
 
             _rabbitService.ConfigureServiceDefault();
             _rabbitService.SetListener("ProfileAPI", OnIncomingMessage);
@@ -51,52 +57,44 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         {
             try
             {
-                var incomingObject = JsonConvert.DeserializeObject(incomingMessage) as RabbitMessageModel;
+                var incomingObject = JsonConvert.DeserializeObject<RabbitMessageModel>(incomingMessage);
 
-                switch (incomingObject.Sender)
+                if (incomingObject.Sender != "TransactionAPI")
                 {
-                    case "TransactionAPI":
+                    throw new JsonException("Unexpected action.");
+                }
+
+                var transactionDTO = JsonConvert.DeserializeObject<TransactionDataTransferObject>(incomingObject.Model.ToString());
+
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ProfileContext>();
+
+                    var profile = dbContext.Profiles.FirstOrDefaultAsync(p => p.Id == transactionDTO.ProfileId).GetAwaiter().GetResult();
+
+                    if (profile != null)
+                    {
+                        // UNDONE: При развитии решения продумать более детальную и улучшеную реализацию
+                        switch (incomingObject.Action)
                         {
-                            var balanceReserve = incomingObject.Model as BalanceReservedModel;
-                            var profile = _profileContext.Profiles.FirstOrDefault(p => p.Id == balanceReserve.ProfileId);
-                            if (incomingObject.Action == (int)RabbitMessageActions.Apply)
-                            {
-                                if (profile != null && profile.Balance >= balanceReserve.Total)
+                            case (int)RabbitMessageActions.Apply:
                                 {
-                                    profile.Balance -= balanceReserve.Total;
-                                    balanceReserve.Status = (int)ProductReserveStatus.Peserved;
-
-                                    _profileContext.Entry(profile).State = EntityState.Modified;
-                                    _profileContext.Entry(balanceReserve).State = EntityState.Added;
-
-                                    _profileContext.SaveChanges();
-
-                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Apply, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+                                    profile.Balance -= transactionDTO.Cost;
                                 }
-                            }
-                            else if (incomingObject.Action == (int)RabbitMessageActions.Revert)
-                            {
-                                if (profile != null)
+                                break;
+
+                            case (int)RabbitMessageActions.Revert:
                                 {
-                                    profile.Balance += balanceReserve.Total;
-                                    balanceReserve.Status = (int)ProductReserveStatus.NotReserved;
-
-                                    _profileContext.Entry(profile).State = EntityState.Modified;
-                                    _profileContext.Entry(balanceReserve).State = EntityState.Modified;
-
-                                    _profileContext.SaveChanges();
-
-                                    _rabbitService.SendMessage(JsonConvert.SerializeObject(new RabbitMessageModel { Action = (int)RabbitMessageActions.Revert, Sender = "ProductAPI", Model = balanceReserve }), "TransactionAPI");
+                                    profile.Balance += transactionDTO.Cost;
                                 }
-                            }
-                            else
-                            {
-                                throw new JsonException("Unexpected action.");
-                            }
-                            break;
+                                break;
+
+                            default: throw new JsonException("Unexpected action.");
                         }
-                    default:
-                        throw new JsonException("Unexpected sender.");
+
+                        dbContext.Update(profile);
+                        dbContext.SaveChangesAsync().GetAwaiter().GetResult();
+                    }
                 }
             }
             catch (JsonException jsonEx)
@@ -130,7 +128,7 @@ namespace PaymentPlatform.Profile.API.Services.Implementations
         }
 
         /// <inheritdoc/>
-        public async Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
+        public async Task<IEnumerable<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null)
         {
             var queriableListOfProfiles = _profileContext.Profiles.Select(x => x);
 

@@ -14,11 +14,6 @@ namespace PaymentPlatform.Profile.API.Models
         public DbSet<ProfileModel> Profiles { get; set; }
 
         /// <summary>
-        /// Резервирование баланса.
-        /// </summary>
-        public DbSet<BalanceReservedModel> BalanceReserveds { get; set; }
-
-        /// <summary>
         /// Базовый конструктор.
         /// </summary>
         /// <param name="options">параметры.</param>

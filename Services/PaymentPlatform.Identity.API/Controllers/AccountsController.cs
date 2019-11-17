@@ -7,6 +7,7 @@ using PaymentPlatform.Identity.API.Services.Interfaces;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PaymentPlatform.Identity.API.Controllers
@@ -21,10 +22,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="accountService">account сервис.</param>
-        public AccountsController(IAccountService accountService)
-        {
-            _accountService = accountService ?? throw new ArgumentException(nameof(accountService));
-        }
+        public AccountsController(IAccountService accountService) => _accountService = accountService ?? throw new ArgumentException(nameof(accountService));
 
         // GET: api/accounts
         [Authorize(Roles = "Admin")]
@@ -32,7 +30,7 @@ namespace PaymentPlatform.Identity.API.Controllers
         public async Task<IEnumerable<AccountViewModel>> GetAccounts(int? take, int? skip)
         {
             var accounts = await _accountService.GetAllAccountsAsync(take, skip);
-            var count = accounts.Count;
+            var count = accounts.ToList().Count;
 
             Log.Information($"{count} {IdentityLoggerConstants.GET_ACCOUNTS}");
 

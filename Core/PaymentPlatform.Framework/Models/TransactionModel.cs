@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaymentPlatform.Framework.Models
 {
     /// <summary>
-	/// Модель транзакции.
-	/// </summary>
+    /// Модель транзакции.
+    /// </summary>
     [Table("Transaction")]
     public class TransactionModel : IHasGuidIdentity
     {
@@ -33,25 +33,11 @@ namespace PaymentPlatform.Framework.Models
         /// <summary>
         /// Статус.
         /// </summary>
-        public int Status { get; set; }
+        public bool IsActive { get; set; }
 
         /// <summary>
         /// Итоговая стоймость.
         /// </summary>
         public decimal TotalCost { get; set; }
-
-        /// <summary>
-        /// Идентификатор резерва денег.
-        /// </summary>
-        public Guid? BalanceReserveId { get; set; }
-        /// <summary>
-        /// Идентификатор резерва товара.
-        /// </summary>
-        public Guid? ProductReserveId { get; set; }
-
-        /// <summary>
-        /// Успешность транзакции на основе резерва.
-        /// </summary>
-        public bool TransactionSuccess { get; set; }
     }
 }

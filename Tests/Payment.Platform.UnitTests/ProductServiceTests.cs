@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Moq;
-using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Models;
 using PaymentPlatform.Framework.Services.RabbitMQ.Interfaces;
 using PaymentPlatform.Framework.ViewModels;
@@ -25,6 +23,7 @@ namespace Payment.Platform.UnitTests
         private readonly ServiceProvider _serviceProvider;
         private readonly IMapper _mapper;
         private readonly Mock<IRabbitMQService> _rabbitMQService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         /// <summary>
         /// Конструктор.
@@ -34,6 +33,7 @@ namespace Payment.Platform.UnitTests
         {
             _serviceProvider = fixture.ServiceProvider;
             _mapper = _serviceProvider.GetRequiredService<IMapper>();
+            _scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
 
             _rabbitMQService = new Mock<IRabbitMQService>();
             _rabbitMQService.Setup(rmq => rmq.SetListener(It.IsAny<string>(), It.IsAny<Action<string>>())).Returns((true, string.Empty));
@@ -78,7 +78,7 @@ namespace Payment.Platform.UnitTests
             // Act
             using (var context = new ProductContext(options))
             {
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = productService.AddNewProductAsync(productViewModel).GetAwaiter().GetResult();
 
                 guid = context.Products.LastOrDefault().Id.ToString();
@@ -118,7 +118,7 @@ namespace Payment.Platform.UnitTests
 
                 var guid = context.Products.LastOrDefault().Id;
 
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = productService.GetProductByIdAsync(guid).GetAwaiter().GetResult();
             }
 
@@ -148,7 +148,7 @@ namespace Payment.Platform.UnitTests
             // Act
             using (var context = new ProductContext(options))
             {
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = productService.GetProductByIdAsync(guid).GetAwaiter().GetResult();
             }
 
@@ -209,8 +209,8 @@ namespace Payment.Platform.UnitTests
                 context.Products.Add(productThree);
                 context.SaveChanges();
 
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult();
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
+                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -232,8 +232,8 @@ namespace Payment.Platform.UnitTests
             // Act
             using (var context = new ProductContext(options))
             {
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult();
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
+                result = productService.GetAllProductsAsync(false, profileGuid).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -293,8 +293,8 @@ namespace Payment.Platform.UnitTests
                 context.Products.Add(productThree);
                 context.SaveChanges();
 
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetAllProductsAsync(true, profileGuid).GetAwaiter().GetResult();
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
+                result = productService.GetAllProductsAsync(true, profileGuid).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -342,8 +342,8 @@ namespace Payment.Platform.UnitTests
                 context.Products.Add(productTwo);
                 context.SaveChanges();
 
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult();
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
+                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -365,8 +365,8 @@ namespace Payment.Platform.UnitTests
             // Act
             using (var context = new ProductContext(options))
             {
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
-                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult();
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
+                result = productService.GetProductsByUserIdAsync(profileId).GetAwaiter().GetResult().ToList();
             }
 
             // Assert
@@ -417,7 +417,7 @@ namespace Payment.Platform.UnitTests
 
                 var updatedProductViewModel = _mapper.Map<ProductViewModel>(productFromContext);
 
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = productService.UpdateProductAsync(updatedProductViewModel).GetAwaiter().GetResult();
 
                 updatedProduct = context.Products.LastOrDefault();
@@ -461,7 +461,7 @@ namespace Payment.Platform.UnitTests
             // Act
             using (var context = new ProductContext(options))
             {
-                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object);
+                IProductService productService = new ProductService(context, _mapper, _rabbitMQService.Object, _scopeFactory);
                 result = productService.UpdateProductAsync(product).GetAwaiter().GetResult();
             }
 

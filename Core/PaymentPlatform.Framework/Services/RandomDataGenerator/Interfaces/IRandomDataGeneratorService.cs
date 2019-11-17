@@ -24,6 +24,5 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces
         /// </summary>
         /// <param name="count">количество.</param>
         Task AddNewTransactionsAsync(int count);
-
     }
 }

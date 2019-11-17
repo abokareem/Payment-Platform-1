@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 {
     /// <summary>
-	/// Модель профиля пользователя для Context.
-	/// </summary>
+    /// Модель профиля пользователя для Context.
+    /// </summary>
     [Table("Profile")]
     public class ProfileContextModel : ProfileModel
     {
@@ -20,8 +20,8 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Models
 
         // Навигационные свойства.
         public AccountContextModel Account { get; set; }
-        public ICollection<TransactionContextModel> Transactions { get; set; }
-        public ICollection<ProductContextModel> Products { get; set; }
-        public ICollection<BalanceReservedContextModel> BalanceReserveds { get; set; }
+
+        public IEnumerable<TransactionContextModel> Transactions { get; set; }
+        public IEnumerable<ProductContextModel> Products { get; set; }
     }
 }

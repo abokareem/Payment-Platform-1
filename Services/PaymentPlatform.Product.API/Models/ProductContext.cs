@@ -14,11 +14,6 @@ namespace PaymentPlatform.Product.API.Models
         public DbSet<ProductModel> Products { get; set; }
 
         /// <summary>
-        /// Резервирование продукта.
-        /// </summary>
-        public DbSet<ProductReservedModel> ProductReserves { get; set; }
-
-        /// <summary>
         /// Базовый конструктор.
         /// </summary>
         /// <param name="options">параметры.</param>

@@ -9,20 +9,18 @@ using System.Threading.Tasks;
 namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
 {
     /// <summary>
-	/// Генератор заполнения базы данных случайными данными.
-	/// </summary>
+    /// Генератор заполнения базы данных случайными данными.
+    /// </summary>
     public class RandomDataGeneratorService : IRandomDataGeneratorService
     {
         private readonly MainContext _mainContext;
+        private readonly Random rnd = new Random();
 
         /// <summary>
         /// Конструктор с параметрами.
         /// </summary>
         /// <param name="mainContext">Контекст бд.</param>
-        public RandomDataGeneratorService(MainContext mainContext)
-        {
-            _mainContext = mainContext ?? throw new ArgumentException(nameof(mainContext));
-        }
+        public RandomDataGeneratorService(MainContext mainContext) => _mainContext = mainContext ?? throw new ArgumentException(nameof(mainContext));
 
         /// <inheritdoc/>
         public async Task AddNewAccountsAndProfilesAsync(int count)
@@ -34,11 +32,11 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
             {
                 accounts.Add(new AccountContextModel
                 {
-                    Email = $"{Guid.NewGuid().ToString()}@outlook.com",
+                    Email = $"{Guid.NewGuid().ToString()}@payment-platform.com",
                     Password = Guid.NewGuid().ToString().ToUpper().Substring(0, 8),
                     Login = Guid.NewGuid().ToString().ToUpper(),
-                    Role = new Random(0).Next(5),
-                    IsActive = Convert.ToBoolean(new Random().Next(2))
+                    Role = rnd.Next(3),
+                    IsActive = Convert.ToBoolean(rnd.Next(2))
                 });
             }
 
@@ -53,11 +51,11 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                     LastName = Guid.NewGuid().ToString().Substring(0, 8),
                     SecondName = Guid.NewGuid().ToString().Substring(0, 8),
                     Passport = Guid.NewGuid().ToString().Substring(0, 8),
-                    IsSeller = Convert.ToBoolean(new Random().Next(2)),
+                    IsSeller = Convert.ToBoolean(rnd.Next(2)),
                     OrgName = Guid.NewGuid().ToString().Substring(0, 8),
                     OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
                     BankBook = Guid.NewGuid().ToString().ToUpper(),
-                    Balance = new Random(10).Next(10000)
+                    Balance = rnd.Next(10000)
                 });
             }
 
@@ -69,8 +67,6 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
         /// <inheritdoc/>
         public async Task AddNewProductsAsync(int count)
         {
-            var rnd = new Random();
-
             var products = new List<ProductContextModel>();
             var profilesId = _mainContext.Profiles.Where(p => p.IsSeller)
                                                   .Select(p => p.Id)
@@ -84,11 +80,11 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                     LastName = Guid.NewGuid().ToString().Substring(0, 8),
                     SecondName = Guid.NewGuid().ToString().Substring(0, 8),
                     Passport = Guid.NewGuid().ToString().Substring(0, 8),
-                    IsSeller = Convert.ToBoolean(new Random().Next(2)),
+                    IsSeller = Convert.ToBoolean(rnd.Next(2)),
                     OrgName = Guid.NewGuid().ToString().Substring(0, 8),
                     OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
                     BankBook = Guid.NewGuid().ToString().ToUpper(),
-                    Balance = new Random(10).Next(10000)
+                    Balance = rnd.Next(10000)
                 };
 
                 await _mainContext.Profiles.AddAsync(profile);
@@ -109,10 +105,10 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                     Description = Guid.NewGuid().ToString().ToUpper(),
                     MeasureUnit = Guid.NewGuid().ToString().ToUpper().Substring(0, 4),
                     Category = Guid.NewGuid().ToString().Substring(0, 8),
-                    Amount = new Random(0).Next(10000),
-                    Price = new Random(10).Next(10000),
+                    Amount = rnd.Next(10000),
+                    Price = rnd.Next(10000),
                     QrCode = Guid.NewGuid().ToString().ToUpper(),
-                    IsActive = Convert.ToBoolean(new Random().Next(2))
+                    IsActive = Convert.ToBoolean(rnd.Next(2))
                 });
             }
 
@@ -123,8 +119,6 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
         /// <inheritdoc/>
         public async Task AddNewTransactionsAsync(int count)
         {
-            var rnd = new Random();
-
             var transactions = new List<TransactionContextModel>();
 
             var profilesId = _mainContext.Profiles.Where(p => p.IsSeller == true)
@@ -143,7 +137,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                     OrgName = Guid.NewGuid().ToString().Substring(0, 8),
                     OrgNumber = Guid.NewGuid().ToString().Substring(0, 8),
                     BankBook = Guid.NewGuid().ToString().ToUpper(),
-                    Balance = new Random(10).Next(10000)
+                    Balance = rnd.Next(10000)
                 };
 
                 await _mainContext.Profiles.AddAsync(profile);
@@ -170,8 +164,8 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                     Description = Guid.NewGuid().ToString().ToUpper(),
                     MeasureUnit = Guid.NewGuid().ToString().ToUpper().Substring(0, 4),
                     Category = Guid.NewGuid().ToString().Substring(0, 8),
-                    Amount = new Random(0).Next(10000),
-                    Price = new Random(10).Next(10000),
+                    Amount = rnd.Next(10000),
+                    Price = rnd.Next(10000),
                     QrCode = Guid.NewGuid().ToString().ToUpper(),
                     IsActive = true
                 };
@@ -194,7 +188,7 @@ namespace PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations
                 {
                     ProfileId = profilesId[profileIndex],
                     ProductId = product.Id,
-                    Status = new Random(0).Next(5),
+                    IsActive = true,
                     TotalCost = product.Price
                 });
             }

@@ -30,7 +30,7 @@ namespace PaymentPlatform.Profile.API.Services.Interfaces
         /// <param name="take">параметр пагинации (кол-во взять).</param>
         /// <param name="skip">параметр пагинации (кол-во пропустить).</param>
         /// <returns>Список профилей.</returns>
-        Task<List<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null);
+        Task<IEnumerable<ProfileViewModel>> GetAllProfilesAsync(int? take = null, int? skip = null);
 
         /// <summary>
         /// Обновить профиль.

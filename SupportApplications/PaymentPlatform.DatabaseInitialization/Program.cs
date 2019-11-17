@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PaymentPlatform.Framework.Constants;
 using PaymentPlatform.Framework.Enums;
+using PaymentPlatform.Framework.Extensions;
+using PaymentPlatform.Framework.Helpers;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Context;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Implementations;
 using PaymentPlatform.Framework.Services.RandomDataGenerator.Interfaces;
@@ -13,39 +15,57 @@ using System.Threading.Tasks;
 
 namespace PaymentPlatform.DatabaseInitialization
 {
-    static class Program
+    internal static class Program
     {
         public static async Task Main()
         {
-            Console.Title = "RandomDataGenerator Application v1.0";
+            var programTitle = "RandomDataGenerator Application v2.0";
+            Console.Title = programTitle;
 
-            var connectionString = GetConnectionString();
-
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<MainContext>(options => options.UseSqlServer(connectionString));
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            var mainContext = serviceProvider.GetService<MainContext>();
-
-            IRandomDataGeneratorService rndDataGenerator = new RandomDataGeneratorService(mainContext);
-
-            Console.Write(DbInitializationConstants.ENTER_COUNT);
-            var value = Environment.GetEnvironmentVariable("COUNT") ?? Console.ReadLine();
-            int.TryParse(value, out int count);
-
-            if (count > 0)
+            try
             {
-                var allTime = 0L;
+                Console.WriteLine($"Welcome to {programTitle}!");
 
-                allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewAccountsAndProfilesAsync, rndDataGenerator, count);
-                allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewProductsAsync, rndDataGenerator, count);
-                allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewTransactionsAsync, rndDataGenerator, count);
+                var serviceCollection = new ServiceCollection();
+                var connectionString = GetConnectionString(serviceCollection);
 
-                Console.WriteLine(DbInitializationConstants.SUCCESSFUL_COMPLETION + allTime.ToString() + DbInitializationConstants.MS);
+                Console.WriteLine($"ConnectionString: {connectionString}.");
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new ArgumentException(nameof(connectionString));
+                }
+
+                serviceCollection.AddDbContext<MainContext>(options => options.UseSqlServer(connectionString));
+                var serviceProvider = serviceCollection.BuildServiceProvider();
+
+                var mainContext = serviceProvider.GetService<MainContext>();
+
+                IRandomDataGeneratorService rndDataGenerator = new RandomDataGeneratorService(mainContext);
+
+                Console.Write(DbInitializationConstants.ENTER_COUNT);
+
+                var value = Environment.GetEnvironmentVariable("COUNT") ?? Console.ReadLine();
+                int.TryParse(value, out int count);
+
+                if (count > 0)
+                {
+                    var allTime = 0L;
+
+                    allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewAccountsAndProfilesAsync, rndDataGenerator, count);
+                    allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewProductsAsync, rndDataGenerator, count);
+                    allTime += await StartFillingDatabase(DataGeneratorTypes.AddNewTransactionsAsync, rndDataGenerator, count);
+
+                    Console.WriteLine(DbInitializationConstants.SUCCESSFUL_COMPLETION + allTime.ToString() + DbInitializationConstants.MS);
+                }
+                else
+                {
+                    Console.WriteLine(DbInitializationConstants.INVALID_COMMAND);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine(DbInitializationConstants.INVALID_COMMAND);
+                Console.WriteLine(ex.ToString());
             }
 
             Console.ReadLine();
@@ -81,22 +101,25 @@ namespace PaymentPlatform.DatabaseInitialization
         /// Получить строку подключения.
         /// </summary>
         /// <returns>Строка подключения.</returns>
-        private static string GetConnectionString()
+        private static string GetConnectionString(ServiceCollection serviceCollection)
         {
             var connectionString = string.Empty;
 
             if (File.Exists("appsettings.json"))
             {
                 var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
                 var configuration = builder.Build();
 
-                connectionString = configuration.GetConnectionString("DefaultConnection");
-            }
-            else
-            {
-                connectionString = "Server=(localdb)\\mssqllocaldb;Database=PaymentPlatformApplication;Trusted_Connection=True;MultipleActiveResultSets=true";
+                var appSettingSection = configuration.GetSection("AppSettings");
+                serviceCollection.Configure<AppSettings>(appSettingSection);
+
+                var appSettings = appSettingSection.Get<AppSettings>();
+                var isProduction = appSettings.IsProduction;
+
+                var connectionStringValue = isProduction.ToDbConnectionString();
+                connectionString = configuration.GetConnectionString(connectionStringValue);
             }
 
             return connectionString;

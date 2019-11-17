@@ -21,4 +21,10 @@
     <ProjectReference Include="..\..\Core\PaymentPlatform.Framework\PaymentPlatform.Framework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
